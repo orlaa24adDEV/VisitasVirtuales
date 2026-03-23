@@ -1,18 +1,12 @@
 import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from './assets/vite.svg';
-import heroImg from './assets/hero.png';
-import './App.css';
+import './assets/App.css';
+import MockAPITest from './components/dev/MockApiTest';
 
 function App() {
-	const [count, setCount] = useState(0);
-
 	return (
-		<>
-			<h1 className="text-3xl font-bold text-red-600 h-screen w-full flex justify-center items-center">
-				Probando tailwind
-			</h1>
-		</>
+		<div className="h-screen w-full flex flex-col justify-center items-center space-y-6 bg-white">
+			<MockAPITest />
+		</div>
 	);
 }
 
