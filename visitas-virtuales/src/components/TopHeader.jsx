@@ -100,12 +100,12 @@ export default function TopHeader({
                     <div className="flex flex-row items-end leading-tight">
                         <button
                             onClick={onLogin}
-                            className="w-30 m-2 p-2 text-slate-500 border-b border-transparent hover:text-slate-800 hover:border-slate-800 transition-colors">
+                            className="w-30 m-2 p-2 text-slate-500 border-b border-transparent cursor-pointer hover:text-slate-800 hover:border-slate-800 transition-colors">
                             Iniciar Sesión
                         </button>
                         <button
                             onClick={onRegister}
-                            className="w-30 m-2 p-2 text-slate-500 border-b border-transparent hover:text-slate-800 hover:border-slate-800 transition-colors">
+                            className="w-30 m-2 p-2 text-slate-500 border-b border-transparent cursor-pointer hover:text-slate-800 hover:border-slate-800 transition-colors">
                             Registrarte
                         </button>
                     </div>

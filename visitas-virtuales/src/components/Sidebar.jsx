@@ -11,9 +11,10 @@ import {
 } from 'lucide-react';
 import logo1 from '@/assets/logo1.png';
 
-const Sidebar = ({ onSelect, activeItem }) => {
+const Sidebar = () => {
 	// 1. Estado para saber si está expandida o contraída
 	const [isExpanded, setIsExpanded] = useState(true);
+	const [seccion, setSeccion] = useState('inicio'); // Para cambiar color de seleccion
 
 	const menuItems = [
 		{ id: 'inicio', name: 'Inicio', icon: <Home size={20} /> },
@@ -53,9 +54,9 @@ const Sidebar = ({ onSelect, activeItem }) => {
 				{menuItems.map((item) => (
 					<button
 						key={item.id}
-						onClick={() => onSelect(item.id)}
-						className={`flex w-full items-center rounded-lg px-4 py-3 transition-all duration-200 
-                            ${activeItem === item.id ? 'bg-white text-blue-600 shadow-md font-bold' : 'hover:bg-blue-700 text-blue-100 hover:text-white'}
+						onClick={() => setSeccion(item.id)}
+						className={`flex w-full items-center rounded-lg px-4 py-3 cursor-pointer transition-all duration-200 
+                            ${seccion === item.id ? 'bg-white text-blue-600 shadow-md font-bold' : 'hover:bg-blue-700 text-blue-100 hover:text-white'}
                             ${isExpanded ? 'justify-start gap-4' : 'justify-center'}`}>
 						<div className="shrink-0">{item.icon}</div>
 						<span
@@ -75,7 +76,7 @@ const Sidebar = ({ onSelect, activeItem }) => {
 					{/* El botón de menú siempre presente */}
 					<button
 						onClick={() => setIsExpanded(!isExpanded)}
-						className="hover:bg-blue-700 p-2 rounded-full transition-colors"
+						className="hover:bg-blue-700 p-2 rounded-full cursor-pointer transition-colors"
 						title="Expandir/Contraer">
 						<Menu size={24} />
 					</button>
