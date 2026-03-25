@@ -7,25 +7,71 @@ import Dashboard from './pages/Dashborad.jsx';
 import Pois from './pages/Pois.jsx';
 import Historial from './pages/Historial.jsx';
 import { Outlet } from 'react-router-dom';
+import CenterSelectionPage from './pages/CenterSelectionPage.jsx';
+import { useAuth } from './context/AuthContext.jsx';
+
+//Ruta protegida con centro seleccionado y usuario autenticado
+const ProtectedRoute = ({ children }) => {
+    const { user, selectdCenter } = useAuth();
+
+    if (!user) {
+        return <Navigate to="/login" replace />;
+    }
+    if (!selectdCenter) {
+        return <Navigate to="/select-center" replace />;
+    }
+    return children;
+};
+
+//Ruta que solo necesita autenticacion pero no centro seleccionado
+const AuthRoute = ({ children }) => {
+    const { user , selectedCenter} = useAuth();
+    if (!user) {
+        return <Navigate to="/login" replace />;
+    }
+    //Si ya tiene un centro, va directo al dashboard
+    if(!selectedCenter) {
+        return <Navigate to="/dashboard" replace />;
+    }
+    return children;
+};
 
 
 function App() {
-    return (
-        <Routes>
-            <Route path="/" element={<AdminLayout />}>
-                {/* Redirección inicial */}
-                <Route index element={<Navigate to="/dashboard" replace />} />
-
-                {/* Rutas Hijas conectadas a sus componentes */}
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="pois" element={<Pois />} />
-                <Route path="historial" element={<Historial />} />
-
-                {/* 404 opcional */}
-                <Route path="*" element={<div className="p-10">404 - No encontrado</div>} />
-            </Route>
-        </Routes>
-    );
+  return (
+    <Routes>
+      {/* Raíz → selección de centro */}
+      <Route index element={<Navigate to="/select-center" replace />} />
+ 
+      {/* Selección de centro: siempre accesible */}
+      <Route path="/select-center" element={<CenterSelectionPage />} />
+ 
+      {/* Layout con sidebar — rutas protegidas */}
+      <Route
+        path="/dashboard"
+        element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}
+      >
+        <Route index element={<Dashboard />} />
+      </Route>
+ 
+      <Route
+        path="/pois"
+        element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}
+      >
+        <Route index element={<Pois />} />
+      </Route>
+ 
+      <Route
+        path="/historial"
+        element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}
+      >
+        <Route index element={<Historial />} />
+      </Route>
+ 
+      {/* 404 */}
+      <Route path="*" element={<div className="p-10">404 - No encontrado</div>} />
+    </Routes>
+  );
 }
 
 export default App;
