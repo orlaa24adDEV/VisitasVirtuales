@@ -16,7 +16,7 @@ function App() {
 			<Sidebar onSelect={setSeccion} activeItem={seccion}/>
 
 			{/* El contenido principal de tu aplicación */}
-			<main className="flex-1 p-8 bg-gray-100 min-h-screen">
+			<main className="flex-1 p-8 bg-gray-100 min-h-screen flex flex-col items-center">
 				{/* Da true porque un html siempre da true */}
 				{seccion === 'inicio' && <h1>Estás en Inicio</h1>}
 				{seccion === 'perfil' && <h1>Perfil de Usuario</h1>}
@@ -37,7 +37,3 @@ function App() {
 export default App;
 
 
-/*
-<div className="h-screen w-full flex flex-col justify-center items-center space-y-6 bg-white">
-	<MockAPITest />
-</div>*/

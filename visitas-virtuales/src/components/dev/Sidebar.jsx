@@ -26,12 +26,7 @@ const Sidebar = ({ onSelect, activeItem }) => {
             <img src={logo1} alt="Icono" className="h-12 w-12 object-contain rounded-lg" />
             
             {/*Texto davante que se contrae */}
-            {isExpanded && (
-                <span className="font-bold text-xl tracking-widest whitespace-nowrap">DAVANTE</span> 
-            )}
-            {!isExpanded && (
-                <span className="font-bold text-xl tracking-widest whitespace-nowrap invisible">DAVANTE</span> 
-            )}
+            <span className={`font-bold text-xl tracking-widest whitespace-nowrap ${isExpanded ? "": "transition-all duration-50 invisible"}`}>DAVANTE</span>
         </div>
 
         {/*Lista de Navegación */}
