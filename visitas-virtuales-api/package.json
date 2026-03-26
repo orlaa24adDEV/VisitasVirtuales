@@ -38,6 +38,7 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.94.5",
     "dotenv-cli": "^11.0.0",
     "drizzle-kit": "^0.31.10",
     "nodemon": "^3.1.14",
