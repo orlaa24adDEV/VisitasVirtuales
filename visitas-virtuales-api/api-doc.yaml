@@ -1,0 +1,15 @@
+openapi: '3.0.0'
+basePath: '/api/v1'
+info:
+  title: 'Visitas Virtuales API'
+  version: '0.1.0'
+definitions:
+  World:
+    type: 'object'
+    properties:
+      name:
+        description: 'The name of this world.'
+        type: 'string'
+    required:
+      - 'name'
+paths: {}
