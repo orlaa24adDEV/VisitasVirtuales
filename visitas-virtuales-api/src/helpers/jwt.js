@@ -1,4 +1,4 @@
-import { SignJWT } from 'jose'
+import { SignJWT, jwtVerify } from 'jose'
 import assert from 'node:assert'
 
 // Comprobar que las variables de entorno necesarias para JWT están definidas
@@ -31,10 +31,9 @@ const alg = 'HS256'
 
 const generateToken = (sub, role, ttl) => {
   const payload = {
-    sub,
+    sub: Number(sub),
     role,
   }
-
   return new SignJWT(payload)
     .setProtectedHeader({ alg })
     .setIssuer(issuer)
@@ -52,13 +51,14 @@ const generateRefreshToken = (sub, role) => {
   return generateToken(sub, role, process.env.JWT_REFRESH_TOKEN_TTL)
 }
 
+
 const verifyToken = async (token) => {
   try {
-    const { payload } = await jose.jwtVerify(token, secret, {
+    const { payload } = await jwtVerify(token, secret, {
       issuer,
       audience,
     })
-    return payload
+    return { payload }
   } catch (err) {
     throw new Error('Token inválido o expirado: ' + err.message)
   }

@@ -29,13 +29,14 @@ export const loginHandler = async (req, res) => {
   res.json({ message: 'Usuario autenticado exitosamente', tokens: tokenPair })
 }
 
-// TODO: _
+// TODO: implementar endpoint para que el usuario pueda actualizar su perfil
 export const userUpdateHandler = (req, res) => {
   res.json({
     message: `Ruta para actualizar el usuario con ID ${req.params.id} - solo accesible para el propio usuario`,
   })
 }
 
+// TODO: exponer endpoint para que el usuario pueda refrescar su token de acceso
 export const refreshTokenHandler = (req, res) => {
   // El token de actualización se enviará desde el cliente en una cookie HTTP-only para evitar ataques XSS
   const token = req.cookies?.refreshToken
@@ -65,6 +66,14 @@ export const refreshTokenHandler = (req, res) => {
     })
 }
 
-export const profileHandler = (req, res) => {
-  res.json({ message: 'Ruta de perfil del usuario' })
+/**
+ * 
+ * @param request.user.id es asignado por el middleware isAuthenticated después de verificar el token de acceso
+ * @returns perfil del usuario autenticado
+ * @throws manejados por middleware apiErrorHandler
+ */
+export const profileHandler = async (req, res) => {
+  const userProfile = await userService.getUserProfile(req.user.sub)
+  res.locals.statusMessage = 'Perfil de usuario obtenido exitosamente'
+  res.json({ message: 'Perfil de usuario obtenido exitosamente', profile: userProfile })
 }

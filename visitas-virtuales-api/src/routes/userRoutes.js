@@ -42,7 +42,7 @@ router.post('/users', registerHandler)
 
 /**
  * @openapi
- * /api/v1/users/me:
+ * /api/v1/me:
  *   get:
  *     summary: Obtener el perfil del usuario autenticado
  *     tags: [User]

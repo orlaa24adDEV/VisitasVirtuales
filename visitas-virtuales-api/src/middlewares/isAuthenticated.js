@@ -1,3 +1,5 @@
+import { verifyToken } from '../helpers/jwt.js'
+
 const isAuthenticated = async (req, res, next) => {
   const authHeader = req.headers['authorization']
   // Authorization: Bearer <token>

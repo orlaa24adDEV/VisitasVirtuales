@@ -40,10 +40,10 @@ const register = async (userRegisterRequest) => {
     .insert(users)
     .values(userRegisterRequest)
     .returning()
+  const newUser = newUserArr[0]
   if (newUser.length === 0) {
     throw new ApiError(500, 'Error al registrar el usuario')
   }
-  const newUser = newUserArr[0]
   const tokenPair = {
     accessToken: await generateAccessToken(newUser.id, newUser.role),
     refreshToken: await generateRefreshToken(newUser.id, newUser.role),
@@ -51,6 +51,8 @@ const register = async (userRegisterRequest) => {
   if (!tokenPair.accessToken || !tokenPair.refreshToken) {
     throw new ApiError(500, 'Error al generar los tokens de autenticación')
   }
+  // TODO: garantizar que el token de actualización se almacene de forma segura en el cliente (cookie HTTP-only) y se invalide al cerrar sesión o después de un tiempo determinado
+  // Devolver ambos tokens al controlador para que los envíe al cliente
   return tokenPair
 }
 
@@ -89,7 +91,25 @@ const login = async (userLoginRequest) => {
   return tokenPair
 }
 
+const getUserProfile = async (userId) => {
+  const userArr = await db
+    .select({ id: users.id, email: users.email, username: users.username, role: users.role })
+    .from(users)
+    .where(eq(users.id, Number(userId)))
+    .limit(1)
+
+
+  const userProfile = userArr[0]
+
+  if (!userProfile) {
+    throw new ApiError(404, 'Usuario no encontrado')
+  }
+
+  return userProfile
+}
+
 export default {
   register,
   login,
+  getUserProfile,
 }
