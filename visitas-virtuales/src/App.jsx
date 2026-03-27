@@ -3,6 +3,7 @@ import { useState } from 'react';
 import TopHeader from './components/TopHeader';
 import Sidebar from './components/Sidebar';
 import Login from './components/Login';
+import Crud from './components/Crud';
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
 				<TopHeader onMenuClick={() => setIsMobileMenuOpen(true)}/>
 				<main className="flex-1 overflow-y-auto flex items-center justify-center">
 					<Login />
+					<Crud></Crud>
 				</main>
 				
 			</div>
