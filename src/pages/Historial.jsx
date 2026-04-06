@@ -9,7 +9,7 @@ const Historial = () => {
       try {
         // Añadimos &per_page=10 al final de la URL
         const response = await fetch(
-          "https://api.github.com/repos/jaimemoya-bit/VisitasVirtualesZaitec/commits?sha=Web_Zaitec_Orlando&per_page=10"
+          "https://api.github.com/repos/jaimemoya-bit/VisitasVirtualesZaitec/commits?sha=Web_Zaitec&per_page=10"
         );
         const data = await response.json();
         setCommits(Array.isArray(data) ? data : []);
