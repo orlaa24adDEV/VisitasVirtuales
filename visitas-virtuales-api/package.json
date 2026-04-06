@@ -5,6 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"dev": "nodemon --require ./preload-env.js src/app.js",
+		"prod": "pm2-runtime start ecosystem.config.cjs",
 		"db:up": "docker compose -f docker-compose.dev.yml --env-file .env.dev up -d",
 		"db:up:watch": "docker compose -f docker-compose.dev.yml --env-file .env.dev up",
 		"db:down": "docker compose -f docker-compose.dev.yml --env-file .env.dev down",
