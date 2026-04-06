@@ -42,15 +42,15 @@ const router = Router()
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
 router.put('/admin/users/:id/role', isAuthenticated, isAdmin, (req, res) => {
-  res.json({
-    message: `Ruta para cambiar el rol del usuario con ID ${req.params.id} - solo accesible para administradores`,
-  })
+	res.json({
+		message: `Ruta para cambiar el rol del usuario con ID ${req.params.id} - solo accesible para administradores`,
+	})
 })
 
 router.get('/admin', isAuthenticated, isAdmin, (req, res) => {
-  res.json({
-    message: 'Ruta de administración - solo accesible para administradores',
-  })
+	res.json({
+		message: 'Ruta de administración - solo accesible para administradores',
+	})
 })
 
 // CRUD de POIs - solo accesible para administradores
@@ -82,10 +82,10 @@ router.get('/admin', isAuthenticated, isAdmin, (req, res) => {
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
 router.post('/admin/pois', isAuthenticated, isAdmin, (req, res) => {
-  res.json({
-    message:
-      'Ruta para crear un nuevo POI - solo accesible para administradores',
-  })
+	res.json({
+		message:
+			'Ruta para crear un nuevo POI - solo accesible para administradores',
+	})
 })
 
 /**
@@ -105,10 +105,10 @@ router.post('/admin/pois', isAuthenticated, isAdmin, (req, res) => {
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
 router.get('/admin/pois', isAuthenticated, isAdmin, (req, res) => {
-  res.json({
-    message:
-      'Ruta para listar todos los POIs - solo accesible para administradores',
-  })
+	res.json({
+		message:
+			'Ruta para listar todos los POIs - solo accesible para administradores',
+	})
 })
 
 /**
@@ -146,9 +146,9 @@ router.get('/admin/pois', isAuthenticated, isAdmin, (req, res) => {
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
 router.put('/admin/pois/:id', isAuthenticated, isAdmin, (req, res) => {
-  res.json({
-    message: `Ruta para actualizar el POI con ID ${req.params.id} - solo accesible para administradores`,
-  })
+	res.json({
+		message: `Ruta para actualizar el POI con ID ${req.params.id} - solo accesible para administradores`,
+	})
 })
 
 /**
@@ -175,9 +175,9 @@ router.put('/admin/pois/:id', isAuthenticated, isAdmin, (req, res) => {
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
 router.delete('/admin/pois/:id', isAuthenticated, isAdmin, (req, res) => {
-  res.json({
-    message: `Ruta para eliminar el POI con ID ${req.params.id} - solo accesible para administradores`,
-  })
+	res.json({
+		message: `Ruta para eliminar el POI con ID ${req.params.id} - solo accesible para administradores`,
+	})
 })
 
 export default router

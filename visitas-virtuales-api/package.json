@@ -1,47 +1,47 @@
 {
-  "name": "visitasvirtualeszaitec",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "dev": "nodemon --require ./preload-env.js src/app.js",
-    "db:up": "docker compose -f docker-compose.dev.yml --env-file .env.dev up -d",
-    "db:up:watch": "docker compose -f docker-compose.dev.yml --env-file .env.dev up",
-    "db:down": "docker compose -f docker-compose.dev.yml --env-file .env.dev down",
-    "db:generate": "dotenv -e .env.dev -- drizzle-kit generate",
-    "db:migrate": "dotenv -e .env.dev -- drizzle-kit migrate",
-    "db:seed": "node --require ./preload-env.js src/db/seed.js",
-    "format": "prettier --write ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com-pva0011:jaimemoya-bit/VisitasVirtualesZaitec.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
-  "dependencies": {
-    "@libsql/client": "^0.17.2",
-    "bcrypt": "^6.0.0",
-    "cookie-parser": "^1.4.7",
-    "cookieparser": "^0.1.0",
-    "dotenv-expand": "^12.0.3",
-    "drizzle-orm": "^0.45.1",
-    "express": "^5.2.1",
-    "jose": "^6.2.2",
-    "jsonwebtoken": "^9.0.3",
-    "morgan": "^1.10.1",
-    "pg": "^8.20.0",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1",
-    "yamljs": "^0.3.0"
-  },
-  "devDependencies": {
-    "@hey-api/openapi-ts": "^0.94.5",
-    "dotenv-cli": "^11.0.0",
-    "drizzle-kit": "^0.31.10",
-    "nodemon": "^3.1.14",
-    "prettier": "^3.8.1"
-  }
+	"name": "visitasvirtualeszaitec",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"dev": "nodemon --require ./preload-env.js src/app.js",
+		"db:up": "docker compose -f docker-compose.dev.yml --env-file .env.dev up -d",
+		"db:up:watch": "docker compose -f docker-compose.dev.yml --env-file .env.dev up",
+		"db:down": "docker compose -f docker-compose.dev.yml --env-file .env.dev down",
+		"db:generate": "dotenv -e .env.dev -- drizzle-kit generate",
+		"db:migrate": "dotenv -e .env.dev -- drizzle-kit migrate",
+		"db:seed": "node --require ./preload-env.js src/db/seed.js",
+		"format": "prettier --write ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com-pva0011:jaimemoya-bit/VisitasVirtualesZaitec.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "module",
+	"dependencies": {
+		"@libsql/client": "^0.17.2",
+		"bcrypt": "^6.0.0",
+		"cookie-parser": "^1.4.7",
+		"cookieparser": "^0.1.0",
+		"dotenv-expand": "^12.0.3",
+		"drizzle-orm": "^0.45.1",
+		"express": "^5.2.1",
+		"jose": "^6.2.2",
+		"jsonwebtoken": "^9.0.3",
+		"morgan": "^1.10.1",
+		"pg": "^8.20.0",
+		"swagger-jsdoc": "^6.2.8",
+		"swagger-ui-express": "^5.0.1",
+		"yamljs": "^0.3.0"
+	},
+	"devDependencies": {
+		"@hey-api/openapi-ts": "^0.94.5",
+		"dotenv-cli": "^11.0.0",
+		"drizzle-kit": "^0.31.10",
+		"nodemon": "^3.1.14",
+		"prettier": "^3.8.1"
+	}
 }

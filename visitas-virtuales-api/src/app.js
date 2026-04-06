@@ -1,5 +1,6 @@
 import express from 'express'
 import morgan from 'morgan'
+import cookieParser from 'cookie-parser'
 import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import userRoutes from './routes/userRoutes.js'
@@ -14,6 +15,8 @@ app.use(morgan(':method :url :status :status-message - :response-time ms'))
 
 app.use(express.json())
 
+app.use(cookieParser())
+
 // Montar rutas de usuarios
 app.use('/api/v1/', userRoutes)
 
@@ -22,21 +25,21 @@ app.use('/api/v1/', adminRoutes)
 
 // Montar ruta de especificación OpenAPI
 const swaggerSpec = swaggerJSDoc({
-  definition: {
-    openapi: '3.0.0',
-    info: { title: 'Visitas Virtuales API', version: '0.1.0' },
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
-      },
-    },
-    security: [{ bearerAuth: [] }],
-  },
-  apis: ['./src/routes/*.js'],
+	definition: {
+		openapi: '3.0.0',
+		info: { title: 'Visitas Virtuales API', version: '0.1.0' },
+		components: {
+			securitySchemes: {
+				bearerAuth: {
+					type: 'http',
+					scheme: 'bearer',
+					bearerFormat: 'JWT',
+				},
+			},
+		},
+		security: [{ bearerAuth: [] }],
+	},
+	apis: ['./src/routes/*.js'],
 })
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
