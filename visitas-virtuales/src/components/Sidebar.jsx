@@ -23,7 +23,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 		{ id: 'mensajes', name: 'Mensajes', icon: <Mail size={20} />, path: 'mensajes' },
 		{ id: 'dashboard', name: 'Dashboard', icon: <LayoutDashboard size={22} />, path: '/crud' },
 		{ id: 'seleccion-centro', name: 'Selección de Centro', icon: <Building2 size={22} />, path: '/centros'},
-		{ id: 'gestion-pois', name: 'Gestión de POIs', icon: <MapPin size={22} />, path: 'pois' },
+		{ id: 'gestion-pois', name: 'Gestión de POIs', icon: <MapPin size={22} />, path: 'listpois' },
 		{ id: 'auditoria', name: 'Auditoría', icon: <ClipboardCheck size={22} />, path: '/historial' },
 	];
 

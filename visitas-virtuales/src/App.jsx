@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard.jsx';
 import Pois from './pages/Pois.jsx';
 import Historial from './pages/Historial.jsx';
 import CenterSelectionPage from './pages/CenterSelectionPage.jsx';
+import ListPois from './pages/ListPois.jsx';
 
 
 function App() {
@@ -29,7 +30,7 @@ function App() {
 						<Route path="/perfil" element={<div className="p-10 text-center text-gray-500 text-3xl font-bold">Bienvenido a Perfil</div>} />
 						<Route path="/mensajes" element={<div className="p-10 text-center text-gray-500 text-3xl font-bold">Bienvenido a Mensajes</div>} />
 						<Route path="/crud" element={<Crud />} />
-						<Route path="/pois" element={<Pois />} /> 
+						<Route path="/listpois" element={<ListPois />} /> 
 						<Route path="/centros" element={<CenterSelectionPage />} />
 						<Route path="/historial" element={<Historial />} />
 						{/* Ruta por defecto (404) */}
