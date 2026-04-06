@@ -14,7 +14,3 @@ worker.events.on('request:match', ({ request }) => {
 worker.events.on('request:unhandled', ({ request }) => {
 	console.debug('MSW unhandled:', request.method, request.url);
 });
-
-worker.start({
-  onUnhandledRequest: 'bypass', // Esto le dice: "Si no lo conoces, cállate y déjalo pasar"
-})
