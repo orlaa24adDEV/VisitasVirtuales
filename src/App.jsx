@@ -3,7 +3,7 @@ import MockAPITest from './components/dev/MockApiTest';
 import { MainLayout } from './components/dev/layout/MainLayout';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import {AdminLayout}   from './components/dev/layout/AdminLayout';
-import Dashboard from './pages/Dashborad.jsx';
+import Dashboard from './pages/Dashboard.jsx';
 import Pois from './pages/Pois.jsx';
 import Historial from './pages/Historial.jsx';
 import { Outlet } from 'react-router-dom';
