@@ -4,6 +4,7 @@ import { ChevronDown, LogOut, Menu } from 'lucide-react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
+
 TopHeader.propTypes = {
     onMenuClick: PropTypes.func.isRequired,
     isLog: PropTypes.bool.isRequired,
@@ -35,20 +36,20 @@ TopHeader.propTypes = {
 // Datos de sesión del usuario y acción de salida para el navbar.
 export default function TopHeader({
     onMenuClick,
-    isLog = false,
+    isLog = true,
     onLogin = () => { },
     onLogout = () => { },
     onRegister = () => {},
-    userName = "Usuario",
-    userEmail = "sin email",
+    userName = "Estudiante",
+    userEmail = "estudiante@medac.es",
     userImg = "https://unavatar.io/x/unknow",
-    role = "Sin rol"
+    role = "Estudiante"
 }) {
 
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <header className="h-16 w-full bg-gray-100 border-b border-slate-100 flex items-center justify-between px-4 lg:justify-end lg:px-8 shadow-sm">
+        <header className="h-16 w-full bg-blue-100 border-b border-slate-100 flex items-center justify-between px-4 lg:justify-end lg:px-8 shadow-sm">
             <button onClick={onMenuClick} className="p-2 text-slate-600 hover:bg-slate-200 rounded-lg lg:hidden">
                 <Menu size={24} />
             </button>

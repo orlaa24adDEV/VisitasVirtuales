@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import {
 	Home,
 	User,
@@ -15,20 +16,15 @@ import logo1 from '@/assets/logo1.png';
 const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 	// Estado para saber si está expandida o contraída
 	const [isExpanded, setIsExpanded] = useState(true);
-	const [seccion, setSeccion] = useState('inicio'); // Para cambiar color de seleccion
 
 	const menuItems = [
-		{ id: 'inicio', name: 'Inicio', icon: <Home size={20} /> },
-		{ id: 'perfil', name: 'Perfil', icon: <User size={20} /> },
-		{ id: 'mensajes', name: 'Mensajes', icon: <Mail size={20} /> },
-		{ id: 'dashboard', name: 'Dashboard', icon: <LayoutDashboard size={22} /> },
-		{
-			id: 'seleccion-centro',
-			name: 'Selección de Centro',
-			icon: <Building2 size={22} />,
-		},
-		{ id: 'gestion-pois', name: 'Gestión de POIs', icon: <MapPin size={22} /> },
-		{ id: 'auditoria', name: 'Auditoría', icon: <ClipboardCheck size={22} /> },
+		{ id: 'inicio', name: 'Inicio', icon: <Home size={20} />, path: 'home' },
+		{ id: 'perfil', name: 'Perfil', icon: <User size={20} />, path: 'login' },
+		{ id: 'mensajes', name: 'Mensajes', icon: <Mail size={20} />, path: 'mensajes' },
+		{ id: 'dashboard', name: 'Dashboard', icon: <LayoutDashboard size={22} />, path: '/dashboard' },
+		{ id: 'seleccion-centro', name: 'Selección de Centro', icon: <Building2 size={22} />, path: '/centros'},
+		{ id: 'gestion-pois', name: 'Gestión de POIs', icon: <MapPin size={22} />, path: 'listpois' },
+		{ id: 'auditoria', name: 'Auditoría', icon: <ClipboardCheck size={22} />, path: '/historial' },
 	];
 
 	return (
@@ -42,7 +38,6 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 					onClick={() => setIsMobileMenuOpen(false)}
 				/>
 			)}
-
 
 
 
@@ -63,7 +58,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 					<img
 						src={logo1}
 						alt="Icono"
-						className="h-12 w-12 object-contain rounded-lg"
+						className="h-12 w-12 object-contain rounded-lg cursor-pointer"
 					/>
 
 					{/*Texto davante que se contrae */}
@@ -76,15 +71,15 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 				{/*Lista de Navegación */}
 				<nav className="flex-1 px-4 py-6 space-y-3">
 					{menuItems.map((item) => (
-						<button
+						<NavLink
 							key={item.id}
+							to={item.path}
 							onClick={() => {
-								setSeccion(item.id)
 								// En móvil, cerramos el menú al hacer click en una opción
 								if (window.innerWidth < 1024) setIsMobileMenuOpen(false);
 							}}
-							className={`flex w-full items-center rounded-lg px-4 py-3 cursor-pointer transition-all duration-200 
-								${seccion === item.id ? 'bg-white text-blue-600 shadow-md font-bold' : 'hover:bg-blue-700 text-blue-100 hover:text-white'}
+							className={({isActive}) =>`flex w-full items-center rounded-lg px-4 py-3 cursor-pointer transition-all duration-200 
+								${isActive ? 'bg-white text-blue-600 shadow-md font-bold' : 'hover:bg-blue-700 text-blue-100 hover:text-white'}
 								${isExpanded ? 'justify-start gap-4' : 'lg:justify-center'}`}>
 							<div className="shrink-0">{item.icon}</div>
 							<span
@@ -92,9 +87,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 								${isExpanded ? 'opacity-100 w-auto' : 'lg:opacity-0 lg:w-0'}`}>
 								{item.name}
 							</span>
-							{/* Aquí le decimos que se puede encojer el texto */}
-							{/*isExpanded && <span className="font-medium">{item.name}</span>*/}
-						</button>
+						</NavLink>
 					))}
 				</nav>
 
