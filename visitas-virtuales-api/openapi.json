@@ -1,0 +1,389 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Visitas Virtuales API",
+		"version": "0.1.0"
+	},
+	"components": {
+		"securitySchemes": {
+			"bearerAuth": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
+	},
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"paths": {
+		"/admin/users/{id}/role": {
+			"put": {
+				"summary": "Cambiar el rol de un usuario (solo para administradores)",
+				"tags": ["Admin"],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						},
+						"description": "ID del usuario al que se le cambiará el rol"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"role": {
+										"type": "string",
+										"enum": ["user", "admin"]
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Rol del usuario actualizado con éxito"
+					},
+					"400": {
+						"description": "Rol proporcionado no es válido"
+					},
+					"401": {
+						"description": "No se proporcionó un token de acceso"
+					},
+					"403": {
+						"description": "El token proporcionado no es válido o el usuario no tiene permisos de administrador"
+					}
+				}
+			}
+		},
+		"/admin/pois": {
+			"post": {
+				"summary": "Crear un nuevo POI (solo para administradores)",
+				"tags": ["POIs"],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									},
+									"description": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "POI creado con éxito"
+					},
+					"401": {
+						"description": "No se proporcionó un token de acceso"
+					},
+					"403": {
+						"description": "El token proporcionado no es válido o el usuario no tiene permisos de administrador"
+					}
+				}
+			},
+			"get": {
+				"summary": "Listar todos los POIs (solo para administradores)",
+				"tags": ["POIs"],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Lista de POIs obtenida con éxito"
+					},
+					"401": {
+						"description": "No se proporcionó un token de acceso"
+					},
+					"403": {
+						"description": "El token proporcionado no es válido o el usuario no tiene permisos de administrador"
+					}
+				}
+			}
+		},
+		"/admin/pois/{id}": {
+			"put": {
+				"summary": "Actualizar un POI existente (solo para administradores)",
+				"tags": ["POIs"],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						},
+						"description": "ID del POI a actualizar"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									},
+									"description": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "POI actualizado con éxito"
+					},
+					"401": {
+						"description": "No se proporcionó un token de acceso"
+					},
+					"403": {
+						"description": "El token proporcionado no es válido o el usuario no tiene permisos de administrador"
+					}
+				}
+			},
+			"delete": {
+				"summary": "Eliminar un POI existente (solo para administradores)",
+				"tags": ["POIs"],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						},
+						"description": "ID del POI a eliminar"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "POI eliminado con éxito"
+					},
+					"401": {
+						"description": "No se proporcionó un token de acceso"
+					},
+					"403": {
+						"description": "El token proporcionado no es válido o el usuario no tiene permisos de administrador"
+					}
+				}
+			}
+		},
+		"/api/v1/users": {
+			"post": {
+				"summary": "Registrar un nuevo usuario",
+				"tags": ["User"],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"username": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									},
+									"password": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Usuario registrado con éxito"
+					},
+					"400": {
+						"description": "Email, nombre de usuario o contraseña no proporcionados"
+					},
+					"409": {
+						"description": "Email o nombre de usuario ya en uso"
+					},
+					"500": {
+						"description": "Error del servidor al registrar el usuario"
+					}
+				}
+			}
+		},
+		"/api/v1/users/me": {
+			"get": {
+				"summary": "Obtener el perfil del usuario autenticado",
+				"tags": ["User"],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Perfil del usuario obtenido con éxito"
+					},
+					"401": {
+						"description": "No se proporcionó un token de acceso o el token es inválido"
+					}
+				}
+			}
+		},
+		"/api/v1/users/auth": {
+			"post": {
+				"summary": "Iniciar sesión y obtener tokens de acceso y actualización",
+				"tags": ["User"],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"email": {
+										"type": "string"
+									},
+									"password": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Inicio de sesión exitoso, se devuelve un token de acceso"
+					},
+					"400": {
+						"description": "Formato de solicitud no válido"
+					},
+					"401": {
+						"description": "Credenciales incorrectas"
+					}
+				}
+			}
+		},
+		"/api/v1/users/{id}": {
+			"put": {
+				"summary": "Actualizar la información de un usuario (solo para el propio usuario)",
+				"tags": ["User"],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						},
+						"description": "ID del usuario a actualizar"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"username": {
+										"type": "string"
+									},
+									"password": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Usuario actualizado con éxito"
+					},
+					"400": {
+						"description": "Formato de solicitud no válido"
+					},
+					"401": {
+						"description": "Token de acceso no proporcionado o inválido"
+					},
+					"403": {
+						"description": "Usuario autenticado no tiene permiso para actualizar este usuario"
+					}
+				}
+			}
+		},
+		"/api/v1/users/auth/refresh": {
+			"get": {
+				"summary": "Obtener un nuevo token de acceso utilizando un token de actualización",
+				"tags": ["User"],
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Nuevo token de acceso generado con éxito"
+					},
+					"401": {
+						"description": "No se proporcionó un token de actualización"
+					},
+					"403": {
+						"description": "El token de actualización proporcionado es inválido o ha expirado"
+					}
+				}
+			}
+		}
+	},
+	"tags": []
+}
