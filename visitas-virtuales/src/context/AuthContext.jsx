@@ -4,7 +4,7 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({children}) => {
 
-    //Vamos a simular un usuario ya autenticado para probar la funcionalidad de el codido.
+    //Vamos a simular un usuario ya autenticado para probar la funcionalidad del código.
 
     const [user, setUser] = useState(() => {
         const savedUser = localStorage.getItem('user');
@@ -44,6 +44,6 @@ export const AuthProvider = ({children}) => {
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
         const ctx = useContext(AuthContext);
-        if (!ctx) throw new Error('useAuth deber ser usado dentro de un AuthProvider');
+        if (!ctx) throw new Error('useAuth debe ser usado dentro de un AuthProvider');
         return ctx;
 };

@@ -6,7 +6,6 @@ import Login from './components/Login';
 import Crud from './components/Crud';
 
 import Dashboard from './pages/Dashboard.jsx';
-import Pois from './pages/Pois.jsx';
 import Historial from './pages/Historial.jsx';
 import CenterSelectionPage from './pages/CenterSelectionPage.jsx';
 import ListPois from './pages/ListPois.jsx';
@@ -40,7 +39,7 @@ function App() {
                         {selectedCenter ? (
                             <>
                                 <Route path="/home" element={<Home />} />
-                                <Route path="/listpois" element={<ListPois />} />
+                                <Route path="/listpois" element={<ListPois idCentro={selectedCenter.idCentro ?? selectedCenter.id} />} />
                                 <Route path="/crud" element={<Crud />} />
 								<Route path="/dashboard" element={<Dashboard />} />
                                 <Route path="/historial" element={<Historial />} />

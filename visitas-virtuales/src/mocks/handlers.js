@@ -17,9 +17,9 @@ export const handlers = [
 		return HttpResponse.json(CENTERS);
 	}),
 
-	http.get('/api/centers:id', ({params}) => {
+	http.get('/api/centers/:id', ({params}) => {
 		const center = CENTERS.find(c => c.id === params.id);
-		if (!center) return HttpResponse.status(404);
+		if (!center) return new HttpResponse(null, { status: 404 });
 		return HttpResponse.json(center);
 	}),
 ];

@@ -1,4 +1,3 @@
-import CenterSelectionPage from "./CenterSelectionPage";
 import { useAuth } from '../context/AuthContext';
 
 const Home = () => {
