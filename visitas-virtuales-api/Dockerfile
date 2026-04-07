@@ -1,6 +1,9 @@
 FROM node:25-slim
 
 WORKDIR /app
+# Instalar netcat 
+RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
+
 # Instalar PM2 globalmente para producción
 RUN npm install pm2 -g
 
@@ -13,8 +16,11 @@ RUN npm install --omit=dev
 # Copiar el resto del código de la aplicación
 COPY . .
 
+ENV NODE_ENV=production
+
 # Exponer puerto de la aplicación
 EXPOSE 3000
 
-# Usar PM2 para ejecutar la aplicación en modo producción
-CMD ["pm2-runtime", "start", "ecosystem.config.cjs", "--env", "production"]
+# Ejecutar migraciones DB y PM2
+COPY docker-entrypoint.sh .
+ENTRYPOINT ["./docker-entrypoint.sh"]

@@ -10,7 +10,8 @@
 		"db:up:watch": "docker compose -f docker-compose.dev.yml --env-file .env.dev up",
 		"db:down": "docker compose -f docker-compose.dev.yml --env-file .env.dev down",
 		"db:generate": "dotenv -e .env.dev -- drizzle-kit generate",
-		"db:migrate": "dotenv -e .env.dev -- drizzle-kit migrate",
+		"db:migrate:dev": "dotenv -e .env.dev -- drizzle-kit migrate",
+		"db:migrate:prod": "drizzle-kit migrate",
 		"db:seed": "node --require ./preload-env.js src/db/seed.js",
 		"format": "prettier --write ."
 	},
@@ -27,6 +28,7 @@
 		"bcrypt": "^6.0.0",
 		"cookie-parser": "^1.4.7",
 		"cookieparser": "^0.1.0",
+		"dotenv": "^17.4.1",
 		"dotenv-expand": "^12.0.3",
 		"drizzle-orm": "^0.45.1",
 		"express": "^5.2.1",
