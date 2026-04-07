@@ -13,6 +13,11 @@
 		"db:migrate:dev": "dotenv -e .env.dev -- drizzle-kit migrate",
 		"db:migrate:prod": "drizzle-kit migrate",
 		"db:seed": "node --require ./preload-env.js src/db/seed.js",
+		"deploy:prod:up": "docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build",
+		"deploy:prod:down": "docker compose -f docker-compose.prod.yml --env-file .env.prod down",
+		"deploy:prod:restart": "npm run deploy:prod:down && npm run deploy:prod:up",
+		"deploy:prod:logs": "docker compose -f docker-compose.prod.yml --env-file .env.prod logs -f api_service nginx",
+		"deploy:prod:ps": "docker compose -f docker-compose.prod.yml --env-file .env.prod ps",
 		"format": "prettier --write ."
 	},
 	"repository": {
