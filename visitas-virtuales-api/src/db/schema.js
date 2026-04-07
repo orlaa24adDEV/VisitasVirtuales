@@ -5,6 +5,9 @@ export const users = pgTable('users', {
 	email: text('email').notNull().unique(),
 	username: text('username').notNull().unique(),
 	password: text('password').notNull(),
+	centerId: integer('center_id')
+		.notNull()
+		.references(() => centers.id),
 	role: text('role').notNull(), // 'user' o 'admin'
 })
 

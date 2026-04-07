@@ -280,4 +280,11 @@ router.put('/users/:id', isAuthenticated, userUpdateHandler)
  */
 router.post('/users/auth/refresh', refreshTokenHandler)
 
+// router.get('/pois', isAuthenticated, (req, res) => {
+// 	res.json({
+// 		message:
+// 			'Ruta para listar todos los POIs asociados a un centro',
+// 	})
+// })
+
 export default router
