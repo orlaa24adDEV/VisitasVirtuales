@@ -1,6 +1,7 @@
 import { Search, Plus, Pencil, Trash, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Crud from "../components/Crud";
 
 export default function ListPois({ idCentro }) {
     const [pois, setPois] = useState([]);
@@ -19,6 +20,7 @@ export default function ListPois({ idCentro }) {
     const currentPois = filteredPois.slice(firstIndex, lastIndex);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentPage(1);
     }, [search]);
 
@@ -48,7 +50,7 @@ export default function ListPois({ idCentro }) {
     //He metido todo el section dentro de un div para centrarlo.
     return (
         <div className="flex flex-col items-center justify-center min-h-full w-full p-6">
-            <section className="flex flex-col gap-2 w-full max-w-4xl p-5 shadow-sm rounded-2xl bg-white min-h-[500px]">
+            <section className="flex flex-col gap-2 w-full max-w-4xl p-5 shadow-sm rounded-2xl bg-white min-h-125">
                 <div className="flex flex-row gap-2 border-2 border-gray-200 rounded-lg items-center focus-within:border-2 hover:border-blue-600 focus-within:border-blue-600 focus-within:border-solid">
                     <Search size={24} className="text-gray-300 ml-2" />
                     <input
@@ -59,7 +61,7 @@ export default function ListPois({ idCentro }) {
                         className="w-full p-1 focus:outline-hidden"
                     />
                     <Link
-                        to="pois/nuevo"
+                        to="/crud"
                         className="flex items-center w-40  gap-1 px-3 py-1.5 text-white text-sm font-medium bg-blue-600 border border-transparent hover:bg-blue-800 rounded-r-md cursor-pointer transition-all"
                     >
                         <Plus size={18} strokeWidth={3} /> Nuevo POI
@@ -90,7 +92,7 @@ export default function ListPois({ idCentro }) {
                                         <td className="px-6 py-4">
                                             <div className="flex justify-end gap-2">
                                                 <Link
-                                                    to="pois/editar"
+                                                    to="/crud"
                                                     state={{ id: poi.id, name: poi.name, description: poi.description }}
                                                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
                                                 >

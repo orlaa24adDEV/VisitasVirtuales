@@ -26,7 +26,7 @@ function Login(props) {
 			return 'El usuario debe contener al menos un número';
 		}
 		// Verificar que contiene símbolos especiales
-		if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)) {
+		if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value)) {
 			return 'El usuario debe contener al menos un símbolo especial (!@#$%^&*...)';
 		}
 		return null;
@@ -46,7 +46,7 @@ function Login(props) {
 		if (!/[0-9]/.test(value)) {
 			return 'La contraseña debe contener al menos un número';
 		}
-		if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)) {
+		if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value)) {
 			return 'La contraseña debe contener al menos un símbolo especial (!@#$%^&*...)';
 		}
 		return null;
@@ -139,7 +139,7 @@ function Login(props) {
 		// Volver a modo login
 		setIsCreateMode(false);
 	};
-	const handlePeek = (e) => {
+	const handlePeek = () => {
 		setShowPassword(!showPassword);
 	};
 

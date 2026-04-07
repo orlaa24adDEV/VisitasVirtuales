@@ -12,6 +12,7 @@ function Crud() {
 
     // Cargar POIs al montar el componente
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/immutability
         readPois()
     }, [])
 
@@ -29,6 +30,7 @@ function Crud() {
         try {
             const newPoi = {
                 ...formData,
+                // eslint-disable-next-line react-hooks/purity
                 id: Date.now().toString() // Generar ID único
             }
            
@@ -103,20 +105,9 @@ function Crud() {
                 {isEditing ? 'Editar POI' : 'Crear Nuevo POI'}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
                 <div>
-                    <label className="block text-sm font-medium mb-1">ID:</label>
-                    <input
-                        type="text"
-                        name="id"
-                        value={formData.id}
-                        onChange={handleInputChange}
-                        readOnly
-                        className="w-full p-2 border rounded"
-                        placeholder="Se generará automáticamente"
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium mb-1">Centro ID:</label>
+                    <label className="block text-sm font-medium mb-1">Centro:</label>
                     <input
                         type="text"
                         name="centerId"

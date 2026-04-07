@@ -18,10 +18,10 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 	const [isExpanded, setIsExpanded] = useState(true);
 
 	const menuItems = [
-		{ id: 'inicio', name: 'Inicio', icon: <Home size={20} />, path: 'login' },
-		{ id: 'perfil', name: 'Perfil', icon: <User size={20} />, path: 'perfil' },
+		{ id: 'inicio', name: 'Inicio', icon: <Home size={20} />, path: 'home' },
+		{ id: 'perfil', name: 'Perfil', icon: <User size={20} />, path: 'login' },
 		{ id: 'mensajes', name: 'Mensajes', icon: <Mail size={20} />, path: 'mensajes' },
-		{ id: 'dashboard', name: 'Dashboard', icon: <LayoutDashboard size={22} />, path: '/crud' },
+		{ id: 'dashboard', name: 'Dashboard', icon: <LayoutDashboard size={22} />, path: '/dashboard' },
 		{ id: 'seleccion-centro', name: 'Selección de Centro', icon: <Building2 size={22} />, path: '/centros'},
 		{ id: 'gestion-pois', name: 'Gestión de POIs', icon: <MapPin size={22} />, path: 'listpois' },
 		{ id: 'auditoria', name: 'Auditoría', icon: <ClipboardCheck size={22} />, path: '/historial' },
@@ -58,7 +58,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 					<img
 						src={logo1}
 						alt="Icono"
-						className="h-12 w-12 object-contain rounded-lg"
+						className="h-12 w-12 object-contain rounded-lg cursor-pointer"
 					/>
 
 					{/*Texto davante que se contrae */}

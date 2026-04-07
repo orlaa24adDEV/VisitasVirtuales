@@ -10,7 +10,7 @@ export default function CenterSelectionPage() {
   const [selected, setSelected] = useState(null);
 
   const navigate = useNavigate();
-  const { selectCenter, user } = useAuth();
+  const { selectCenter } = useAuth();
 
   useEffect(() => {
     const fetchCenters = async () => {
@@ -28,15 +28,17 @@ export default function CenterSelectionPage() {
     fetchCenters();
   }, []);
 
+
   const handleSelect = (center) => {
     setSelected(center.id);
+    
   };
 
   const handleConfirm = () => {
     if (!selected) return;
     const center = centers.find((c) => c.id === selected);
     selectCenter(center);
-    navigate('/dashboard');
+    navigate('/home');
   };
 
   return (
