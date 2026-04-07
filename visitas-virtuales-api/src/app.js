@@ -13,8 +13,10 @@ const app = express()
 morgan.token('status-message', (req, res) => res.statusMessage || '')
 app.use(morgan(':method :url :status :status-message - :response-time ms'))
 
+// Middleware para extraer JSON de las solicitudes
 app.use(express.json())
 
+// Middleware para extraer cookies de las solicitudes
 app.use(cookieParser())
 
 // Montar rutas de usuarios

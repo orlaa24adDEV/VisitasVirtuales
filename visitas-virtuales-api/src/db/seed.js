@@ -12,39 +12,7 @@ const db = drizzle({ client: pool })
 
 async function main() {
 	try {
-		// Insertar usuarios de prueba
-		const mockUserData = [
-			{
-				email: 'francisco@zaitec.es',
-				username: 'francisco',
-				password: await bcrypt.hash('francisco123', 10),
-				role: 'admin',
-			},
-			{
-				email: 'jaime@zaitec.es',
-				username: 'jaime',
-				password: await bcrypt.hash('jaime123', 10),
-				role: 'admin',
-			},
-			{
-				email: 'alumno@alu.medac.es',
-				username: 'alumno',
-				password: await bcrypt.hash('alumno123', 10),
-				role: 'user',
-			},
-			{
-				email: 'alumno2@alu.medac.es',
-				username: 'alumno2',
-				password: await bcrypt.hash('alumno123', 10),
-				role: 'user',
-			},
-		]
-		const insertedUsers = await db
-			.insert(users)
-			.values(mockUserData)
-			.returning()
-
-		// Insertar centros de prueba
+		// Insertar centros de prueba primero
 		const mockCenters = [
 			{
 				name: 'MEDAC Málaga',
@@ -72,65 +40,101 @@ async function main() {
 			.values(mockCenters)
 			.returning()
 
+		// Insertar usuarios de prueba
+		const mockUserData = [
+			{
+				email: 'francisco@zaitec.es',
+				username: 'francisco',
+				password: await bcrypt.hash('francisco123', 10),
+				role: 'admin',
+				centerId: insertedCenters[0].id,
+			},
+			{
+				email: 'jaime@zaitec.es',
+				username: 'jaime',
+				password: await bcrypt.hash('jaime123', 10),
+				role: 'admin',
+				centerId: insertedCenters[1].id,
+			},
+			{
+				email: 'alumno@alu.medac.es',
+				username: 'alumno',
+				password: await bcrypt.hash('alumno123', 10),
+				role: 'user',
+				centerId: insertedCenters[0].id,
+			},
+			{
+				email: 'alumno2@alu.medac.es',
+				username: 'alumno2',
+				password: await bcrypt.hash('alumno123', 10),
+				role: 'user',
+				centerId: insertedCenters[1].id,
+			},
+		]
+		const insertedUsers = await db
+			.insert(users)
+			.values(mockUserData)
+			.returning()
+
 		// Insertar POIs de prueba
 		const mockPois = [
 			// MEDAC Málaga
 			{
 				name: 'Cafetería',
-				description: 'Cafetería principal del centro',
+				details: { description: 'Cafetería principal del centro' },
 				centerId: insertedCenters[0].id,
 				userId: insertedUsers[0].id,
 			},
 			{
-				name: 'News Board',
-				description: 'Tablón de anuncios de MEDAC Málaga',
+				name: 'Tablón de anuncios',
+				details: { description: 'Tablón de anuncios de MEDAC Málaga' },
 				centerId: insertedCenters[0].id,
 				userId: insertedUsers[1].id,
 			},
 			{
 				name: 'Biblioteca',
-				description: 'Biblioteca del centro',
+				details: { description: 'Biblioteca del centro' },
 				centerId: insertedCenters[0].id,
-				userId: insertedUsers[2].id,
+				userId: insertedUsers[0].id,
 			},
 			// MEDAC Madrid
 			{
 				name: 'Aula 101',
-				description: 'Aula principal de informática',
+				details: { description: 'Aula principal de informática' },
 				centerId: insertedCenters[1].id,
 				userId: insertedUsers[0].id,
 			},
 			{
 				name: 'Cafetería',
-				description: 'Cafetería de MEDAC Madrid',
+				details: { description: 'Cafetería de MEDAC Madrid' },
 				centerId: insertedCenters[1].id,
 				userId: insertedUsers[1].id,
 			},
 			// MEDAC Sevilla
 			{
 				name: 'Sala de profesores',
-				description: 'Sala de profesores de MEDAC Sevilla',
+				details: { description: 'Sala de profesores de MEDAC Sevilla' },
 				centerId: insertedCenters[2].id,
-				userId: insertedUsers[2].id,
+				userId: insertedUsers[1].id,
 			},
 			{
 				name: 'Tablón de anuncios',
-				description: 'Tablón de anuncios de MEDAC Sevilla',
+				details: { description: 'Tablón de anuncios de MEDAC Sevilla' },
 				centerId: insertedCenters[2].id,
-				userId: insertedUsers[0].id,
+				userId: insertedUsers[1].id,
 			},
 			// MEDAC Barcelona
 			{
 				name: 'Biblioteca',
-				description: 'Biblioteca de MEDAC Barcelona',
+				details: { description: 'Biblioteca de MEDAC Barcelona' },
 				centerId: insertedCenters[3].id,
-				userId: insertedUsers[1].id,
+				userId: insertedUsers[0].id,
 			},
 			{
 				name: 'Aula 202',
-				description: 'Aula de ciencias',
+				details: { description: 'Aula de ciencias' },
 				centerId: insertedCenters[3].id,
-				userId: insertedUsers[2].id,
+				userId: insertedUsers[1].id,
 			},
 		]
 		await db.insert(pois).values(mockPois)
