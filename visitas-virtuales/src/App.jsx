@@ -12,6 +12,7 @@ import CenterSelectionPage from './pages/CenterSelectionPage.jsx';
 import ListPois from './pages/ListPois.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import Home from './pages/Home.jsx';
+import { AdminRoute } from './components/ProtectedRoute.jsx';
 
 function App() {
     const { selectedCenter } = useAuth();
@@ -39,14 +40,18 @@ function App() {
                         {/* 2. RUTAS CONDICIONALES */}
                         {selectedCenter ? (
                             <>
+                                {/* Rutas publicas para admin y estudiandtes */}
                                 <Route path="/home" element={<Home />} />
                                 <Route path="/listpois" element={<ListPois />} />
-                                <Route path="/crud" element={<Crud />} />
-								<Route path="/dashboard" element={<Dashboard />} />
-                                <Route path="/historial" element={<Historial />} />
                                 <Route path="/perfil" element={<div className="p-10 text-center text-black text-3xl font-bold">Perfil de {selectedCenter.name}</div>} />
                                 <Route path="/mensajes" element={<div className="p-10 text-center text-black text-3xl font-bold">Mensajes de {selectedCenter.name}</div>} />
-                                
+
+                                {/*Rutas protegidas solo para admin*/}
+
+                                <Route path="/crud" element={<AdminRoute><Crud /></AdminRoute>} />
+                                <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
+                                <Route path="/historial" element={<AdminRoute><Historial /></AdminRoute>} />
+
                                 {/* Si intenta ir a una ruta que no existe, pero tiene centro, lo mandamos a home */}
                                 <Route path="*" element={<Navigate to="/home" replace />} />
                             </>

@@ -8,7 +8,7 @@ export const AuthProvider = ({children}) => {
 
     const [user, setUser] = useState(() => {
         const savedUser = localStorage.getItem('user');
-        return savedUser ? JSON.parse(savedUser) : { id : 1, name: 'Admin' };
+        return savedUser ? JSON.parse(savedUser) : { id : 1, name: 'Admin', role: 'admin' };
     });
 
     const [selectedCenter, setSelectedCenter] = useState(() => {
@@ -33,8 +33,10 @@ export const AuthProvider = ({children}) => {
         localStorage.setItem('selectedCenter', JSON.stringify(center));
     };
 
+    const isAdmin = user?.role === 'admin';
+
     return (
-        <AuthContext.Provider value={{user, login, logout, selectedCenter, selectCenter}}>
+        <AuthContext.Provider value={{user, login, logout, selectedCenter, selectCenter, isAdmin}}>
             {children}
         </AuthContext.Provider>
     );
