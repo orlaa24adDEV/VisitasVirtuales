@@ -16,10 +16,26 @@ app.get('/api/pois', (req, res) => {
     res.json(data);
 });
 
-// Crear o Actualizar (CRUD completo)
+// Crear o Actualizar 
 app.post('/api/pois', (req, res) => {
     const pois = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-    const newPoi = { ...req.body, id: Date.now().toString() };
+    const { centerId, name, description } = req.body;
+
+    // 1. Filtramos los POIs que pertenecen a ese centro específico
+    const poisDelCentro = pois.filter(p => p.centerId === centerId);
+
+    // 2. Buscamos el ID máximo dentro de ese centro
+    const maxId = poisDelCentro.length > 0 
+        ? Math.max(...poisDelCentro.map(p => parseInt(p.id))) 
+        : 0;
+
+    // 3. El nuevo ID será el máximo del centro + 1
+    const newPoi = { 
+        id: (maxId + 1).toString(), 
+        centerId: centerId,         
+        name: name,                 
+        description: description 
+    };
     pois.push(newPoi);
     fs.writeFileSync(DATA_FILE, JSON.stringify(pois, null, 2));
     res.status(201).json(newPoi);
@@ -27,14 +43,25 @@ app.post('/api/pois', (req, res) => {
 
 app.put('/api/pois/:id', (req, res) => {
     let pois = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-    pois = pois.map(p => p.id === req.params.id ? req.body : p);
+    const poiId = req.params.id;
+    const centerId = req.body.centerId; 
+
+    pois = pois.map(p => 
+        (p.id === poiId && p.centerId === centerId) ? req.body : p
+    );
+    
     fs.writeFileSync(DATA_FILE, JSON.stringify(pois, null, 2));
     res.json(req.body);
 });
 
+// Eliminar
 app.delete('/api/pois/:id', (req, res) => {
     let pois = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-    pois = pois.filter(p => p.id !== req.params.id);
+    const poiId = req.params.id;
+    const centerId = req.query.centerId; 
+
+    pois = pois.filter(p => !(p.id === poiId && p.centerId === centerId));
+    
     fs.writeFileSync(DATA_FILE, JSON.stringify(pois, null, 2));
     res.status(204).send();
 });
@@ -60,3 +87,4 @@ app.get('/api/centers', (req, res) => {
 
 //----------------------------------------------------------------
 app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
+//Conectar el servidor con node index.js.

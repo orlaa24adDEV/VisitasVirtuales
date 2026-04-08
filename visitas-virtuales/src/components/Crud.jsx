@@ -39,24 +39,25 @@ function Crud() {
             return;
         }
 
-        const newPoi = {
-            ...formData,
-            centerId: selectedCenter.id // <--- Se asigna solo
-        };
-
         try {
+            const newPoi = {
+                name: formData.name,
+                description: formData.description,
+                centerId: selectedCenter.id 
+            };
+
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newPoi)
             });
-            
+
             if (response.ok) {
-                readPois(); // Recarga la lista del servidor
+                readPois(); 
                 resetForm();
             }
         } catch (error) {
-            console.error('Error al crear:', error);
+            console.error('Error:', error);
         }
     };
 
@@ -66,7 +67,7 @@ function Crud() {
         const response = await fetch(`${API_URL}/${formData.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
+            body: JSON.stringify({ ...formData, centerId: selectedCenter.id })
         });
         if (response.ok) {
             readPois();
@@ -76,8 +77,17 @@ function Crud() {
     };
 
     const deletePois = async (id) => {
-        await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-        readPois();
+        try {
+        
+        const url = `http://localhost:5000/api/pois/${id}?centerId=${selectedCenter.id}`;
+        const response = await fetch(url, { method: 'DELETE' });
+        
+        if (response.ok) {
+            readPois();
+        }
+        } catch (error) {
+            console.error('Error al eliminar:', error);
+        }
     };
 
 
@@ -194,7 +204,7 @@ function Crud() {
             </thead>
             <tbody>
                 {pois.filter(poi => poi.centerId === selectedCenter?.id) .map((poi) => (
-                    <tr key={poi.id} className="hover:bg-gray-50">
+                    <tr key={`${poi.centerId}-${poi.id}`} className="hover:bg-gray-50">
                         <td className="border border-gray-300 px-4 py-2">{poi.id}</td>
                         <td className="border border-gray-300 px-4 py-2">{poi.centerId}</td>
                         <td className="border border-gray-300 px-4 py-2">{poi.name}</td>
