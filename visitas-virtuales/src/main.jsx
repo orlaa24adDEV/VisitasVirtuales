@@ -1,14 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App.jsx';
-import { BrowserRouter } from 'react-router-dom';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext.jsx';
+import App from './App.jsx';
+import './assets/App.css';
 
 async function enableMocking() {
 	if (import.meta.env.DEV) {
 		const { worker } = await import('./mocks/browser');
 		await worker.start({
-			onUnhandledRequest: 'warn',
+			onUnhandledRequest: 'bypass',
 			serviceWorker: {
 				url: '/mockServiceWorker.js',
 			},
@@ -18,14 +19,13 @@ async function enableMocking() {
 }
 
 enableMocking().then(() =>
-	
-	ReactDOM.createRoot(document.getElementById('root')).render(
-		<React.StrictMode>
+	createRoot(document.getElementById('root')).render(
+		<StrictMode>
 			<BrowserRouter>
 				<AuthProvider>
 					<App />
 				</AuthProvider>
 			</BrowserRouter>
-		</React.StrictMode>,
+		</StrictMode>,
 	),
 );

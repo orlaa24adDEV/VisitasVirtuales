@@ -10,7 +10,7 @@ export default function CenterSelectionPage() {
   const [selected, setSelected] = useState(null);
 
   const navigate = useNavigate();
-  const { selectCenter, user } = useAuth();
+  const { selectCenter } = useAuth();
 
   useEffect(() => {
     const fetchCenters = async () => {
@@ -28,31 +28,21 @@ export default function CenterSelectionPage() {
     fetchCenters();
   }, []);
 
+
   const handleSelect = (center) => {
     setSelected(center.id);
+    
   };
 
   const handleConfirm = () => {
     if (!selected) return;
     const center = centers.find((c) => c.id === selected);
     selectCenter(center);
-    navigate('/dashboard');
+    navigate('/home');
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
-
-      {/* Header */}
-      <header className="bg-blue-800 text-white px-6 py-4 flex items-center justify-between shadow">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-white rounded-lg" />
-          <span className="font-bold text-lg tracking-tight">Centros</span>
-        </div>
-        <span className="text-blue-200 text-sm">
-          Bienvenido,{' '}
-          <span className="text-white font-medium">{user?.name ?? 'Usuario'}</span>
-        </span>
-      </header>
+    <div className="min-h-screen bg-white flex flex-col">
 
       {/* Contenido */}
       <main className="flex-1 flex flex-col items-center justify-center p-6">
@@ -97,8 +87,8 @@ export default function CenterSelectionPage() {
                         border-2 transition-all duration-200 focus:outline-none
                         hover:scale-105 hover:shadow-xl cursor-pointer
                         ${isActive
-                          ? 'border-blue-600 shadow-lg scale-105'
-                          : 'border-transparent shadow-sm hover:border-blue-200'
+                          ? 'border-blue-600 shadow-2xl scale-105'
+                          : 'border-gray-200 shadow-xl hover:border-blue-200'
                         }
                       `}
                     >
