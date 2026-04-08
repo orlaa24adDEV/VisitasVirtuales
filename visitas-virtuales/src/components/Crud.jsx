@@ -10,6 +10,8 @@ function Crud() {
     })
     const [isEditing, setIsEditing] = useState(false)
 
+    const API_URL = 'http://localhost:5000/api/pois';
+
     // Cargar POIs al montar el componente
     useEffect(() => {
         // eslint-disable-next-line react-hooks/immutability
@@ -18,7 +20,7 @@ function Crud() {
 
     const readPois = async () => {
         try {
-            const response = await fetch('/api/pois')
+            const response = await fetch(API_URL)
             const data = await response.json()
             setPois(data)
         } catch (error) {
@@ -26,43 +28,37 @@ function Crud() {
         }
     }
 
+    
     const createPois = async () => {
-        try {
-            const newPoi = {
-                ...formData,
-                // eslint-disable-next-line react-hooks/purity
-                id: Date.now().toString() // Generar ID único
-            }
-           
-            //  Actualizar en local
-            setPois([...pois, newPoi])
-            resetForm()
-        } catch (error) {
-            console.error('Error al crear POI:', error)
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+        if (response.ok) {
+            readPois(); // Recargar de la base de datos
+            resetForm();
         }
-    }
+    };
 
     const updatePois = async () => {
-        try {
-            const updatedPois = pois.map(poi =>
-                poi.id === formData.id ? formData : poi
-            )
-            setPois(updatedPois)
-            resetForm()
-            setIsEditing(false)
-        } catch (error) {
-            console.error('Error al actualizar POI:', error)
+        const response = await fetch(`${API_URL}/${formData.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+        if (response.ok) {
+            readPois();
+            resetForm();
+            setIsEditing(false);
         }
-    }
+    };
 
     const deletePois = async (id) => {
-        try {
-            const filteredPois = pois.filter(poi => poi.id !== id)
-            setPois(filteredPois)
-        } catch (error) {
-            console.error('Error al eliminar POI:', error)
-        }
-    }
+        await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+        readPois();
+    };
+    
 
     const editPoi = (poi) => {
         setFormData(poi)

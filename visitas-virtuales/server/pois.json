@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "centerId": "1MEDAC Málaga",
+    "name": "1Tablón de anuncios",
+    "description": "wrthujrtjurtdfdffffffffwwww"
+  },
+  {
+    "id": "2",
+    "centerId": "2MEDAC Málaga",
+    "name": "2Tablón de anuncios",
+    "description": "sdgqwerhgerher"
+  },
+  {
+    "id": "3",
+    "centerId": "3MEDAC Málaga",
+    "name": "3Tablón de anuncios",
+    "description": "3Aquí encontrarás las últimas noticias y eventos relacionados con el centro."
+  },
+  {
+    "id": "4",
+    "centerId": "Nuevo Medac",
+    "name": "cafetería",
+    "description": "Esto es una cafetería, y estoy probando que funciona el crear un nuevo pois"
+  },
+  {
+    "id": "5",
+    "centerId": "Los menganitos",
+    "name": "Aula de informática",
+    "description": "Esto es un aula de informática que está dentro de un POI"
+  }
+]
