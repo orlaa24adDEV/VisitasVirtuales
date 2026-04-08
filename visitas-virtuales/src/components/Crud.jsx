@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 
+import { useAuth } from '../context/AuthContext';
+
 function Crud() {
+    const { selectedCenter } = useAuth();
     const [pois, setPois] = useState([])
     const [formData, setFormData] = useState({
         id: '',
@@ -29,17 +32,35 @@ function Crud() {
     }
 
     
+    
     const createPois = async () => {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        });
-        if (response.ok) {
-            readPois(); // Recargar de la base de datos
-            resetForm();
+        if (!selectedCenter) {
+            alert("No hay un centro seleccionado");
+            return;
+        }
+
+        const newPoi = {
+            ...formData,
+            centerId: selectedCenter.id // <--- Se asigna solo
+        };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newPoi)
+            });
+            
+            if (response.ok) {
+                readPois(); // Recarga la lista del servidor
+                resetForm();
+            }
+        } catch (error) {
+            console.error('Error al crear:', error);
         }
     };
+
+    
 
     const updatePois = async () => {
         const response = await fetch(`${API_URL}/${formData.id}`, {
@@ -58,7 +79,7 @@ function Crud() {
         await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
         readPois();
     };
-    
+
 
     const editPoi = (poi) => {
         setFormData(poi)
@@ -172,7 +193,7 @@ function Crud() {
                 </tr>
             </thead>
             <tbody>
-                {pois.map((poi) => (
+                {pois.filter(poi => poi.centerId === selectedCenter?.id) .map((poi) => (
                     <tr key={poi.id} className="hover:bg-gray-50">
                         <td className="border border-gray-300 px-4 py-2">{poi.id}</td>
                         <td className="border border-gray-300 px-4 py-2">{poi.centerId}</td>

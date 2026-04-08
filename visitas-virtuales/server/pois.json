@@ -1,32 +1,44 @@
 [
   {
     "id": "1",
-    "centerId": "1MEDAC Málaga",
-    "name": "1Tablón de anuncios",
-    "description": "wrthujrtjurtdfdffffffffwwww"
+    "centerId": "center-1",
+    "name": "Salón de estudio",
+    "description": "Esto es el salón de estudios"
   },
   {
     "id": "2",
-    "centerId": "2MEDAC Málaga",
-    "name": "2Tablón de anuncios",
-    "description": "sdgqwerhgerher"
+    "centerId": "center-1",
+    "name": "Biblioteca",
+    "description": "Esto es la biblioteca"
   },
   {
     "id": "3",
-    "centerId": "3MEDAC Málaga",
-    "name": "3Tablón de anuncios",
-    "description": "3Aquí encontrarás las últimas noticias y eventos relacionados con el centro."
+    "centerId": "center-2",
+    "name": "Tablón de anuncios",
+    "description": "Aquí encontrarás las últimas noticias y eventos relacionados con el centro."
   },
   {
     "id": "4",
-    "centerId": "Nuevo Medac",
+    "centerId": "center-4",
     "name": "cafetería",
     "description": "Esto es una cafetería, y estoy probando que funciona el crear un nuevo pois"
   },
   {
     "id": "5",
-    "centerId": "Los menganitos",
+    "centerId": "center-5",
     "name": "Aula de informática",
     "description": "Esto es un aula de informática que está dentro de un POI"
+  },
+  {
+    "id": "1775671369939",
+    "centerId": "center-3",
+    "name": "Cafetería",
+    "description": "Estoy probando si funcionan los pois"
+  },
+  {
+    "id": "1775671403803",
+    "centerId": "center-3",
+    "name": "Laboratorio",
+    "description": "Esto es un laboratorio dentro de la descripción"
   }
 ]
