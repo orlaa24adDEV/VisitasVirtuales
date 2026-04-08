@@ -45,7 +45,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 			<aside
 				className={`fixed inset-y-0 left-0 z-50 flex h-screen flex-col bg-blue-600 text-white shadow-lg transition-all duration-300 lg:relative
 					${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-					${isExpanded ? 'w-64' : 'w-20'}`}>
+					${isExpanded ? 'w-64' : 'lg:w-20'}`}>
 				{/*Cabecera del sidebar*/}
 				<div className="flex flex-col items-center gap-2 border-b border-blue-500 p-6 relative">
 					{/* Botón de cerrar (X) solo visible en móvil */}
