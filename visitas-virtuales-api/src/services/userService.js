@@ -1,18 +1,46 @@
 import bcrypt from 'bcrypt'
 import { eq, or } from 'drizzle-orm'
 import { db } from '../db/db.js'
-import { users } from '../db/schema.js'
+import { users, centers } from '../db/schema.js'
 import { generateAccessToken, generateRefreshToken } from '../helpers/jwt.js'
 import ApiError from '../helpers/ApiError.js'
 
+const EMAIL_PATTERN =
+	/^(?=.{1,120}$)(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+const USERNAME_PATTERN = /^[a-zA-Z0-9_]{6,24}$/
+const PASSWORD_PATTERN = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,32}$/
+
 const register = async (userRegisterRequest) => {
-	const { email, username, password } = userRegisterRequest
-	if (!email || !username || !password) {
+	const { email, username, password, centerId } = userRegisterRequest
+	if (!email || !username || !password || !centerId) {
 		throw new ApiError(
 			400,
-			'Email, nombre de usuario y contraseña son obligatorios',
+			'Email, nombre de usuario, contraseña y centro son obligatorios',
 		)
 	}
+
+	// Verificar que el email tenga un formato válido
+	if (!EMAIL_PATTERN.test(email)) {
+		throw new ApiError(400, 'El email proporcionado no tiene un formato válido')
+	}
+
+	// Verificar que el nombre de usuario tenga al menos 6 caracteres y solo contenga letras, números y guiones bajos
+	if (!USERNAME_PATTERN.test(username)) {
+		throw new ApiError(
+			400,
+			'El nombre de usuario debe tener entre 6 y 24 caracteres y solo puede contener letras, números y guiones bajos',
+		)
+	}
+
+	// Verificar que la contraseña tenga al menos 8 caracteres y contenga al menos un símbolo, un número y una letra mayúscula
+	if (!PASSWORD_PATTERN.test(password)) {
+		throw new ApiError(
+			400,
+			'La contraseña debe tener entre 8 y 32 caracteres y contener al menos un símbolo, un número y una letra mayúscula',
+		)
+	}
+
+	// Verificar que el email o el nombre de usuario no estén ya en uso
 	const existingUserArr = await db
 		.select()
 		.from(users)
@@ -25,6 +53,19 @@ const register = async (userRegisterRequest) => {
 		throw new ApiError(409, 'El email o el nombre de usuario ya están en uso')
 	}
 
+	// Verificar que el centro especificado existe
+	const centerArr = await db
+		.select()
+		.from(centers)
+		.where(eq(centers.id, centerId))
+		.limit(1)
+
+	const center = centerArr[0]
+
+	if (!center) {
+		throw new ApiError(400, 'El centro especificado no existe')
+	}
+
 	const isFirstUser = (await db.select().from(users)).length === 0
 
 	// Aplicar hashing a la contraseña (bcrypt)
@@ -33,7 +74,7 @@ const register = async (userRegisterRequest) => {
 		...userRegisterRequest,
 		password: hashedPassword,
 		// El primer usuario registrado será admin, el resto serán usuarios normales
-		role: isFirstUser ? 'admin' : 'user',
+		role: isFirstUser ? 'admin' : 'student',
 	}
 
 	const newUserArr = await db
@@ -41,7 +82,7 @@ const register = async (userRegisterRequest) => {
 		.values(userRegisterRequest)
 		.returning()
 	const newUser = newUserArr[0]
-	if (newUser.length === 0) {
+	if (!newUser) {
 		throw new ApiError(500, 'Error al registrar el usuario')
 	}
 	const tokenPair = {
@@ -60,6 +101,24 @@ const login = async (userLoginRequest) => {
 		throw new ApiError(
 			400,
 			'Email o nombre de usuario y contraseña son obligatorios',
+		)
+	}
+
+	if (email && !EMAIL_PATTERN.test(email)) {
+		throw new ApiError(400, 'El email proporcionado no tiene un formato válido')
+	}
+
+	if (username && username.length > 24) {
+		throw new ApiError(
+			400,
+			'El nombre de usuario no puede tener más de 24 caracteres',
+		)
+	}
+
+	if (password.length > 32) {
+		throw new ApiError(
+			400,
+			'La contraseña no puede tener más de 32 caracteres',
 		)
 	}
 

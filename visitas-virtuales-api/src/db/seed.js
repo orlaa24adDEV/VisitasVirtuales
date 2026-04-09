@@ -15,24 +15,19 @@ async function main() {
 		// Insertar centros de prueba primero
 		const mockCenters = [
 			{
-				name: 'MEDAC Málaga',
-				description: 'Centro MEDAC en Málaga',
-				location: 'Málaga, España',
-			},
-			{
-				name: 'MEDAC Madrid',
-				description: 'Centro MEDAC en Madrid',
+				name: 'Instituto Madrid',
+				description: 'Centro educativo principal en Madrid',
 				location: 'Madrid, España',
 			},
 			{
-				name: 'MEDAC Sevilla',
-				description: 'Centro MEDAC en Sevilla',
-				location: 'Sevilla, España',
+				name: 'Instituto Barcelona',
+				description: 'Centro educativo principal en Barcelona',
+				location: 'Barcelona, España',
 			},
 			{
-				name: 'MEDAC Barcelona',
-				description: 'Centro MEDAC en Barcelona',
-				location: 'Barcelona, España',
+				name: 'Instituto Sevilla',
+				description: 'Centro educativo principal en Sevilla',
+				location: 'Sevilla, España',
 			},
 		]
 		const insertedCenters = await db
@@ -41,34 +36,73 @@ async function main() {
 			.returning()
 
 		// Insertar usuarios de prueba
+		const adminPassword = await bcrypt.hash('admin123', 10)
+		const teacherPassword = await bcrypt.hash('prof123', 10)
+		const studentPassword = await bcrypt.hash('alumno123', 10)
+
 		const mockUserData = [
 			{
-				email: 'francisco@zaitec.es',
-				username: 'francisco',
-				password: await bcrypt.hash('francisco123', 10),
+				email: 'admin_mad@instituto.es',
+				username: 'admin_mad',
+				password: adminPassword,
 				role: 'admin',
 				centerId: insertedCenters[0].id,
 			},
 			{
-				email: 'jaime@zaitec.es',
-				username: 'jaime',
-				password: await bcrypt.hash('jaime123', 10),
+				email: 'admin_bar@instituto.es',
+				username: 'admin_bar',
+				password: adminPassword,
 				role: 'admin',
 				centerId: insertedCenters[1].id,
 			},
 			{
-				email: 'alumno@alu.medac.es',
-				username: 'alumno',
-				password: await bcrypt.hash('alumno123', 10),
-				role: 'user',
+				email: 'admin_sev@instituto.es',
+				username: 'admin_sev',
+				password: adminPassword,
+				role: 'admin',
+				centerId: insertedCenters[2].id,
+			},
+			{
+				email: 'profesor_mad@instituto.es',
+				username: 'prof_mad',
+				password: teacherPassword,
+				role: 'teacher',
 				centerId: insertedCenters[0].id,
 			},
 			{
-				email: 'alumno2@alu.medac.es',
-				username: 'alumno2',
-				password: await bcrypt.hash('alumno123', 10),
-				role: 'user',
+				email: 'profesor_bar@instituto.es',
+				username: 'prof_bar',
+				password: teacherPassword,
+				role: 'teacher',
 				centerId: insertedCenters[1].id,
+			},
+			{
+				email: 'profesor_sev@instituto.es',
+				username: 'prof_sev',
+				password: teacherPassword,
+				role: 'teacher',
+				centerId: insertedCenters[2].id,
+			},
+			{
+				email: 'alumno_mad@instituto.es',
+				username: 'alumno_mad',
+				password: studentPassword,
+				role: 'student',
+				centerId: insertedCenters[0].id,
+			},
+			{
+				email: 'alumno_bar@instituto.es',
+				username: 'alumno_bar',
+				password: studentPassword,
+				role: 'student',
+				centerId: insertedCenters[1].id,
+			},
+			{
+				email: 'alumno_sev@instituto.es',
+				username: 'alumno_sev',
+				password: studentPassword,
+				role: 'student',
+				centerId: insertedCenters[2].id,
 			},
 		]
 		const insertedUsers = await db
@@ -76,65 +110,56 @@ async function main() {
 			.values(mockUserData)
 			.returning()
 
+		const usersByUsername = Object.fromEntries(
+			insertedUsers.map((u) => [u.username, u])
+		)
+
 		// Insertar POIs de prueba
 		const mockPois = [
-			// MEDAC Málaga
+			// Instituto Madrid
 			{
 				name: 'Cafetería',
 				details: { description: 'Cafetería principal del centro' },
 				centerId: insertedCenters[0].id,
-				userId: insertedUsers[0].id,
+				userId: usersByUsername.prof_mad.id,
 			},
 			{
 				name: 'Tablón de anuncios',
-				details: { description: 'Tablón de anuncios de MEDAC Málaga' },
+				details: { description: 'Tablón de anuncios de Instituto Madrid' },
 				centerId: insertedCenters[0].id,
-				userId: insertedUsers[1].id,
+				userId: usersByUsername.admin_mad.id,
 			},
 			{
 				name: 'Biblioteca',
 				details: { description: 'Biblioteca del centro' },
 				centerId: insertedCenters[0].id,
-				userId: insertedUsers[0].id,
+				userId: usersByUsername.prof_mad.id,
 			},
-			// MEDAC Madrid
+			// Instituto Barcelona
 			{
 				name: 'Aula 101',
 				details: { description: 'Aula principal de informática' },
 				centerId: insertedCenters[1].id,
-				userId: insertedUsers[0].id,
+				userId: usersByUsername.prof_bar.id,
 			},
 			{
 				name: 'Cafetería',
-				details: { description: 'Cafetería de MEDAC Madrid' },
+				details: { description: 'Cafetería de Instituto Barcelona' },
 				centerId: insertedCenters[1].id,
-				userId: insertedUsers[1].id,
+				userId: usersByUsername.admin_bar.id,
 			},
-			// MEDAC Sevilla
+			// Instituto Sevilla
 			{
 				name: 'Sala de profesores',
-				details: { description: 'Sala de profesores de MEDAC Sevilla' },
+				details: { description: 'Sala de profesores de Instituto Sevilla' },
 				centerId: insertedCenters[2].id,
-				userId: insertedUsers[1].id,
+				userId: usersByUsername.prof_sev.id,
 			},
 			{
 				name: 'Tablón de anuncios',
-				details: { description: 'Tablón de anuncios de MEDAC Sevilla' },
+				details: { description: 'Tablón de anuncios de Instituto Sevilla' },
 				centerId: insertedCenters[2].id,
-				userId: insertedUsers[1].id,
-			},
-			// MEDAC Barcelona
-			{
-				name: 'Biblioteca',
-				details: { description: 'Biblioteca de MEDAC Barcelona' },
-				centerId: insertedCenters[3].id,
-				userId: insertedUsers[0].id,
-			},
-			{
-				name: 'Aula 202',
-				details: { description: 'Aula de ciencias' },
-				centerId: insertedCenters[3].id,
-				userId: insertedUsers[1].id,
+				userId: usersByUsername.admin_sev.id,
 			},
 		]
 		await db.insert(pois).values(mockPois)

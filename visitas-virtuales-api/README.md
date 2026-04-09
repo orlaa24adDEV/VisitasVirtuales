@@ -29,7 +29,7 @@ Para iniciar la API en modo desarrollo será necesario:
     - `PGADMIN_DEFAULT_PASSWORD`
     - `JWT_SECRET`
 
-    > Puedes usar `openssl rand -base64 32` para generar credenciales seguras. Es importante utilizar diferentes credenciales para cada variable.
+    > Puedes usar `openssl rand -hex 32` para generar credenciales seguras. Es importante utilizar diferentes credenciales para cada variable.
 
 5.  **Iniciar la base de datos**: Ejecutar el script `npm run db:up`. Puedes comprobar si has definido las variables de entorno correctamente observando los logs mediante `npm run db:logs`.
 
@@ -42,6 +42,7 @@ Para iniciar la API en modo desarrollo será necesario:
 
 7.  **Iniciar aplicación de Express**: Ejecutar `npm run dev`.
 
+
 ---
 
 ### Herramientas útiles
@@ -49,6 +50,8 @@ Para iniciar la API en modo desarrollo será necesario:
 - **Documentación API**: Puedes acceder la documentación generada mediante la especificación OpenAPI en [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
 - **Gestión de Base de Datos**:
   - **pgAdmin**: Interfaz web disponible en [http://localhost:15432/](http://localhost:15432/)
-  - **psql**: Cliente de PostgreSQL en la terminal (`psql -h localhost -U postgres -p 5433`)
-
+    > Al añadir el servidor de PostgreSQL, especifica el hostname **vv-postgres** y el puerto **5432** (los contenedores se encuentran en la misma red)
+  - **psql**: Cliente de PostgreSQL en la terminal (`psql -h localhost -U postgres -p 5433 -d visitas_virtuales_db`)
+    > **\dt** para listar las tablas presentes en la base de datos.\
+    > **\d <nombre_tabla>** para obtener información sobre las columnas de una tabla.
 > Para más información sobre los scripts disponibles consulta [scripts](./docs/scripts.md)

@@ -6,7 +6,19 @@ import swaggerUi from 'swagger-ui-express'
 import userRoutes from './routes/userRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
 import apiErrorThrown from './middlewares/apiErrorThrown.js'
-console.log('JWT_SECRET in app.js:', process.env.JWT_SECRET)
+import cors from 'cors'
+import assert from 'node:assert'
+
+// Garantizar que las variables de entorno necesarias estén definidas
+assert(
+	process.env.JWT_SECRET,
+	'Error: JWT_SECRET no está definido en las variables de entorno',
+)
+assert(
+	process.env.FRONTEND_URL,
+	'Error: FRONTEND_URL no está definido en las variables de entorno',
+)
+
 const app = express()
 
 // Logger para solicitudes HTTP
@@ -18,6 +30,15 @@ app.use(express.json())
 
 // Middleware para extraer cookies de las solicitudes
 app.use(cookieParser())
+
+// Permitir CORS desde la app de React (Vite)
+app.use(
+	cors({
+		origin: process.env.FRONTEND_URL,
+		methods: ['GET', 'POST', 'PUT', 'DELETE'],
+		credentials: true, // Compartir cookies entre frontend y backend
+	}),
+)
 
 // Montar rutas de usuarios
 app.use('/api/v1/', userRoutes)
@@ -48,6 +69,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 // Middleware para manejar errores lanzados desde servicios
 app.use(apiErrorThrown)
 
-app.listen(3000, () => console.log('Server running on port 3000'))
+app.listen(8000, () => console.log('Servidor escuchando en puerto 8000'))
 
 export default app

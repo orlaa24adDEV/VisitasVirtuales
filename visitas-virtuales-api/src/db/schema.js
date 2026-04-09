@@ -5,6 +5,8 @@ import {
 	serial,
 	timestamp,
 	jsonb,
+	pgEnum,
+	uniqueIndex,
 } from 'drizzle-orm/pg-core'
 
 export const centers = pgTable('centers', {
@@ -14,28 +16,34 @@ export const centers = pgTable('centers', {
 	location: text('location').notNull(),
 })
 
+export const userRoles = pgEnum('user_roles', ['admin', 'teacher', 'student'])
+
 export const users = pgTable('users', {
 	id: serial('id').primaryKey(),
 	email: text('email').notNull().unique(),
 	username: text('username').notNull().unique(),
 	password: text('password').notNull(),
-	role: text('role').notNull(), // 'user' o 'admin'
+	role: userRoles('role').notNull().default('student'),
 	centerId: integer('center_id')
 		.notNull()
 		.references(() => centers.id, { onDelete: 'cascade' }),
 })
 
-export const pois = pgTable('pois', {
-	id: serial('id').primaryKey(),
-	name: text('name').notNull(),
-	details: jsonb('details').notNull(),
-	userId: integer('user_id')
-		.notNull()
-		.references(() => users.id, { onDelete: 'cascade' }),
-	centerId: integer('center_id')
-		.notNull()
-		.references(() => centers.id, { onDelete: 'cascade' }),
-})
+export const pois = pgTable(
+	'pois',
+	{
+		id: serial('id').primaryKey(),
+		name: text('name').notNull(),
+		details: jsonb('details').notNull(),
+		userId: integer('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		centerId: integer('center_id')
+			.notNull()
+			.references(() => centers.id, { onDelete: 'cascade' }),
+	},
+	(t) => [uniqueIndex('pois_name_center_unique').on(t.name, t.centerId)],
+)
 
 export const stats = pgTable('stats', {
 	id: serial('id').primaryKey(),
