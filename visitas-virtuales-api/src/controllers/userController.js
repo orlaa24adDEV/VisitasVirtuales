@@ -15,7 +15,7 @@ export const registerHandler = async (req, res) => {
 	res.cookie('refreshToken', tokenPair.refreshToken, getHttpOnlyCookieOptions())
 	res.status(201).json({
 		message: 'Usuario registrado exitosamente',
-		tokens: tokenPair.accessToken,
+		accessToken: tokenPair.accessToken,
 	})
 }
 

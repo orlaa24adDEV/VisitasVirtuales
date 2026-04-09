@@ -14,7 +14,7 @@ const router = Router()
  * /api/v1/users:
  *   post:
  *     summary: Registrar nuevo usuario
- *     description: Registra un nuevo usuario con email, nombre de usuario y contraseña. Al primer usuario registrado se le asignará automáticamente el rol de "admin", mientras que los siguientes usuarios registrados tendrán el rol de "user". Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.
+ *     description: Registra un nuevo usuario con email, nombre de usuario, contraseña e id del centro. Al primer usuario registrado se le asignará automáticamente el rol de "admin", mientras que los siguientes usuarios registrados tendrán el rol de "student". Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.
  *     tags: [User]
  *     requestBody:
  *       required: true
@@ -22,26 +22,39 @@ const router = Router()
  *         application/json:
  *           schema:
  *             type: object
- *             required: [username, email, password]
+ *             required: [username, email, password, centerId]
  *             properties:
  *               username:
  *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 24
+ *                 pattern: '^[a-zA-Z0-9_]{6,24}$'
  *               email:
  *                 type: string
+ *                 maxLength: 120
+ *                 format: email
  *               password:
  *                 type: string
+ *                 minLength: 8
+ *                 maxLength: 32
+ *                 pattern: '^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,32}$'
+ *               centerId:
+ *                 type: integer
+ *                 minimum: 1
  *     responses:
- *       200:
+ *       201:
  *         description: Usuario registrado con éxito
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 accessToken:
+ *                 message:
+ *                   type: string
+ *                 tokens:
  *                   type: string
  *       400:
- *         description: Email, nombre de usuario o contraseña no proporcionados
+ *         description: Email, nombre de usuario, contraseña o centro no proporcionados, o con formato no válido
  *         content:
  *           application/json:
  *             schema:
@@ -87,16 +100,39 @@ router.post('/users', registerHandler)
  *             schema:
  *               type: object
  *               properties:
- *                 id:
+ *                 message:
  *                   type: string
- *                 username:
- *                   type: string
- *                 email:
- *                   type: string
- *                 role:
- *                   type: string
+ *                 profile:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     username:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     role:
+ *                       type: string
  *       401:
  *         description: Token de acceso no proporcionado o inválido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: Usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Error del servidor al obtener el perfil del usuario
  *         content:
  *           application/json:
  *             schema:
@@ -112,7 +148,7 @@ router.get('/me', isAuthenticated, profileHandler)
  * /api/v1/users/auth:
  *   post:
  *     summary: Iniciar sesión de usuario
- *     description: Permite a un usuario iniciar sesión utilizando su email junto con su contraseña. Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.
+ *     description: Permite a un usuario iniciar sesión utilizando su email o su nombre de usuario junto con su contraseña. Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.
  *     tags: [User]
  *     requestBody:
  *       required: true
@@ -120,12 +156,21 @@ router.get('/me', isAuthenticated, profileHandler)
  *         application/json:
  *           schema:
  *             type: object
- *             required: [email, password]
+ *             anyOf:
+ *               - required: [email, password]
+ *               - required: [username, password]
  *             properties:
  *               email:
  *                 type: string
+ *                 maxLength: 120
+ *                 format: email
+ *               username:
+ *                 type: string
+ *                 minLength: 1
+ *                 maxLength: 24
  *               password:
  *                 type: string
+ *                 maxLength: 32
  *     responses:
  *       200:
  *         description: Usuario autenticado con éxito
@@ -134,10 +179,12 @@ router.get('/me', isAuthenticated, profileHandler)
  *             schema:
  *               type: object
  *               properties:
+ *                 message:
+ *                   type: string
  *                 accessToken:
  *                   type: string
  *       400:
- *         description: Formato de solicitud no válido
+ *         description: Formato de solicitud no válido o campos requeridos no proporcionados
  *         content:
  *           application/json:
  *             schema:
@@ -170,7 +217,7 @@ router.post('/users/auth', loginHandler)
  * @openapi
  * /api/v1/users:
  *   put:
- *     summary: Editar perfil del usuario autenticado
+ *     summary: Editar perfil del usuario autenticado (SIN IMPLEMENTAR)
  *     description: Permite al usuario autenticado editar su propio perfil, incluyendo su nombre de usuario y contraseña. Requiere un token de acceso válido en el header Authorization.
  *     tags: [User]
  *     security:
