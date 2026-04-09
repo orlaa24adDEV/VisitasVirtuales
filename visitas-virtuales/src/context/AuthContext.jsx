@@ -7,30 +7,30 @@ export const AuthProvider = ({children}) => {
     //Vamos a simular un usuario ya autenticado para probar la funcionalidad de el codido.
 
     const [user, setUser] = useState(() => {
-        const savedUser = localStorage.getItem('user');
-        return savedUser ? JSON.parse(savedUser) : { id : 1, name: 'Admin', role: 'admin' };
+        const savedUser = sessionStorage.getItem('user');
+        return savedUser ? JSON.parse(savedUser) : null;
     });
 
     const [selectedCenter, setSelectedCenter] = useState(() => {
-        const savedCenter = localStorage.getItem('selectedCenter');
+        const savedCenter = sessionStorage.getItem('selectedCenter');
         return savedCenter ? JSON.parse(savedCenter) : null;
     });
 
     const login = (userData) => {
         setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
+        sessionStorage.setItem('user', JSON.stringify(userData));
     };
 
     const logout = () => {
         setUser(null);
         setSelectedCenter(null);
-        localStorage.removeItem('user');
-        localStorage.removeItem('selectedCenter');
+        sessionStorage.removeItem('user');
+        sessionStorage.removeItem('selectedCenter');
     };
 
     const selectCenter = (center) => {
         setSelectedCenter(center);
-        localStorage.setItem('selectedCenter', JSON.stringify(center));
+        sessionStorage.setItem('selectedCenter', JSON.stringify(center));
     };
 
     const isAdmin = user?.role === 'admin';

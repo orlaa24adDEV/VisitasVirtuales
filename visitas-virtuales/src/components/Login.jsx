@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import '@/assets/Login.css';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '@/context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
 
-function Login(props) {
+function Login() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [errors, setErrors] = useState({});
@@ -96,21 +96,19 @@ function Login(props) {
 
 		if (isCreateMode) {
 			console.log(`Cuenta creada exitosamente (${role}) ${timestamp}`);
-			console.log('Datos del nuevo usuario:', userData);
 		} else {
 			console.log(`Login exitoso (${role}) - ${timestamp}`);
-			console.log('Datos del usuario:', userData);
 
 			login(userData); // Guardar el usuario en el contexto global
 			if (role === 'admin') {
-				navigate('/dashboard'); // Redirigir a dashboard para admin
+				navigate('/home'); // Redirigir a dashboard para admin
 			} else {
 				navigate('/home'); // Redirigir a home para estudiantes
 			}
 		}
 
 		// Enviar datos al componente padre
-		props.handleLogin(userData);
+		//props.handleLogin(userData);
 
 		// Limpiar el formulario
 		setUsername('');

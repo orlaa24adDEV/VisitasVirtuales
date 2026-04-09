@@ -38,7 +38,7 @@ export default function CenterSelectionPage() {
     if (!selected) return;
     const center = centers.find((c) => c.id === selected);
     selectCenter(center);
-    navigate('/home');
+    navigate('/login');
   };
 
   return (
