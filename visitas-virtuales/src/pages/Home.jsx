@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 
+// TODO: cambiar a "true" cuando los archivos del build de Unity estén en el folder de unity-build
 //Revisa si tenemos archivos del build en Unity
 const UNITY_BUILD_LISTO = false;
 
