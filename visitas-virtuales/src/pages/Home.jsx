@@ -1,13 +1,102 @@
+import { useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 
+// TODO: cambiar a "true" cuando los archivos del build de Unity estén en el folder de unity-build
+//Revisa si tenemos archivos del build en Unity
+const UNITY_BUILD_LISTO = false;
+
 const Home = () => {
+    // Obtenemos el centro seleccionado del contexto global
     const { selectedCenter } = useAuth();
-        return (
-            <div className="flex flex-col justify-center items-center space-y-6 h-full">
-                <h1 className=" text-center text-3xl font-bold text-gray-800">Bienvenido a {selectedCenter.name}</h1>
-                <p className="text-gray-500 italic text-xl">Inicio</p>
+
+    // Referencia directa al canvas del DOM
+    // Es como un "puntero" para que Unity sepa dónde pintarse
+    const canvasRef = useRef(null);
+
+    // Se ejecuta una sola vez cuando el componente aparece en pantalla
+    useEffect(() => {
+
+        // Si el build no está listo todavía no se hace nada
+        if (!UNITY_BUILD_LISTO) {
+            console.log('Unity build no disponible aún');
+            return;
+        }
+
+        // Crear el script del loader de Unity dinámicamente
+        const script = document.createElement('script');
+        script.src = '/unity-build/NombreDelBuild.loader.js';
+
+        // Cuando el script termina de cargar, arrancamos Unity
+        script.onload = () => {
+
+            // createUnityInstance: función global que viene del loader.
+            // Recibe: el canvas, los paths a los archivos del build, y un callback de progreso
+            createUnityInstance(canvasRef.current, {
+                dataUrl:      '/unity-build/NombreDelBuild.data',
+                frameworkUrl: '/unity-build/NombreDelBuild.framework.js',
+                codeUrl:      '/unity-build/NombreDelBuild.wasm',
+            }, (progress) => {
+                console.log('Cargando Unity... ' + Math.round(progress * 100) + '%');
+            })
+
+            //Cuando Unity termino de cargar correctamente
+            .then((unityInstance) => {
+                console.log('Unity cargado correctamente');
+
+                // EL PUENTE: enviamos el ID del centro a Unity
+                unityInstance.SendMessage(
+                    'WebBridge',  // nombre del GameObject en la escena Unity
+                    'RecibirIdCentro',  // nombre del método en WebBridge.cs
+                    selectedCenter.id.toString()  // el ID del centro
+                );
+
+                console.log('ID enviado a Unity:', selectedCenter.id);
+            })
+
+            // Si Unity falla al cargar
+            .catch((error) => {
+                console.warn('Error al cargar Unity:', error);
+            });
+        };
+
+        // Agregar el script al documento para que empiece a descargarse
+        document.body.appendChild(script);
+
+        // Limpieza cuando el usuario salga de esta página, quitamos el script
+        return () => {
+            document.body.removeChild(script);
+        };
+
+    }, []); // <-- [] ejecutar solo una vez al montar el componente
+
+    // Lo que se muestra en pantalla
+    return (
+        <div className="flex flex-col w-full h-full">
+
+            {/* Texto de bienvenida */}
+            <div className="flex flex-col items-center justify-center py-4 space-y-2">
+                <h1 className="text-3xl font-bold text-center text-gray-800">
+                    Bienvenido a {selectedCenter.name}
+                </h1>
+                <p className="text-xl italic text-gray-500">Inicio</p>
             </div>
-        );
+
+            {/* Canvas de Unity — solo se muestra cuando el build está listo */}
+            {UNITY_BUILD_LISTO ? (
+                <canvas
+                    ref={canvasRef}
+                    id="unity-canvas"
+                    className="flex-1 w-full"
+                    style={{ display: 'block' }}
+                />
+            ) : (
+                <div className="flex flex-col items-center justify-center flex-1 text-gray-400">
+                    <p className="text-sm italic">Vista de Unity no disponible aún</p>
+                </div>
+            )}
+
+        </div>
+    );
 };
 
 export default Home;
