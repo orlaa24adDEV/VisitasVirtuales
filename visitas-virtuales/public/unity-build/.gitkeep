@@ -1,0 +1,2 @@
+# Carpeta reservada para los archivos del build de Unity WebGL (NombreDelBuild.loader.js, .data, .framework.js, .wasm). 
+# Este archivo .gitkeep se puede borrar una vez que se coloquen los archivos reales.
