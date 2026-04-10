@@ -1,100 +1,122 @@
 import React, { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import '@/assets/Login.css';
+import { useAuth } from '@/hooks/useAuth.js';
+import { useNavigate } from 'react-router-dom';
 
-function Login(props) {
+function Login() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [errors, setErrors] = useState({});
 	const [isCreateMode, setIsCreateMode] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
+	const { login } = useAuth();
+	const navigate = useNavigate();
 
 	// Validación de username: 8+ caracteres, letras, números, símbolos
-	const validateUsername = (value) => {
-		if (!value) {
-			return 'El usuario es requerido';
-		}
-		if (value.length < 8) {
-			return 'El usuario debe tener al menos 8 caracteres';
-		}
-		// Verificar que contiene letras
-		if (!/[a-zA-Z]/.test(value)) {
-			return 'El usuario debe contener al menos una letra';
-		}
-		// Verificar que contiene números
-		if (!/[0-9]/.test(value)) {
-			return 'El usuario debe contener al menos un número';
-		}
-		// Verificar que contiene símbolos especiales
-		if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value)) {
-			return 'El usuario debe contener al menos un símbolo especial (!@#$%^&*...)';
-		}
-		return null;
-	};
+	// const validateUsername = (value) => {
+	// 	if (!value) {
+	// 		return 'El usuario es requerido';
+	// 	}
+	// 	if (value.length < 8) {
+	// 		return 'El usuario debe tener al menos 8 caracteres';
+	// 	}
+	// 	// Verificar que contiene letras
+	// 	if (!/[a-zA-Z]/.test(value)) {
+	// 		return 'El usuario debe contener al menos una letra';
+	// 	}
+	// 	// Verificar que contiene números
+	// 	if (!/[0-9]/.test(value)) {
+	// 		return 'El usuario debe contener al menos un número';
+	// 	}
+	// 	// Verificar que contiene símbolos especiales
+	// 	if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value)) {
+	// 		return 'El usuario debe contener al menos un símbolo especial (!@#$%^&*...)';
+	// 	}
+	// 	return null;
+	// };
 
-	// Validación de password: mayúscula, minúscula, número, símbolo
-	const validatePassword = (value) => {
-		if (!value) {
-			return 'La contraseña es requerida';
-		}
-		if (!/[A-Z]/.test(value)) {
-			return 'La contraseña debe contener al menos una mayúscula';
-		}
-		if (!/[a-z]/.test(value)) {
-			return 'La contraseña debe contener al menos una minúscula';
-		}
-		if (!/[0-9]/.test(value)) {
-			return 'La contraseña debe contener al menos un número';
-		}
-		if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value)) {
-			return 'La contraseña debe contener al menos un símbolo especial (!@#$%^&*...)';
-		}
-		return null;
-	};
+	// // Validación de password: mayúscula, minúscula, número, símbolo
+	// const validatePassword = (value) => {
+	// 	if (!value) {
+	// 		return 'La contraseña es requerida';
+	// 	}
+	// 	if (!/[A-Z]/.test(value)) {
+	// 		return 'La contraseña debe contener al menos una mayúscula';
+	// 	}
+	// 	if (!/[a-z]/.test(value)) {
+	// 		return 'La contraseña debe contener al menos una minúscula';
+	// 	}
+	// 	if (!/[0-9]/.test(value)) {
+	// 		return 'La contraseña debe contener al menos un número';
+	// 	}
+	// 	if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value)) {
+	// 		return 'La contraseña debe contener al menos un símbolo especial (!@#$%^&*...)';
+	// 	}
+	// 	return null;
+	// };
 
 	// Validar el formulario completo
-	const validateForm = () => {
-		const newErrors = {};
+	// const validateForm = () => {
+	// 	const newErrors = {};
 
-		const usernameError = validateUsername(username);
-		if (usernameError) {
-			newErrors.username = usernameError;
-		}
+	// 	const usernameError = validateUsername(username);
+	// 	if (usernameError) {
+	// 		newErrors.username = usernameError;
+	// 	}
 
-		const passwordError = validatePassword(password);
-		if (passwordError) {
-			newErrors.password = passwordError;
-		}
+	// 	const passwordError = validatePassword(password);
+	// 	if (passwordError) {
+	// 		newErrors.password = passwordError;
+	// 	}
 
-		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0;
-	};
+	// 	setErrors(newErrors);
+	// 	return Object.keys(newErrors).length === 0;
+	// };
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		if (!validateForm()) {
-			return;
+		// if (!validateForm()) {
+		// 	return;
+		// }
+
+		let role = 'student';
+		const lowerUsername = username.toLowerCase();
+		if (lowerUsername.includes('admin')) {
+			role = 'admin';
+		} else if (lowerUsername.includes('profesor')) {
+			role = 'teacher';
 		}
+
+		//const role = username.toLowerCase().includes('admin') ? 'admin' : 'student';
 
 		// Si la validación pasó, loguear en consola con timestamp
 		const userData = {
+			id: Math.floor(Math.random() * 1000) + 1, // ID aleatorio para simular un usuario
 			username: username,
+			role: role,
 			password: password,
+			name: username.split(' ')[0], // Simulamos un nombre a partir del username
 		};
 
 		const timestamp = new Date().toLocaleString('es-ES');
 
 		if (isCreateMode) {
-			console.log(`Cuenta creada exitosamente - ${timestamp}`);
-			console.log('Datos del nuevo usuario:', userData);
+			console.log(`Cuenta creada exitosamente (${role}) ${timestamp}`);
 		} else {
-			console.log(`Login exitoso - ${timestamp}`);
-			console.log('Datos del usuario:', userData);
+			console.log(`Login exitoso (${role}) - ${timestamp}`);
+
+			login(userData); // Guardar el usuario en el contexto global
+			if (role === 'admin') {
+				navigate('/home'); // Redirigir a dashboard para admin
+			} else {
+				navigate('/home'); // Redirigir a home para estudiantes
+			}
 		}
 
 		// Enviar datos al componente padre
-		props.handleLogin(userData);
+		//props.handleLogin(userData);
 
 		// Limpiar el formulario
 		setUsername('');
