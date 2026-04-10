@@ -30,7 +30,7 @@ const Register = () => {
                 <div className="space-y-4">
                     <h1 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tighter">
                         ¡ESTAMOS TRABAJANDO EN ELLO!
-                        <h2 className='text-black text-2xl'>(Jenni lo tiene que hacer)</h2>
+                        <h2 className='text-black text-2xl'></h2>
                     </h1>
                     
                     <p className="text-xl text-gray-600 leading-relaxed max-w-xl mx-auto">
