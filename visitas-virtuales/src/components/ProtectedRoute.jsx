@@ -3,10 +3,11 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 
 export const AdminRoute = ({ children }) => {
-    const { user, isAdmin } = useAuth();
+    const { user, isAdmin, isTeacher } = useAuth();
 
     if (!user) return <Navigate to="/login" />;
-    if (!isAdmin) return <Navigate to="/home" />; // Si no es admin, lo mandamos a home
+    if ( isAdmin || isTeacher ) return children;
 
-    return children;
+    return <Navigate to="/home" />;
+
 };

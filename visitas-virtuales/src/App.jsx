@@ -61,6 +61,10 @@ function App() {
                                         <Route path="/perfil" element={<div className="p-10 text-center text-black text-3xl font-bold">Perfil de {selectedCenter.name}</div>} />
                                         <Route path="/mensajes" element={<div className="p-10 text-center text-black text-3xl font-bold">Mensajes de {selectedCenter.name}</div>} />
 
+                                        {/* Ruta para Profesores */}
+                                        <Route path="/crud" element={<AdminRoute><Crud /></AdminRoute>} />
+                                        <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
+
                                         {/* Rutas de Admin */}
                                         <Route path="/crud" element={<AdminRoute><Crud /></AdminRoute>} />
                                         <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />

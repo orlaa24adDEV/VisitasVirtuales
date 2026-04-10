@@ -81,7 +81,15 @@ function Login() {
 		// 	return;
 		// }
 
-		const role = username.toLowerCase().includes('admin') ? 'admin' : 'student';
+		let role = 'student';
+		const lowerUsername = username.toLowerCase();
+		if (lowerUsername.includes('admin')) {
+			role = 'admin';
+		} else if (lowerUsername.includes('profesor')) {
+			role = 'teacher';
+		}
+
+		//const role = username.toLowerCase().includes('admin') ? 'admin' : 'student';
 
 		// Si la validación pasó, loguear en consola con timestamp
 		const userData = {
