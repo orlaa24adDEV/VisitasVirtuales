@@ -1,6 +1,7 @@
 import React from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '@/hooks/useAuth.js';
 import { UserCheck, ShieldCheck } from 'lucide-react'; // Iconos para darle estilo
+import UnityViewer from '../components/UnityViewer';
 
 const Home = () => {
     const { user, isAdmin, selectedCenter } = useAuth();
@@ -51,6 +52,7 @@ const Home = () => {
                             Puedes explorar el mapa y ver la información de los puntos de interés.
                         </p>
                     )}
+                    <UnityViewer />
                 </div>
             </div>
         </div>

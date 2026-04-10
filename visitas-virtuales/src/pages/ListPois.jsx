@@ -1,7 +1,6 @@
 import { Search, Plus, Pencil, Trash, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Crud from "../components/Crud";
 
 export default function ListPois({ idCentro }) {
     const [pois, setPois] = useState([]);
@@ -18,6 +17,16 @@ export default function ListPois({ idCentro }) {
     const lastIndex = currentPage * itemsPerPage;
     const firstIndex = lastIndex - itemsPerPage;
     const currentPois = filteredPois.slice(firstIndex, lastIndex);
+
+    useEffect(() => {
+        const maxPage = Math.max(1, totalPages);
+
+        if (currentPage > maxPage) {
+            setCurrentPage(maxPage);
+        } else if (currentPage < 1) {
+            setCurrentPage(1);
+        }
+    }, [currentPage, totalPages]);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect

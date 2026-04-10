@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Asegúrate de que la ruta es correcta
+import { useAuth } from '@/hooks/useAuth.js';
 import {
     Home,
     User,

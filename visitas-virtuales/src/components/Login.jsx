@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import '@/assets/Login.css';
-import { useAuth } from '@/context/AuthContext.jsx';
+import { useAuth } from '@/hooks/useAuth.js';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
