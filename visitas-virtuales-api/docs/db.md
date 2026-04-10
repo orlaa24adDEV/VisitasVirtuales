@@ -15,16 +15,19 @@ Se utiliza el ORM **Drizzle** para generar el schema y realizar migraciones a pa
 
 ## `users` (Usuarios)
 
-**Cada usuario** (profesor o estudiante) **pertenece a un centro.**
+**Cada usuario pertenece a un centro y tiene un rol que le otorga diferentes permisos** (_admin_, _teacher_ o _student_)
 
-| Campo         | Tipo    | Restricciones                                    |
-| :------------ | :------ | :----------------------------------------------- |
-| **id**        | SERIAL  | PRIMARY KEY                                      |
-| **email**     | TEXT    | NOT NULL, UNIQUE                                 |
-| **username**  | TEXT    | NOT NULL, UNIQUE                                 |
-| **password**  | TEXT    | NOT NULL                                         |
-| **role**      | TEXT    | NOT NULL                                         |
-| **center_id** | INTEGER | NOT NULL, FK -> `centers(id)`, ON DELETE CASCADE |
+| Campo         | Tipo       | Restricciones                                    |
+| :------------ | :--------- | :----------------------------------------------- |
+| **id**        | SERIAL     | PRIMARY KEY                                      |
+| **email**     | TEXT       | NOT NULL, UNIQUE                                 |
+| **username**  | TEXT       | NOT NULL, UNIQUE                                 |
+| **password**  | TEXT       | NOT NULL                                         |
+| **role**      | user_roles | NOT NULL, DEFAULT 'student',                     |
+| **center_id** | INTEGER    | NOT NULL, FK -> `centers(id)`, ON DELETE CASCADE |
+
+> Por defecto, los usuarios tendrán el rol de _student_, a excepción del primer usuario insertado en la base de datos que recibirá el rol de admin.
+> Los administradores se encargarán de entregar a los profesores sus correspondientes roles.
 
 ## `pois` (POIs)
 
@@ -37,6 +40,9 @@ Se utiliza el ORM **Drizzle** para generar el schema y realizar migraciones a pa
 | **details**   | JSONB   | NOT NULL                                         |
 | **user_id**   | INTEGER | NOT NULL, FK -> `users(id)`, ON DELETE CASCADE   |
 | **center_id** | INTEGER | NOT NULL, FK -> `centers(id)`, ON DELETE CASCADE |
+
+> Restricción de unicidad compuesta: `UNIQUE(name, center_id)`.
+> No pueden existir dos POIs con el mismo nombre dentro de un mismo centro.
 
 ## `stats` (Historial_Logs)
 
@@ -76,24 +82,36 @@ Se utiliza el ORM **Drizzle** para generar el schema y realizar migraciones a pa
 | **stat_id** | INTEGER | NOT NULL, FK -> `stats(id)`, ON DELETE CASCADE |
 | **poi_id**  | INTEGER | NOT NULL, FK -> `pois(id)`, ON DELETE CASCADE  |
 
+## `user_roles`
+
+**Enum** en la base de datos que define los posibles roles para los usuarios.
+
+| Valor        | Descripción                                                                           |
+| :----------- | :------------------------------------------------------------------------------------ |
+| `admin`      | Control total sobre el sistema, todos los centros, todos los POIs y gestión de roles. |
+| `profesor`   | Gestión de POIs y consulta de estadísticas de su propio centro.                       |
+| `estudiante` | Rol por defecto. Acceso de lectura a POIs                                             |
+
 ## Datos de prueba
 
-Ejecuta `npm run db:seed` para insertar datos de prueba en la base de datos.
+Ejecuta `npm run db:seed` (tras generar y aplicar las migraciones) para insertar datos de prueba en la base de datos.
+
+> El historial de migraciones se encuentra en `./drizzle`.
+
+> El schema de la base de datos se encuentra en `./src/db/schema.js`. Será necesario generar y aplicar migraciones tras editarlo.
 
 ### Usuarios de prueba
 
-| email                | username  | password     | role  | centro       |
-| :------------------- | :-------- | :----------- | :---- | :----------- |
-| francisco@zaitec.es  | francisco | francisco123 | admin | MEDAC Málaga |
-| jaime@zaitec.es      | jaime     | jaime123     | admin | MEDAC Málaga |
-| alumno@alu.medac.es  | alumno    | alumno123    | user  | MEDAC Madrid |
-| alumno2@alu.medac.es | alumno2   | alumno123    | user  | MEDAC Madrid |
-
-### Centros de prueba
-
-- **MEDAC Málaga** — Centro MEDAC en Málaga, España
-- **MEDAC Madrid** — Centro MEDAC en Madrid, España
-- **MEDAC Sevilla** — Centro MEDAC en Sevilla, España
-- **MEDAC Barcelona** — Centro MEDAC en Barcelona, España
+| email                         | username   | password  | role        | centro (ID ref)     |
+| :---------------------------- | :--------- | :-------- | :---------- | :------------------ |
+| **admin_mad@instituto.es**    | admin_mad  | admin123  | **admin**   | Instituto Madrid    |
+| **admin_bar@instituto.es**    | admin_bar  | admin123  | **admin**   | Instituto Barcelona |
+| **admin_sev@instituto.es**    | admin_sev  | admin123  | **admin**   | Instituto Sevilla   |
+| **profesor_mad@instituto.es** | prof_mad   | prof123   | **teacher** | Instituto Madrid    |
+| **profesor_bar@instituto.es** | prof_bar   | prof123   | **teacher** | Instituto Barcelona |
+| **profesor_sev@instituto.es** | prof_sev   | prof123   | **teacher** | Instituto Sevilla   |
+| **alumno_mad@instituto.es**   | alumno_mad | alumno123 | **student** | Instituto Madrid    |
+| **alumno_bar@instituto.es**   | alumno_bar | alumno123 | **student** | Instituto Barcelona |
+| **alumno_sev@instituto.es**   | alumno_sev | alumno123 | **student** | Instituto Sevilla   |
 
 Cada centro cuenta con POIs de prueba (Cafetería, Biblioteca, Aulas, etc.) asociados a usuarios creadores.

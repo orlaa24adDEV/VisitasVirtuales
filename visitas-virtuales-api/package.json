@@ -23,7 +23,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git@github.com-pva0011:jaimemoya-bit/VisitasVirtualesZaitec.git"
+		"url": "git@github.com:jaimemoya-bit/VisitasVirtualesZaitec.git"
 	},
 	"keywords": [],
 	"author": "",
@@ -34,6 +34,7 @@
 		"bcrypt": "^6.0.0",
 		"cookie-parser": "^1.4.7",
 		"cookieparser": "^0.1.0",
+		"cors": "^2.8.6",
 		"dotenv": "^17.4.1",
 		"dotenv-expand": "^12.0.3",
 		"drizzle-orm": "^0.45.1",

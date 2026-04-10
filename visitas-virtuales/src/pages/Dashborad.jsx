@@ -6,14 +6,12 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const API_URL = 'http://localhost:5000/api/pois';
-
   useEffect(() => {
     const fetchPois = async () => {
       setLoading(true);
       setError('');
       try {
-        const response = await fetch(API_URL);
+        const response = await fetch('/api/pois');
         if (!response.ok) throw new Error('No se pudo cargar el listado de POIs');
         const data = await response.json();
         setPois(data);
@@ -34,14 +32,14 @@ const Dashboard = () => {
     .slice(0, 5);
 
   return (
-    <div className="flex flex-col h-full gap-4 p-10">
+    <div className="flex flex-col h-full gap-6">
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl text-center font-bold text-slate-900">Dashboard</h1>
-          <p className="text- text-center mt-1">Resumen rápido de POIs y última actividad</p>
+          <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
+          <p className="text-slate-600 mt-1">Resumen rápido de POIs y última actividad</p>
         </div>
         <Link
-          to="/listpois"
+          to="/pois"
           className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition"
         >
           Ir a POIs
