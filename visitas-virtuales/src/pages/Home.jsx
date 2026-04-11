@@ -1,100 +1,77 @@
-import { useEffect, useRef } from 'react';
-import { useAuth } from '../context/AuthContext';
-
-// TODO: cambiar a "true" cuando los archivos del build de Unity estén en el folder de unity-build
-//Revisa si tenemos archivos del build en Unity
-const UNITY_BUILD_LISTO = false;
+import { useAuth } from '@/hooks/useAuth.js';
+import { UserCheck, ShieldCheck } from 'lucide-react'; // Iconos para darle estilo
+import UnityViewer from '../components/UnityViewer';
 
 const Home = () => {
-    // Obtenemos el centro seleccionado del contexto global
-    const { selectedCenter } = useAuth();
+    const { user, isAdmin, isTeacher,selectedCenter } = useAuth();
 
-    // Referencia directa al canvas del DOM
-    // Es como un "puntero" para que Unity sepa dónde pintarse
-    const canvasRef = useRef(null);
-
-    // Se ejecuta una sola vez cuando el componente aparece en pantalla
-    useEffect(() => {
-
-        // Si el build no está listo todavía no se hace nada
-        if (!UNITY_BUILD_LISTO) {
-            console.log('Unity build no disponible aún');
-            return;
-        }
-
-        // Crear el script del loader de Unity dinámicamente
-        const script = document.createElement('script');
-        script.src = '/unity-build/NombreDelBuild.loader.js';
-
-        // Cuando el script termina de cargar, arrancamos Unity
-        script.onload = () => {
-
-            // createUnityInstance: función global que viene del loader.
-            // Recibe: el canvas, los paths a los archivos del build, y un callback de progreso
-            createUnityInstance(canvasRef.current, {
-                dataUrl:      '/unity-build/NombreDelBuild.data',
-                frameworkUrl: '/unity-build/NombreDelBuild.framework.js',
-                codeUrl:      '/unity-build/NombreDelBuild.wasm',
-            }, (progress) => {
-                console.log('Cargando Unity... ' + Math.round(progress * 100) + '%');
-            })
-
-            //Cuando Unity termino de cargar correctamente
-            .then((unityInstance) => {
-                console.log('Unity cargado correctamente');
-
-                // EL PUENTE: enviamos el ID del centro a Unity
-                unityInstance.SendMessage(
-                    'WebBridge',  // nombre del GameObject en la escena Unity
-                    'RecibirIdCentro',  // nombre del método en WebBridge.cs
-                    selectedCenter.id.toString()  // el ID del centro
-                );
-
-                console.log('ID enviado a Unity:', selectedCenter.id);
-            })
-
-            // Si Unity falla al cargar
-            .catch((error) => {
-                console.warn('Error al cargar Unity:', error);
-            });
-        };
-
-        // Agregar el script al documento para que empiece a descargarse
-        document.body.appendChild(script);
-
-        // Limpieza cuando el usuario salga de esta página, quitamos el script
-        return () => {
-            document.body.removeChild(script);
-        };
-
-    }, []); // <-- [] ejecutar solo una vez al montar el componente
-
-    // Lo que se muestra en pantalla
     return (
-        <div className="flex flex-col w-full h-full">
-
-            {/* Texto de bienvenida */}
-            <div className="flex flex-col items-center justify-center py-4 space-y-2">
-                <h1 className="text-3xl font-bold text-center text-gray-800">
-                    Bienvenido a {selectedCenter.name}
-                </h1>
-                <p className="text-xl italic text-gray-500">Inicio</p>
-            </div>
-
-            {/* Canvas de Unity — solo se muestra cuando el build está listo */}
-            {UNITY_BUILD_LISTO ? (
-                <canvas
-                    ref={canvasRef}
-                    id="unity-canvas"
-                    className="flex-1 w-full"
-                    style={{ display: 'block' }}
-                />
-            ) : (
-                <div className="flex flex-col items-center justify-center flex-1 text-gray-400">
-                    <p className="text-sm italic">Vista de Unity no disponible aún</p>
+        <div className="p-8">
+            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                    {/* Icono dinámico según el rol */}
+                    <div className={`p-3 rounded-full ${isAdmin ? 'bg-gray-200 text-red-600' : isTeacher ? 'bg-gray-200 text-blue-600' : 'bg-gray-200 text-green-600'}`}>
+                        {/* 1. Si es Admin, SOLO esto */}
+                            {isAdmin ? (
+                                <ShieldCheck size={32} />
+                            ) : isTeacher ? (
+                            /* 2. Si no es Admin pero es Profe, SOLO esto */
+                                <GraduationCap size={32} />
+                            ) : (
+                            /* 3. Si no es ninguno de los anteriores, SOLO esto */
+                                <UserCheck size={32} />
+                            )}
+                
+                    </div>
+                    
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-800">
+                            ¡Bienvenido de nuevo, {user?.username}!
+                        </h1>
+                        <p className="text-gray-500">
+                            Has iniciado sesión como: 
+                            <span className={`ml-2 px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                                isAdmin ? 'bg-red-600 text-white' : isTeacher ? 'bg-blue-600 text-white' : 'bg-green-600 text-white'
+                            }`}>
+                                {isAdmin ? 'Administrador' : isTeacher ? 'Profesor' : 'Estudiante'}
+                            </span>
+                        </p>
+                    </div>
                 </div>
-            )}
 
+                <hr className="my-4 border-gray-100" />
+
+                <div className="mt-4">
+                    <p className="text-gray-700">
+                        Actualmente estás visualizando el centro: 
+                        <span className="font-bold text-blue-600 ml-1">
+                            {selectedCenter?.name || 'Ninguno seleccionado'}
+                        </span>
+                    </p>
+                </div>
+                
+                {/* Mensaje de ayuda dinámico */}
+                <div className={`h-full mt-6 p-4 rounded-lg border-l-4 ${
+                    isAdmin ? 'bg-red-50 border-red-300' : isTeacher ? 'bg-blue-50 border-blue-300' : 'bg-green-50 border-green-300'
+                }`}>
+                    {isAdmin && (
+                        <p className="text-sm text-black ">
+                            Tienes acceso total. Puedes gestionar puntos de interés (POIs), ver el historial de auditoría y configurar el sistema.
+                        </p>
+                    )}
+                    {isTeacher && (
+                        <p className="text-sm text-black ">
+                            Como profesor, puedes gestionar tus clases y ver la información de los puntos de interés.
+                        </p>
+                    )}
+                    {!isAdmin && !isTeacher && (
+                        <p className="text-sm text-black ">
+                            Puedes explorar el mapa y ver la información de los puntos de interés.
+                        </p>
+                    )}
+                    <UnityViewer />
+                </div>
+            </div>
         </div>
     );
 };

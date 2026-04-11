@@ -36,7 +36,7 @@ const Dashboard = () => {
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl text-center font-bold text-slate-900">Dashboard</h1>
-          <p className="text-black text-center mt-1">Resumen rápido de POIs y última actividad</p>
+          <p className="text- text-center mt-1">Resumen rápido de POIs y última actividad</p>
         </div>
         <Link
           to="/listpois"
