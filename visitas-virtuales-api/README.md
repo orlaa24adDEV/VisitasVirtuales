@@ -35,7 +35,7 @@ Para iniciar la API en modo desarrollo será necesario:
 
 6.  **Generar migraciones, aplicarlas a la base de datos e insertar datos de prueba (Drizzle ORM)**:
     1.  `npm run db:generate`
-    2.  `npm run db:migrate:dev`
+    2.  `npm run db:migrate`
     3.  `npm run db:seed`
 
     > Las migraciones se encargan de versionar el schema de la base de datos. Evitan iconsistencias y permiten revertir cambios.
@@ -50,9 +50,10 @@ Para iniciar la API en modo desarrollo será necesario:
 
 - **Documentación API**: Puedes acceder la documentación generada mediante la especificación OpenAPI en [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
 - **Gestión de Base de Datos**:
-  - **pgAdmin**: Interfaz web disponible en [http://localhost:15432/](http://localhost:15432/)
+  - **Drizzle Kit Studio**: Interfaz web para explorar y consultar la base de datos.
 
-    > Al añadir el servidor de PostgreSQL, especifica el hostname **vv-postgres** y el puerto **5432** (los contenedores se encuentran en la misma red)
+    1. Ejecuta `npm run db:studio`
+    2. Abre [https://local.drizzle.studio](https://local.drizzle.studio)
 
   - **psql**: Cliente de PostgreSQL en la terminal (`psql -h localhost -U postgres -p 5433 -d visitas_virtuales_db`)
 

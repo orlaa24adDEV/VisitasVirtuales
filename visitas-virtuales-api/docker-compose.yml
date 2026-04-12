@@ -1,24 +1,4 @@
 services:
-  pgadmin_service:
-    image: dpage/pgadmin4
-    container_name: vv-pgadmin
-    env_file:
-      - path: .env
-        required: false
-      - path: .env.dev
-        required: false
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    ports:
-      - '15432:80'
-    networks:
-      - vv-network
-    volumes:
-      - pgadmindata:/var/lib/pgadmin
-    depends_on:
-      - postgres_service
-
   postgres_service:
     image: postgres
     container_name: vv-postgres
@@ -45,4 +25,3 @@ networks:
 
 volumes:
   pgdata:
-  pgadmindata:

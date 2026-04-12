@@ -109,3 +109,27 @@ export const statRelations = relations(stats, ({ many }) => ({
 	users: many(statsUsers),
 	pois: many(statsPois),
 }))
+
+// Cada entrada en stats_users relaciona una estadística con un usuario específico
+export const statsUsersRelations = relations(statsUsers, ({ one }) => ({
+	stat: one(stats, {
+		fields: [statsUsers.stat_id],
+		references: [stats.id],
+	}),
+	user: one(users, {
+		fields: [statsUsers.user_id],
+		references: [users.id],
+	}),
+}))
+
+// Cada entrada en stats_pois relaciona una estadística con un POI específico
+export const statsPoisRelations = relations(statsPois, ({ one }) => ({
+	stat: one(stats, {
+		fields: [statsPois.stat_id],
+		references: [stats.id],
+	}),
+	poi: one(pois, {
+		fields: [statsPois.poi_id],
+		references: [pois.id],
+	}),
+}))

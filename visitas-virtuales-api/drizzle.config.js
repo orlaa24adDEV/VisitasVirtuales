@@ -1,4 +1,16 @@
+import { existsSync } from 'node:fs'
+import assert from 'node:assert'
+import { config as loadEnv } from 'dotenv'
+import { expand as expandEnv } from 'dotenv-expand'
 import { defineConfig } from 'drizzle-kit'
+
+const envFile = existsSync('.env.dev') ? '.env.dev' : '.env'
+expandEnv(loadEnv({ path: envFile, quiet: true }))
+
+assert(
+	process.env.DATABASE_URL,
+	`Error: DATABASE_URL no está definido en ${envFile}`,
+)
 
 export default defineConfig({
 	schema: './src/db/schema.js',
