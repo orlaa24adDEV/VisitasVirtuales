@@ -19,9 +19,9 @@
     }
   ],
   "paths": {
-    "/admin/users/{id}/role": {
-      "put": {
-        "summary": "Cambiar el rol de un usuario (solo para administradores)",
+    "/api/v1/users/{id}/role": {
+      "patch": {
+        "summary": "Cambiar el rol de un usuario (solo para administradores) (SIN IMPLEMENTAR)",
         "tags": [
           "Admin"
         ],
@@ -51,9 +51,11 @@
                   "role": {
                     "type": "string",
                     "enum": [
-                      "user",
-                      "admin"
-                    ]
+                      "admin",
+                      "teacher",
+                      "student"
+                    ],
+                    "description": "Nuevo rol para el usuario"
                   }
                 }
               }
@@ -76,9 +78,9 @@
         }
       }
     },
-    "/admin/pois": {
+    "/api/v1/admin/pois": {
       "post": {
-        "summary": "Crear un nuevo POI (solo para administradores)",
+        "summary": "Crear un nuevo POI (solo para administradores) (SIN IMPLEMENTAR)",
         "tags": [
           "POIs"
         ],
@@ -116,9 +118,11 @@
             "description": "El token proporcionado no es válido o el usuario no tiene permisos de administrador"
           }
         }
-      },
+      }
+    },
+    "/api/v1/pois": {
       "get": {
-        "summary": "Listar todos los POIs (solo para administradores)",
+        "summary": "Listar todos los POIs (solo para administradores) (SIN IMPLEMENTAR)",
         "tags": [
           "POIs"
         ],
@@ -140,9 +144,9 @@
         }
       }
     },
-    "/admin/pois/{id}": {
+    "/api/v1/admin/pois/{id}": {
       "put": {
-        "summary": "Actualizar un POI existente (solo para administradores)",
+        "summary": "Actualizar un POI existente (solo para administradores) (SIN IMPLEMENTAR)",
         "tags": [
           "POIs"
         ],
@@ -193,7 +197,7 @@
         }
       },
       "delete": {
-        "summary": "Eliminar un POI existente (solo para administradores)",
+        "summary": "Eliminar un POI existente (solo para administradores) (SIN IMPLEMENTAR)",
         "tags": [
           "POIs"
         ],
@@ -229,7 +233,7 @@
     "/api/v1/users": {
       "post": {
         "summary": "Registrar nuevo usuario",
-        "description": "Registra un nuevo usuario con email, nombre de usuario y contraseña. Al primer usuario registrado se le asignará automáticamente el rol de \"admin\", mientras que los siguientes usuarios registrados tendrán el rol de \"user\". Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.",
+        "description": "Registra un nuevo usuario con email, nombre de usuario, contraseña e id del centro. Al primer usuario registrado se le asignará automáticamente el rol de \"admin\", mientras que los siguientes usuarios registrados tendrán el rol de \"student\". Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.",
         "tags": [
           "User"
         ],
@@ -242,17 +246,30 @@
                 "required": [
                   "username",
                   "email",
-                  "password"
+                  "password",
+                  "centerId"
                 ],
                 "properties": {
                   "username": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 6,
+                    "maxLength": 24,
+                    "pattern": "^[a-zA-Z0-9_]{6,24}$"
                   },
                   "email": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 120,
+                    "format": "email"
                   },
                   "password": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 32,
+                    "pattern": "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,32}$"
+                  },
+                  "centerId": {
+                    "type": "integer",
+                    "minimum": 1
                   }
                 }
               }
@@ -260,14 +277,17 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Usuario registrado con éxito",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "accessToken": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "tokens": {
                       "type": "string"
                     }
                   }
@@ -276,7 +296,7 @@
             }
           },
           "400": {
-            "description": "Email, nombre de usuario o contraseña no proporcionados",
+            "description": "Email, nombre de usuario, contraseña o centro no proporcionados, o con formato no válido",
             "content": {
               "application/json": {
                 "schema": {
@@ -323,7 +343,7 @@
         }
       },
       "put": {
-        "summary": "Editar perfil del usuario autenticado",
+        "summary": "Editar perfil del usuario autenticado (SIN IMPLEMENTAR)",
         "description": "Permite al usuario autenticado editar su propio perfil, incluyendo su nombre de usuario y contraseña. Requiere un token de acceso válido en el header Authorization.",
         "tags": [
           "User"
@@ -459,17 +479,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": {
+                    "message": {
                       "type": "string"
                     },
-                    "username": {
-                      "type": "string"
-                    },
-                    "email": {
-                      "type": "string"
-                    },
-                    "role": {
-                      "type": "string"
+                    "profile": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string"
+                        }
+                      }
                     }
                   }
                 }
@@ -490,6 +518,36 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Usuario no encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor al obtener el perfil del usuario",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -497,7 +555,7 @@
     "/api/v1/users/auth": {
       "post": {
         "summary": "Iniciar sesión de usuario",
-        "description": "Permite a un usuario iniciar sesión utilizando su email junto con su contraseña. Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.",
+        "description": "Permite a un usuario iniciar sesión utilizando su email o su nombre de usuario junto con su contraseña. Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.",
         "tags": [
           "User"
         ],
@@ -507,16 +565,34 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "email",
-                  "password"
+                "anyOf": [
+                  {
+                    "required": [
+                      "email",
+                      "password"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "username",
+                      "password"
+                    ]
+                  }
                 ],
                 "properties": {
                   "email": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 120,
+                    "format": "email"
+                  },
+                  "username": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 24
                   },
                   "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 32
                   }
                 }
               }
@@ -531,6 +607,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "message": {
+                      "type": "string"
+                    },
                     "accessToken": {
                       "type": "string"
                     }
@@ -540,7 +619,7 @@
             }
           },
           "400": {
-            "description": "Formato de solicitud no válido",
+            "description": "Formato de solicitud no válido o campos requeridos no proporcionados",
             "content": {
               "application/json": {
                 "schema": {

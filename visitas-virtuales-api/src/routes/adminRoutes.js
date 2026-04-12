@@ -11,7 +11,7 @@ const router = Router()
 /**
  * @openapi
  * /api/v1/users/{id}/role:
- *   put:
+ *   patch:
  *     summary: Cambiar el rol de un usuario (solo para administradores) (SIN IMPLEMENTAR)
  *     tags: [Admin]
  *     security:
@@ -44,7 +44,7 @@ const router = Router()
  *       403:
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
-router.put('/users/:id/role', isAuthenticated, isAdmin, (req, res) => {
+router.patch('/users/:id/role', isAuthenticated, isAdmin, (req, res) => {
 	res.json({
 		message: `Ruta para cambiar el rol del usuario con ID ${req.params.id} - solo accesible para administradores`,
 	})
