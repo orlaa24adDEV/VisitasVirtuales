@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 import {
 	pgTable,
 	integer,
@@ -71,3 +72,40 @@ export const statsPois = pgTable('stats_pois', {
 		.notNull()
 		.references(() => pois.id, { onDelete: 'cascade' }),
 })
+
+// Definir relaciones entre tablas para permitir a Drizzle simplificar consultas con joins
+
+// Un centro tiene muchos usuarios y muchos POIs
+export const centerRelations = relations(centers, ({ many }) => ({
+	users: many(users),
+	pois: many(pois),
+}))
+
+// Un usuario pertenece a un centro y puede tener muchos POIs y estadísticas
+export const userRelations = relations(users, ({ one, many }) => ({
+	center: one(centers, {
+		fields: [users.centerId],
+		references: [centers.id],
+	}),
+	pois: many(pois),
+	stats: many(statsUsers),
+}))
+
+// Un POI pertenece a un centro y a un usuario, y puede tener muchas estadísticas
+export const poiRelations = relations(pois, ({ one, many }) => ({
+	center: one(centers, {
+		fields: [pois.centerId],
+		references: [centers.id],
+	}),
+	user: one(users, {
+		fields: [pois.userId],
+		references: [users.id],
+	}),
+	stats: many(statsPois),
+}))
+
+// Una estadística puede estar relacionada con muchos usuarios y muchos POIs
+export const statRelations = relations(stats, ({ many }) => ({
+	users: many(statsUsers),
+	pois: many(statsPois),
+}))
