@@ -12,6 +12,11 @@ const db = drizzle({ client: pool })
 
 async function main() {
 	try {
+		// Limpiar datos previos para poder ejecutar seed múltiples veces sin conflictos
+		await db.delete(pois)
+		await db.delete(users)
+		await db.delete(centers)
+
 		// Insertar centros de prueba primero
 		const mockCenters = [
 			{

@@ -1,27 +1,27 @@
 {
-	"version": "7",
-	"dialect": "postgresql",
-	"entries": [
-		{
-			"idx": 0,
-			"version": "7",
-			"when": 1775591066466,
-			"tag": "0000_faulty_stark_industries",
-			"breakpoints": true
-		},
-		{
-			"idx": 1,
-			"version": "7",
-			"when": 1775644483594,
-			"tag": "0001_warm_thunderbolt_ross",
-			"breakpoints": true
-		},
-		{
-			"idx": 2,
-			"version": "7",
-			"when": 1775996500329,
-			"tag": "0002_high_ultimatum",
-			"breakpoints": true
-		}
-	]
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1775591066466,
+      "tag": "0000_faulty_stark_industries",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775644483594,
+      "tag": "0001_warm_thunderbolt_ross",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776005258759,
+      "tag": "0002_fuzzy_captain_midlands",
+      "breakpoints": true
+    }
+  ]
 }
