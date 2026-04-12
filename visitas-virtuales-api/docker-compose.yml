@@ -2,6 +2,11 @@ services:
   pgadmin_service:
     image: dpage/pgadmin4
     container_name: vv-pgadmin
+    env_file:
+      - path: .env
+        required: false
+      - path: .env.dev
+        required: false
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
@@ -17,6 +22,11 @@ services:
   postgres_service:
     image: postgres
     container_name: vv-postgres
+    env_file:
+      - path: .env
+        required: false
+      - path: .env.dev
+        required: false
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

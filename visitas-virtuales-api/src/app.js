@@ -1,3 +1,4 @@
+import { env } from '../env.ts'
 import express from 'express'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
@@ -6,20 +7,9 @@ import userRoutes from './routes/userRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
 import apiErrorThrown from './middlewares/apiErrorThrown.js'
 import cors from 'cors'
-import assert from 'node:assert'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-
-// Garantizar que las variables de entorno necesarias estén definidas
-assert(
-	process.env.JWT_SECRET,
-	'Error: JWT_SECRET no está definido en las variables de entorno',
-)
-assert(
-	process.env.FRONTEND_URL,
-	'Error: FRONTEND_URL no está definido en las variables de entorno',
-)
 
 const app = express()
 
@@ -36,7 +26,7 @@ app.use(cookieParser())
 // Permitir CORS desde la app de React (Vite)
 app.use(
 	cors({
-		origin: process.env.FRONTEND_URL,
+		origin: env.FRONTEND_URL,
 		methods: ['GET', 'POST', 'PUT', 'DELETE'],
 		credentials: true, // Compartir cookies entre frontend y backend
 	}),
@@ -57,6 +47,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 // Middleware para manejar errores lanzados desde servicios
 app.use(apiErrorThrown)
 
-app.listen(8000, () => console.log('Servidor escuchando en puerto 8000'))
+app.listen(env.APP_PORT, () => console.log(`Servidor escuchando en puerto ${env.APP_PORT}`))
 
 export default app

@@ -4,15 +4,15 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"dev": "nodemon --require ./preload-env.js src/app.js",
-		"db:up": "docker compose -f docker-compose.dev.yml --env-file .env.dev up -d",
-		"db:up:watch": "docker compose -f docker-compose.dev.yml --env-file .env.dev up",
-		"db:down": "docker compose -f docker-compose.dev.yml --env-file .env.dev down",
-		"db:generate": "dotenv -e .env.dev -- drizzle-kit generate",
-		"db:migrate:dev": "dotenv -e .env.dev -- drizzle-kit migrate",
+		"dev": "APP_STAGE=dev nodemon --watch 'src/**/*.{js,ts}' --exec 'node --import ./env.ts src/app.js'",
+		"db:up": "docker compose up -d",
+		"db:up:watch": "docker compose up",
+		"db:down": "docker compose down",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate:dev": "sh -c 'ENV_FILE=.env; [ -f .env.dev ] && ENV_FILE=.env.dev; dotenv -e \"$ENV_FILE\" -- drizzle-kit migrate'",
 		"db:migrate:prod": "drizzle-kit migrate",
-		"db:seed": "node --require ./preload-env.js src/db/seed.js",
-		"db:logs": "docker compose -f docker-compose.dev.yml --env-file .env.dev logs -f postgres_service",
+		"db:seed": "APP_STAGE=dev node --import ./env.ts src/db/seed.js",
+		"db:logs": "docker compose logs -f postgres_service",
 		"deploy:prod:up": "docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build",
 		"deploy:prod:down": "docker compose -f docker-compose.prod.yml --env-file .env.prod down",
 		"deploy:prod:restart": "npm run deploy:prod:down && npm run deploy:prod:up",
@@ -45,7 +45,8 @@
 		"pg": "^8.20.0",
 		"swagger-jsdoc": "^6.2.8",
 		"swagger-ui-express": "^5.0.1",
-		"yamljs": "^0.3.0"
+		"yamljs": "^0.3.0",
+		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@hey-api/openapi-ts": "^0.94.5",

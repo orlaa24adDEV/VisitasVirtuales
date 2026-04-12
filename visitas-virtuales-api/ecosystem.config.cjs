@@ -2,7 +2,7 @@ module.exports = {
   apps: [{
     name: "visitas-virtuales",
     script: "./src/app.js",
-    node_args: "--require ./preload-env.js",
+    node_args: "--require ./env.ts",
     exec_mode: "cluster",
     instances: "max",
     autorestart: true,
