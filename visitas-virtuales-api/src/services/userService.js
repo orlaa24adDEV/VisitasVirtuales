@@ -8,7 +8,8 @@ import ApiError from '../helpers/ApiError.js'
 const EMAIL_PATTERN =
 	/^(?=.{1,120}$)(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 const USERNAME_PATTERN = /^[a-zA-Z0-9_]{6,24}$/
-const PASSWORD_PATTERN = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,32}$/
+const PASSWORD_PATTERN =
+	/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,32}$/
 
 const register = async (userRegisterRequest) => {
 	const { email, username, password, centerId } = userRegisterRequest
@@ -116,10 +117,7 @@ const login = async (userLoginRequest) => {
 	}
 
 	if (password.length > 32) {
-		throw new ApiError(
-			400,
-			'La contraseña no puede tener más de 32 caracteres',
-		)
+		throw new ApiError(400, 'La contraseña no puede tener más de 32 caracteres')
 	}
 
 	const userArr = await db

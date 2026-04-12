@@ -33,8 +33,7 @@
 ### Base de datos
 
 - **Aplicar migraciones**
-  > `npm run db:migrate:prod`  (se ejecuta en cada arranque del contenedor de la API en producción)
-
+  > `npm run db:migrate:prod` (se ejecuta en cada arranque del contenedor de la API en producción)
 
 ### Aplicación
 

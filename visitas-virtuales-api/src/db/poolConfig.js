@@ -37,7 +37,7 @@ export function getNodePgPoolConfig(env = process.env) {
 	}
 
 	throw new Error(
-		'Database configuration is missing. Define DATABASE_URL (valid URL) or POSTGRES_USER, POSTGRES_PASSWORD and POSTGRES_DB.'
+		'Database configuration is missing. Define DATABASE_URL (valid URL) or POSTGRES_USER, POSTGRES_PASSWORD and POSTGRES_DB.',
 	)
 }
 
@@ -57,6 +57,6 @@ export function getDrizzleDbCredentials(env = process.env) {
 	}
 
 	throw new Error(
-		'Database configuration is missing. Define DATABASE_URL (valid URL) or POSTGRES_USER, POSTGRES_PASSWORD and POSTGRES_DB.'
+		'Database configuration is missing. Define DATABASE_URL (valid URL) or POSTGRES_USER, POSTGRES_PASSWORD and POSTGRES_DB.',
 	)
 }

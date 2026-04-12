@@ -44,7 +44,6 @@ Para iniciar la API en modo desarrollo será necesario:
 
 7.  **Iniciar aplicación de Express**: Ejecutar `npm run dev`.
 
-
 ---
 
 ### Herramientas útiles
@@ -54,9 +53,10 @@ Para iniciar la API en modo desarrollo será necesario:
   - **pgAdmin**: Interfaz web disponible en [http://localhost:15432/](http://localhost:15432/)
 
     > Al añadir el servidor de PostgreSQL, especifica el hostname **vv-postgres** y el puerto **5432** (los contenedores se encuentran en la misma red)
+
   - **psql**: Cliente de PostgreSQL en la terminal (`psql -h localhost -U postgres -p 5433 -d visitas_virtuales_db`)
 
     > **\dt** para listar las tablas presentes en la base de datos.\
     > **\d <nombre_tabla>** para obtener información sobre las columnas de una tabla.
-    
+
 > Para más información sobre los scripts disponibles consulta [scripts](./docs/scripts.md)

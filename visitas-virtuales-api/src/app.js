@@ -47,6 +47,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 // Middleware para manejar errores lanzados desde servicios
 app.use(apiErrorThrown)
 
-app.listen(env.APP_PORT, () => console.log(`Servidor escuchando en puerto ${env.APP_PORT}`))
+app.listen(env.APP_PORT, () =>
+	console.log(`Servidor escuchando en puerto ${env.APP_PORT}`),
+)
 
 export default app
