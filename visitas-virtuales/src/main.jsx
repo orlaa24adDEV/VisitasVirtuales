@@ -18,7 +18,7 @@ async function enableMocking() {
 	}
 }
 
-enableMocking().then(() =>
+//enableMocking().then(() =>
 	createRoot(document.getElementById('root')).render(
 		<StrictMode>
 			<BrowserRouter>
@@ -27,5 +27,5 @@ enableMocking().then(() =>
 				</AuthProvider>
 			</BrowserRouter>
 		</StrictMode>,
-	),
-);
+	)//,
+//);

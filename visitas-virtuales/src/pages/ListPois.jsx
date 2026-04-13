@@ -18,6 +18,8 @@ export default function ListPois({ idCentro }) {
     const firstIndex = lastIndex - itemsPerPage;
     const currentPois = filteredPois.slice(firstIndex, lastIndex);
 
+    const API_URL = 'http://localhost:5000/api/pois';
+
     useEffect(() => {
         const maxPage = Math.max(1, totalPages);
 
@@ -45,7 +47,7 @@ export default function ListPois({ idCentro }) {
     useEffect(() => {
         async function getPois() {
             try {
-                const response = await fetch(`/api/pois?centerId=${idCentro}`);
+                const response = await fetch(API_URL);
                 const data = await response.json();
                 setPois(data);
             } catch (error) {
