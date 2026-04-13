@@ -5,7 +5,7 @@ import { expand as expandEnv } from 'dotenv-expand'
 import { defineConfig } from 'drizzle-kit'
 import { env } from 'node:process'
 
-const envFile = env.APP_STAGE === 'production' ? '.env.prod' : ( env.APP_STAGE === 'dev' && existsSync('.env.dev') ? '.env.dev' : '.env' )
+const envFile = env.APP_STAGE === 'prod' ? '.env.prod' : ( env.APP_STAGE === 'dev' && existsSync('.env.dev') ? '.env.dev' : '.env' )
 expandEnv(loadEnv({ path: envFile, quiet: true }))
 
 assert(
