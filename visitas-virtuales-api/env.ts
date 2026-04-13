@@ -26,7 +26,7 @@ if (process.env.APP_STAGE === 'dev') {
 // que la app se ejecute con configuraciones incorrectas o faltantes.
 const envSchema = z.object({
 	NODE_ENV: z.enum(['development', 'test', 'production']),
-	APP_STAGE: z.enum(['dev', 'prod']),
+	APP_STAGE: z.enum(['dev', 'stage', 'prod']),
 	APP_PORT: z.coerce.number().default(8000),
 	POSTGRES_USER: z.string().min(1),
 	POSTGRES_PASSWORD: z.string().min(32),
