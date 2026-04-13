@@ -1,64 +1,89 @@
 {
-  "pois": [
+  "CENTROS": [
     {
-      "id": "1",
-      "centerId": "center-1",
-      "name": "Biblioteca",
-      "description": "Horario 8:00 a 14:00"
+      "id_centro": "centro-1",
+      "nombre_centro": "CENTRO 1",
+      "descripcion_centro": "Sede de Sevilla.",
+      "POIs": [
+        { "id_poi": 1, "nombre_poi": "Entrada Principal", "descripcion_poi": "Acceso principal al centro con control de seguridad y recepción.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 2, "nombre_poi": "Recepción", "descripcion_poi": "Zona de atención al visitante e información general del centro.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 3, "nombre_poi": "Biblioteca", "descripcion_poi": "Amplia biblioteca con fondos de más de 5.000 volúmenes y zona de estudio.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 4, "nombre_poi": "Comedor", "descripcion_poi": "Servicio de comedor con menú diario para alumnos y personal.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 5, "nombre_poi": "Gimnasio", "descripcion_poi": "Instalación deportiva cubierta con material para educación física.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 6, "nombre_poi": "Aula 101", "descripcion_poi": "Aula de teoría con capacidad para 30 alumnos y pizarra digital.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 7, "nombre_poi": "Aula 102", "descripcion_poi": "Aula de teoría con capacidad para 30 alumnos y proyector.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 8, "nombre_poi": "Laboratorio de Informática", "descripcion_poi": "Sala equipada con 25 equipos de última generación para prácticas.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 9, "nombre_poi": "Sala de Profesores", "descripcion_poi": "Espacio reservado para el equipo docente con zona de descanso.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 10, "nombre_poi": "Patio", "descripcion_poi": "Zona exterior de recreo con pistas deportivas y zona de descanso.", "loc_poi": { "x": 0, "y": 0, "z": 0 } }
+      ]
     },
     {
-      "id": "2",
-      "centerId": "center-1",
-      "name": "Laboratorio de Física",
-      "description": "Horario 16:00 a 17:00"
+      "id_centro": "centro-2",
+      "nombre_centro": "CENTRO 2",
+      "descripcion_centro": "Sede de Malaga.",
+      "POIs": [
+        { "id_poi": 1, "nombre_poi": "Entrada Principal", "descripcion_poi": "Acceso principal con tornos de seguridad y cámeras de vigilancia.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 2, "nombre_poi": "Secretaría", "descripcion_poi": "Oficina administrativa para gestión de matrículas y documentación.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 3, "nombre_poi": "Biblioteca", "descripcion_poi": "Sala de lectura y consulta con acceso a recursos digitales.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 4, "nombre_poi": "Cafetería", "descripcion_poi": "Servicio de cafetería con desayunos, bocadillos y menú del día.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 5, "nombre_poi": "Polideportivo", "descripcion_poi": "Pabellón cubierto con pistas de baloncesto y balonmano.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 6, "nombre_poi": "Aula 201", "descripcion_poi": "Aula de ciclos formativos con equipamiento técnico especializado.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 7, "nombre_poi": "Aula 202", "descripcion_poi": "Aula de prácticas con mesas de trabajo y herramientas.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 8, "nombre_poi": "Taller de Electrónica", "descripcion_poi": "Taller equipado con osciloscopios, soldadores y componentes electrónicos.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 9, "nombre_poi": "Sala de Reuniones", "descripcion_poi": "Sala para tutorías grupales y reuniones con familias.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 10, "nombre_poi": "Almacén de Material", "descripcion_poi": "Zona de almacenaje de material didáctico y equipos de repuesto.", "loc_poi": { "x": 0, "y": 0, "z": 0 } }
+      ]
     },
     {
-      "id": "3",
-      "centerId": "center-1",
-      "name": "Dirección del centro",
-      "description": "Horario 9:00 a 14:00"
+      "id_centro": "centro-3",
+      "nombre_centro": "CENTRO 3",
+      "descripcion_centro": "Sede de Madrid.",
+      "POIs": [
+        { "id_poi": 1, "nombre_poi": "Entrada Principal", "descripcion_poi": "Puerta de acceso principal con vigilancia y sistema de tarjetas.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 2, "nombre_poi": "Conserjería", "descripcion_poi": "Punto de control de acceso y entrega de comunicados.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 3, "nombre_poi": "Mediateca", "descripcion_poi": "Espacio multimedia con ordenadores, libros y recursos audiovisuales.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 4, "nombre_poi": "Comedor", "descripcion_poi": "Comedor escolar con servicio de menú vegetariano y convencional.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 5, "nombre_poi": "Pabellón Deportivo", "descripcion_poi": "Instalación cubierta para actividades físicas y competiciones.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 6, "nombre_poi": "Aula 301", "descripcion_poi": "Aula de bachillerato con mobiliario ergonómico y climatización.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 7, "nombre_poi": "Laboratorio de Ciencias", "descripcion_poi": "Laboratorio equipado para prácticas de física, química y biología.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 8, "nombre_poi": "Aula de Música", "descripcion_poi": "Sala insonorizada con instrumentos y equipo de grabación básico.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 9, "nombre_poi": "Orientación", "descripcion_poi": "Despacho del orientador para atención psicopedagógica y vocacional.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 10, "nombre_poi": "Patio Exterior", "descripcion_poi": "Zona ajardinada con mesas y zona de descanso entre clases.", "loc_poi": { "x": 0, "y": 0, "z": 0 } }
+      ]
     },
     {
-      "id": "4",
-      "centerId": "center-1",
-      "name": "Secretaría",
-      "description": "Horario 11:00 a 13:00"
+      "id_centro": "centro-4",
+      "nombre_centro": "CENTRO 4",
+      "descripcion_centro": "Sede de Cadiz.",
+      "POIs": [
+        { "id_poi": 1, "nombre_poi": "Entrada Principal", "descripcion_poi": "Acceso principal con aparcamiento para bicicletas y motos.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 2, "nombre_poi": "Recepción", "descripcion_poi": "Mostrador de bienvenida con información sobre ciclos y horarios.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 3, "nombre_poi": "Biblioteca Técnica", "descripcion_poi": "Fondos especializados en tecnología, programación e ingeniería.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 4, "nombre_poi": "Cafetería", "descripcion_poi": "Zona de descanso con máquinas expendedoras y mesas comunes.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 5, "nombre_poi": "Gimnasio", "descripcion_poi": "Sala de fitness y actividades deportivas para el alumnado.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 6, "nombre_poi": "Aula DAM", "descripcion_poi": "Aula específica del ciclo de Desarrollo de Aplicaciones Multiplataforma.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 7, "nombre_poi": "Aula DAW", "descripcion_poi": "Aula específica del ciclo de Desarrollo de Aplicaciones Web.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 8, "nombre_poi": "Taller de Redes", "descripcion_poi": "Taller con racks, switches y equipos de red para prácticas ASIR.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 9, "nombre_poi": "Sala de Servidores", "descripcion_poi": "CPD del centro con servidores físicos usados en prácticas reales.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 10, "nombre_poi": "Patio", "descripcion_poi": "Zona exterior con mesas y acceso wifi para trabajar al aire libre.", "loc_poi": { "x": 0, "y": 0, "z": 0 } }
+      ]
     },
     {
-      "id": "5",
-      "centerId": "center-1",
-      "name": "Aula 101",
-      "description": "Horario 8:00 a 14:00"
-    },
-    {
-      "id": "6",
-      "centerId": "center-1",
-      "name": "Aula 102",
-      "description": "Horario 8:00 a 14:00"
-    },
-    {
-      "id": "7",
-      "centerId": "center-1",
-      "name": "Aula 210",
-      "description": "Horario 8:00 a 14:00"
-    },
-    {
-      "id": "8",
-      "centerId": "center-1",
-      "name": "Sala de profesores",
-      "description": "Horario 8:00 a 14:00"
-    },
-    {
-      "id": "9",
-      "centerId": "center-1",
-      "name": "Gimnasio",
-      "description": "Horario 8:00 a 14:00"
-    },
-    {
-      "id": "10",
-      "centerId": "center-1",
-      "name": "Cafetería",
-      "description": "Horario 14:00 a 16:00"
+      "id_centro": "centro-5",
+      "nombre_centro": "CENTRO 5",
+      "descripcion_centro": "Sede de Almeria.",
+      "POIs": [
+        { "id_poi": 1, "nombre_poi": "Entrada Principal", "descripcion_poi": "Acceso principal con rampa de accesibilidad y portero automático.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 2, "nombre_poi": "Secretaría", "descripcion_poi": "Gestión de expedientes, certificados y trámites administrativos.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 3, "nombre_poi": "Biblioteca", "descripcion_poi": "Espacio de lectura con zona infantil, juvenil y de referencia.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 4, "nombre_poi": "Comedor", "descripcion_poi": "Comedor con tres turnos y opciones de menú adaptadas a alergias.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 5, "nombre_poi": "Polideportivo", "descripcion_poi": "Pabellón multiusos con grada para eventos y competiciones.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 6, "nombre_poi": "Aula de Plástica", "descripcion_poi": "Taller de artes plásticas con caballetes, material de dibujo y horno.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 7, "nombre_poi": "Aula de Tecnología", "descripcion_poi": "Taller de tecnología con impresoras 3D y zona de prototipado.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 8, "nombre_poi": "Laboratorio de Idiomas", "descripcion_poi": "Aula de idiomas con cabinas individuales y sistema de audio.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 9, "nombre_poi": "Dirección", "descripcion_poi": "Despacho de dirección y jefatura de estudios.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id_poi": 10, "nombre_poi": "Patio Exterior", "descripcion_poi": "Gran patio con zona de juegos, pistas de fútbol sala y baloncesto.", "loc_poi": { "x": 0, "y": 0, "z": 0 } }
+      ]
     }
   ]
 }
