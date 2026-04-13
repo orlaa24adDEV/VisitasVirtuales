@@ -17,6 +17,7 @@ RUN npm install --omit=dev
 COPY . .
 
 ENV NODE_ENV=production
+ENV APP_STAGE=prod
 
 # Exponer puerto de la aplicación
 EXPOSE 8000

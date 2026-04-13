@@ -8,10 +8,6 @@ module.exports = {
 			instances: 'max',
 			autorestart: true,
 			max_memory_restart: '1G',
-			env_production: {
-				NODE_ENV: 'production',
-				APP_STAGE: 'prod',
-			},
 		},
 	],
 }
