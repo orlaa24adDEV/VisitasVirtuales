@@ -2,15 +2,19 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using System.IO;
-using Unity.VisualScripting;
 
 public class JsonLoader : MonoBehaviour
 {
-    public TMP_Text[] textos; 
+    [Header("Configuración del Centro")]
+    [SerializeField] private string idCentro = "centro-1"; // <- Esto se cambia en el Inspector por cada centro y por cada centro pones una escena
 
-    [SerializeField] private float tiempoActualizacion = 2f;
+    [Header("Textos UI")]
+    public TMP_Text[] textos;
 
-    string ultimaVersion = "";
+    [Header("Ajustes")]
+    [SerializeField] private float tiempoActualizacion = 2f;  //Velocidad para cambiar el texto del .json
+
+    private string ultimaVersion = "";
 
     void Start()
     {
@@ -28,11 +32,11 @@ public class JsonLoader : MonoBehaviour
 
     void LeerJson()
     {
-        string path = Path.Combine(Application.streamingAssetsPath, "poiTexts.json");
+        string path = Path.Combine(Application.streamingAssetsPath, "pois.json");
 
         if (!File.Exists(path))
         {
-            Debug.Log("No se encontró el JSON");
+            Debug.LogWarning($"[JsonLoader] No se encontró el JSON en: {path}");
             return;
         }
 
@@ -40,42 +44,76 @@ public class JsonLoader : MonoBehaviour
         {
             string json = File.ReadAllText(path);
 
-            if (json == ultimaVersion)
-                return;
-
+            // Si el JSON no ha cambiado, no hacemos nada
+            if (json == ultimaVersion) return;
             ultimaVersion = json;
 
-            Data data = JsonUtility.FromJson<Data>(json);
+            // Deserializamos toda la estructura
+            CentroList data = JsonUtility.FromJson<CentroList>(json);
 
-            textos[0].text = data.p1;
-            textos[1].text = data.p2;
-            textos[2].text = data.p3;
-            textos[3].text = data.p4;
-            textos[4].text = data.p5;
-            textos[5].text = data.p6;
-            textos[6].text = data.p7;
-            textos[7].text = data.p8;
-            textos[8].text = data.p9;
-            textos[9].text = data.p10;
+            // Buscamos el centro que coincide con nuestro idCentro
+            Centro centroActual = null;
+            foreach (var centro in data.CENTROS)
+            {
+                if (centro.id_centro == idCentro)
+                {
+                    centroActual = centro;
+                    break;
+                }
+            }
+
+            if (centroActual == null)
+            {
+                Debug.LogWarning($"[JsonLoader] No se encontró el centro con id: {idCentro}");
+                return;
+            }
+
+            // Actualiza los textos con los POIs del centro encontrado
+            for (int i = 0; i < textos.Length && i < centroActual.POIs.Length; i++)
+            {
+                textos[i].text = $"<b>{centroActual.POIs[i].nombre_poi}</b>\n<size=80%>{centroActual.POIs[i].descripcion_poi}</size>";
+
+            }
+
+            Debug.Log($"[JsonLoader] Centro '{centroActual.nombre_centro}' cargado con {centroActual.POIs.Length} POIs.");
         }
-        catch
+        catch (System.Exception e)
         {
-            Debug.Log("JSON en proceso de edición...");
+            Debug.LogWarning($"[JsonLoader] Error leyendo JSON: {e.Message}");
         }
     }
 }
 
+// --- Clases de datos que reflejan la estructura del JSON ---
+
 [System.Serializable]
-public class Data
+public class LocPoi
 {
-    public string p1;
-    public string p2;
-    public string p3;
-    public string p4;
-    public string p5;
-    public string p6;
-    public string p7;
-    public string p8;
-    public string p9;
-    public string p10;
+    public float x;
+    public float y;
+    public float z;
+}
+
+[System.Serializable]
+public class Poi
+{
+    public int id_poi;
+    public string nombre_poi;
+    public string descripcion_poi;
+    public LocPoi loc_poi;
+}
+
+[System.Serializable]
+public class Centro
+{
+    public string id_centro;
+    public string nombre_centro;
+    public string descripcion_centro;
+    public Poi[] POIs;
+}
+
+[System.Serializable]
+public class CentroList
+{
+    public Centro[] CENTROS;
 }
