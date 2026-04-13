@@ -1,11 +1,9 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
-import { users, centers, pois } from './schema.js'
+import { users, centers, pois, UserInsertType, PoiInsertType, UserSelectType, UserSelectMinusPasswordType } from './schema.ts'
 import 'dotenv/config'
-import dotenvExpand from 'dotenv-expand'
+import { env } from '../../env.ts'
 import bcrypt from 'bcrypt'
-
-dotenvExpand.expand({ parsed: process.env })
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 const db = drizzle({ client: pool })
@@ -16,6 +14,9 @@ async function main() {
 		await db.delete(pois)
 		await db.delete(users)
 		await db.delete(centers)
+		await db.execute('ALTER SEQUENCE users_id_seq RESTART WITH 1')
+		await db.execute('ALTER SEQUENCE centers_id_seq RESTART WITH 1')
+		await db.execute('ALTER SEQUENCE pois_id_seq RESTART WITH 1')
 
 		// Insertar centros de prueba primero
 		const mockCenters = [
@@ -45,82 +46,73 @@ async function main() {
 		const teacherPassword = await bcrypt.hash('Profe123!', 10)
 		const studentPassword = await bcrypt.hash('Alumno123!', 10)
 
-		const mockUserData = [
+		const mockUserData: UserInsertType[] = [
 			{
 				email: 'admin_mad@instituto.es',
 				username: 'admin_mad',
 				password: adminPassword,
-				role: 'admin',
-				centerId: insertedCenters[0].id,
+				role: 'admin'
 			},
 			{
 				email: 'admin_bar@instituto.es',
 				username: 'admin_bar',
 				password: adminPassword,
-				role: 'admin',
-				centerId: insertedCenters[1].id,
+				role: 'admin'
 			},
 			{
 				email: 'admin_sev@instituto.es',
 				username: 'admin_sev',
 				password: adminPassword,
-				role: 'admin',
-				centerId: insertedCenters[2].id,
+				role: 'admin'
 			},
 			{
 				email: 'profesor_mad@instituto.es',
 				username: 'prof_mad',
 				password: teacherPassword,
-				role: 'teacher',
-				centerId: insertedCenters[0].id,
+				role: 'teacher'
 			},
 			{
 				email: 'profesor_bar@instituto.es',
 				username: 'prof_bar',
 				password: teacherPassword,
-				role: 'teacher',
-				centerId: insertedCenters[1].id,
+				role: 'teacher'
 			},
 			{
 				email: 'profesor_sev@instituto.es',
 				username: 'prof_sev',
 				password: teacherPassword,
-				role: 'teacher',
-				centerId: insertedCenters[2].id,
+				role: 'teacher'
 			},
 			{
 				email: 'alumno_mad@instituto.es',
 				username: 'alumno_mad',
 				password: studentPassword,
-				role: 'student',
-				centerId: insertedCenters[0].id,
+				role: 'student'
 			},
 			{
 				email: 'alumno_bar@instituto.es',
 				username: 'alumno_bar',
 				password: studentPassword,
-				role: 'student',
-				centerId: insertedCenters[1].id,
+				role: 'student'
 			},
 			{
 				email: 'alumno_sev@instituto.es',
 				username: 'alumno_sev',
 				password: studentPassword,
-				role: 'student',
-				centerId: insertedCenters[2].id,
+				role: 'student'
 			},
 		]
-		const insertedUsers = await db
+		const insertedUsers: { id: number, username: string }[] = await db
 			.insert(users)
 			.values(mockUserData)
-			.returning()
+			.returning({ id: users.id, username: users.username })
 
 		const usersByUsername = Object.fromEntries(
 			insertedUsers.map((u) => [u.username, u]),
 		)
 
 		// Insertar POIs de prueba
-		const mockPois = [
+		const mockPois: PoiInsertType[] = [
 			// Instituto Madrid
 			{
 				name: 'Cafetería',

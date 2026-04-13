@@ -6,7 +6,9 @@ import {
 	refreshTokenHandler,
 	profileHandler,
 } from '../controllers/userController.js'
-import isAuthenticated from '../middlewares/isAuthenticated.js'
+import { userLoginSchema, userRegisterSchema } from '../db/schema.ts'
+import { validateBody } from '../middlewares/validation.ts'
+import hasRole from '../middlewares/hasRole.ts'
 const router = Router()
 
 /**
@@ -83,7 +85,7 @@ const router = Router()
  *                 message:
  *                   type: string
  */
-router.post('/users', registerHandler)
+router.post('/users', validateBody(userRegisterSchema), registerHandler)
 
 /**
  * @openapi
@@ -152,7 +154,7 @@ router.post('/users', registerHandler)
  *                 message:
  *                   type: string
  */
-router.get('/me', isAuthenticated, profileHandler)
+router.get('/me', hasRole('any'), profileHandler)
 
 /**
  * @openapi
@@ -166,26 +168,33 @@ router.get('/me', isAuthenticated, profileHandler)
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             anyOf:
- *               - required: [email, password]
- *               - required: [username, password]
- *             properties:
- *               email:
- *                 type: string
- *                 maxLength: 120
- *                 format: email
- *                 example: 'alumno_mad_2@instituto.es'
- *               username:
- *                 type: string
- *                 minLength: 6
- *                 maxLength: 24
- *                 example: 'alumno_mad_2'
- *               password:
- *                 type: string
- *                 minLength: 8
- *                 maxLength: 32
- *                 example: 'Alumno123!'
+ *             oneOf:
+ *               - type: object
+ *                 required: [email, password]
+ *                 properties:
+ *                   email:
+ *                     type: string
+ *                     maxLength: 120
+ *                     format: email
+ *                     example: 'alumno_mad@instituto.es'
+ *                   password:
+ *                     type: string
+ *                     minLength: 8
+ *                     maxLength: 32
+ *                     example: 'Alumno123!'
+ *               - type: object
+ *                 required: [username, password]
+ *                 properties:
+ *                   username:
+ *                     type: string
+ *                     minLength: 6
+ *                     maxLength: 24
+ *                     example: 'alumno_mad_2'
+ *                   password:
+ *                     type: string
+ *                     minLength: 8
+ *                     maxLength: 32
+ *                     example: 'Alumno123!'
  *     responses:
  *       200:
  *         description: Usuario autenticado con éxito
@@ -226,13 +235,13 @@ router.get('/me', isAuthenticated, profileHandler)
  *                 message:
  *                   type: string
  */
-router.post('/users/auth', loginHandler)
+router.post('/users/auth', validateBody(userLoginSchema), loginHandler)
 
 /**
  * @openapi
- * /api/v1/users/me:
+ * /api/v1/me:
  *   patch:
- *     summary: Editar perfil del usuario autenticado (SIN IMPLEMENTAR)
+ *     summary: Editar perfil del usuario autenticado - SIN IMPLEMENTAR
  *     description: Permite al usuario autenticado editar su propio perfil, incluyendo su email, nombre de usuario y contraseña. Requiere un token de acceso válido en el header Authorization.
  *     tags: [User]
  *     security:
@@ -300,7 +309,7 @@ router.post('/users/auth', loginHandler)
  *                 message:
  *                   type: string
  */
-router.patch('/users/me', isAuthenticated, userUpdateHandler)
+router.patch('/me', hasRole('any'), userUpdateHandler)
 
 /**
  * @openapi
@@ -342,13 +351,6 @@ router.patch('/users/me', isAuthenticated, userUpdateHandler)
  *                 message:
  *                   type: string
  */
-router.post('/users/auth/refresh', refreshTokenHandler)
-
-// router.get('/pois', isAuthenticated, (req, res) => {
-// 	res.json({
-// 		message:
-// 			'Ruta para listar todos los POIs asociados a un centro',
-// 	})
-// })
+router.post('/users/auth/refresh', hasRole('any'), refreshTokenHandler)
 
 export default router
