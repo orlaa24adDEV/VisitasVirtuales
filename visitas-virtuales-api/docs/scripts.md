@@ -12,7 +12,7 @@
 - **Insertar datos de prueba**
   > `npm run db:seed`
 - **Aplicar migraciones**
-  > `npm run db:migrate:dev`
+  > `npm run db:migrate`
 - **Detener base de datos**
   > `npm run db:down`
 - **Ver logs**
@@ -33,7 +33,7 @@
 ### Base de datos
 
 - **Aplicar migraciones**
-  > `npm run db:migrate:prod` (se ejecuta en cada arranque del contenedor de la API en producción)
+  > `npm run db:migrate` (se ejecuta en cada arranque del contenedor de la API en producción)
 
 ### Aplicación
 
@@ -47,3 +47,23 @@
   > `npm run deploy:prod:logs`
 - **Ver estado de contenedores**
   > `npm run deploy:prod:ps`
+
+## Staging
+
+### Base de datos
+
+- **Aplicar migraciones**
+  > `npm run db:migrate` (se ejecuta en cada arranque del contenedor de la API en staging)
+
+### Aplicación
+
+- **Iniciar la aplicación**
+  > `npm run deploy:stage:up`
+- **Detener la aplicación**
+  > `npm run deploy:stage:down`
+- **Reiniciar la aplicación**
+  > `npm run deploy:stage:restart`
+- **Ver logs**
+  > `npm run deploy:stage:logs`
+- **Ver estado de contenedores**
+  > `npm run deploy:stage:ps`

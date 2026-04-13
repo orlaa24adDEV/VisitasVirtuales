@@ -19,7 +19,7 @@ COPY . .
 ENV NODE_ENV=production
 
 # Exponer puerto de la aplicación
-EXPOSE 3000
+EXPOSE 8000
 
 # Ejecutar migraciones DB y PM2
 COPY docker-entrypoint.sh .
