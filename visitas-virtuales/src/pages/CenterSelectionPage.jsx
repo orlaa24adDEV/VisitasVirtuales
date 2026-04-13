@@ -12,10 +12,12 @@ export default function CenterSelectionPage() {
   const navigate = useNavigate();
   const { selectCenter } = useAuth();
 
+  const API_URL = 'http://localhost:5000/api/centers';
+
   useEffect(() => {
     const fetchCenters = async () => {
       try {
-        const response = await fetch('/api/centers');
+        const response = await fetch(API_URL);
         if (!response.ok) throw new Error('Error al cargar los centros');
         const data = await response.json();
         setCenters(data);

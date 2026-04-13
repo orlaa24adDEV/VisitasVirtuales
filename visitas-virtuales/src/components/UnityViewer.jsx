@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth.js';
 
 // TODO: cambiar a "true" cuando los archivos del build de Unity estén en el folder de unity-build
 //Revisa si tenemos archivos del build en Unity
-const UNITY_BUILD_LISTO = false;
+const UNITY_BUILD_LISTO = true;
 
 export default function UnityViewer() {
   // Obtenemos el centro seleccionado del contexto global
@@ -24,7 +24,7 @@ export default function UnityViewer() {
 
         // Crear el script del loader de Unity dinámicamente
         const script = document.createElement('script');
-        script.src = '/unity-build/NombreDelBuild.loader.js';
+        script.src = '/Built_Unity/Build/Built_Unity.loader.js';
 
         // Cuando el script termina de cargar, arrancamos Unity
         script.onload = () => {
@@ -32,9 +32,9 @@ export default function UnityViewer() {
             // createUnityInstance: función global que viene del loader.
             // Recibe: el canvas, los paths a los archivos del build, y un callback de progreso
             createUnityInstance(canvasRef.current, {
-                dataUrl:      '/unity-build/NombreDelBuild.data',
-                frameworkUrl: '/unity-build/NombreDelBuild.framework.js',
-                codeUrl:      '/unity-build/NombreDelBuild.wasm',
+                dataUrl:      '/Built_Unity/Build/Built_Unity.data',
+                frameworkUrl: '/Built_Unity/Build/Built_Unity.framework.js',
+                codeUrl:      '/Built_Unity/Build/Built_Unity.wasm',
             }, (progress) => {
                 console.log('Cargando Unity... ' + Math.round(progress * 100) + '%');
             })
