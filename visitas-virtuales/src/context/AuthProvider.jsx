@@ -32,9 +32,10 @@ export const AuthProvider = ({children}) => {
     };
 
     const isAdmin = user?.role === 'admin';
+    const isTeacher = user?.role === 'teacher';
 
     return (
-        <AuthContext.Provider value={{user, login, logout, selectedCenter, selectCenter, isAdmin}}>
+        <AuthContext.Provider value={{user, login, logout, selectedCenter, selectCenter, isAdmin, isTeacher}}>
             {children}
         </AuthContext.Provider>
     );
