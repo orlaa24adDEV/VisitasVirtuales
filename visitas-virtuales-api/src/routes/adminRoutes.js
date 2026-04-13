@@ -1,6 +1,13 @@
 import isAdmin from '../middlewares/isAdmin.js'
 import isAuthenticated from '../middlewares/isAuthenticated.js'
 import { Router } from 'express'
+import {
+    getPoisByCenterHandler,
+    createPoiHandler,
+    updatePoiHandler,
+    deletePoiHandler,
+    getPoiHistoryHandler,
+} from '../controllers/poiController.js'
 
 const router = Router()
 
@@ -81,12 +88,7 @@ router.patch('/users/:id/role', isAuthenticated, isAdmin, (req, res) => {
  *       403:
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
-router.post('/pois', isAuthenticated, isAdmin, (req, res) => {
-	res.json({
-		message:
-			'Ruta para crear un nuevo POI - solo accesible para administradores',
-	})
-})
+router.post('/pois', isAuthenticated, isAdmin, createPoiHandler)
 
 /**
  * @openapi
@@ -104,12 +106,7 @@ router.post('/pois', isAuthenticated, isAdmin, (req, res) => {
  *       403:
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
-router.get('/pois', isAuthenticated, isAdmin, (req, res) => {
-	res.json({
-		message:
-			'Ruta para listar todos los POIs - solo accesible para administradores',
-	})
-})
+router.get('/pois', isAuthenticated, isAdmin, getPoisByCenterHandler)
 
 /**
  * @openapi
@@ -145,11 +142,7 @@ router.get('/pois', isAuthenticated, isAdmin, (req, res) => {
  *       403:
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
-router.put('/pois/:id', isAuthenticated, isAdmin, (req, res) => {
-	res.json({
-		message: `Ruta para actualizar el POI con ID ${req.params.id} - solo accesible para administradores`,
-	})
-})
+router.put('/pois/:id', isAuthenticated, isAdmin, updatePoiHandler)
 
 /**
  * @openapi
@@ -174,10 +167,33 @@ router.put('/pois/:id', isAuthenticated, isAdmin, (req, res) => {
  *       403:
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
-router.delete('/pois/:id', isAuthenticated, isAdmin, (req, res) => {
-	res.json({
-		message: `Ruta para eliminar el POI con ID ${req.params.id} - solo accesible para administradores`,
-	})
-})
+router.delete('/pois/:id', isAuthenticated, isAdmin, deletePoiHandler)
+
+// ================================================================ //
+// ==== Historial de trazabilidad - accesible para autenticados ==== //
+// ================================================================ //
+
+/**
+ * @openapi
+ * /api/v1/pois/{id}/history:
+ *   get:
+ *     summary: Obtener el historial de cambios de un POI
+ *     tags: [POIs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del POI cuyo historial se quiere consultar
+ *     responses:
+ *       200:
+ *         description: Historial obtenido con éxito
+ *       401:
+ *         description: No se proporcionó un token de acceso
+ */
+router.get('/pois/:id/history', isAuthenticated, getPoiHistoryHandler)
 
 export default router
