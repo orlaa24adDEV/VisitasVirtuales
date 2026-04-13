@@ -12,6 +12,11 @@ const db = drizzle({ client: pool })
 
 async function main() {
 	try {
+		// Limpiar datos previos para poder ejecutar seed múltiples veces sin conflictos
+		await db.delete(pois)
+		await db.delete(users)
+		await db.delete(centers)
+
 		// Insertar centros de prueba primero
 		const mockCenters = [
 			{
@@ -36,9 +41,9 @@ async function main() {
 			.returning()
 
 		// Insertar usuarios de prueba
-		const adminPassword = await bcrypt.hash('admin123', 10)
-		const teacherPassword = await bcrypt.hash('prof123', 10)
-		const studentPassword = await bcrypt.hash('alumno123', 10)
+		const adminPassword = await bcrypt.hash('Admin123!', 10)
+		const teacherPassword = await bcrypt.hash('Profe123!', 10)
+		const studentPassword = await bcrypt.hash('Alumno123!', 10)
 
 		const mockUserData = [
 			{
@@ -111,7 +116,7 @@ async function main() {
 			.returning()
 
 		const usersByUsername = Object.fromEntries(
-			insertedUsers.map((u) => [u.username, u])
+			insertedUsers.map((u) => [u.username, u]),
 		)
 
 		// Insertar POIs de prueba

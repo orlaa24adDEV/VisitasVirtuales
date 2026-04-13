@@ -95,6 +95,10 @@ Se utiliza el ORM **Drizzle** para generar el schema y realizar migraciones a pa
 ## Datos de prueba
 
 Ejecuta `npm run db:seed` (tras generar y aplicar las migraciones) para insertar datos de prueba en la base de datos.
+> **Atención:** Esto eliminará cualquier información que hayas insertado de forma manual.
+
+Ejecuta `npm run db:studio` y accede a [https://local.drizzle.studio](https://local.drizzle.studio), la aplicación web de Drizzle Kit Studio,
+donde podras explorar y consultar la base de datos.
 
 > El historial de migraciones se encuentra en `./drizzle`.
 
@@ -104,14 +108,14 @@ Ejecuta `npm run db:seed` (tras generar y aplicar las migraciones) para insertar
 
 | email                         | username   | password  | role        | centro (ID ref)     |
 | :---------------------------- | :--------- | :-------- | :---------- | :------------------ |
-| **admin_mad@instituto.es**    | admin_mad  | admin123  | **admin**   | Instituto Madrid    |
-| **admin_bar@instituto.es**    | admin_bar  | admin123  | **admin**   | Instituto Barcelona |
-| **admin_sev@instituto.es**    | admin_sev  | admin123  | **admin**   | Instituto Sevilla   |
-| **profesor_mad@instituto.es** | prof_mad   | prof123   | **teacher** | Instituto Madrid    |
-| **profesor_bar@instituto.es** | prof_bar   | prof123   | **teacher** | Instituto Barcelona |
-| **profesor_sev@instituto.es** | prof_sev   | prof123   | **teacher** | Instituto Sevilla   |
-| **alumno_mad@instituto.es**   | alumno_mad | alumno123 | **student** | Instituto Madrid    |
-| **alumno_bar@instituto.es**   | alumno_bar | alumno123 | **student** | Instituto Barcelona |
-| **alumno_sev@instituto.es**   | alumno_sev | alumno123 | **student** | Instituto Sevilla   |
+| **admin_mad@instituto.es**    | admin_mad  | Admin123! | **admin**   | Instituto Madrid    |
+| **admin_bar@instituto.es**    | admin_bar  | Admin123! | **admin**   | Instituto Barcelona |
+| **admin_sev@instituto.es**    | admin_sev  | Admin123! | **admin**   | Instituto Sevilla   |
+| **profesor_mad@instituto.es** | prof_mad   | Profe123! | **teacher** | Instituto Madrid    |
+| **profesor_bar@instituto.es** | prof_bar   | Profe123! | **teacher** | Instituto Barcelona |
+| **profesor_sev@instituto.es** | prof_sev   | Profe123! | **teacher** | Instituto Sevilla   |
+| **alumno_mad@instituto.es**   | alumno_mad | Alumno123! | **student** | Instituto Madrid    |
+| **alumno_bar@instituto.es**   | alumno_bar | Alumno123! | **student** | Instituto Barcelona |
+| **alumno_sev@instituto.es**   | alumno_sev | Alumno123! | **student** | Instituto Sevilla   |
 
 Cada centro cuenta con POIs de prueba (Cafetería, Biblioteca, Aulas, etc.) asociados a usuarios creadores.
