@@ -1,11 +1,11 @@
 FROM node:25-slim
 
 WORKDIR /app
-# Instalar netcat 
-RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
+# Instalar netcat y psql
+RUN apt-get update && apt-get install -y netcat-openbsd postgresql-client && rm -rf /var/lib/apt/lists/*
 
-# Instalar PM2 globalmente para producción
-RUN npm install pm2 -g
+# Instalar P<2 y Drizzle Kit
+RUN npm install -g pm2 drizzle-kit tsx
 
 # Cachear dependencias para evitar reinstalarlas en cada build
 COPY package*.json ./
