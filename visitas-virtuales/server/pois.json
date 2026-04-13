@@ -41,6 +41,18 @@
       "centerId": "center-5",
       "name": "Laboratorio",
       "description": "oñiajsdogijoijasdgòiajsdgòijas`rgoijòigrj"
+    },
+    {
+      "id": "3",
+      "centerId": "center-1",
+      "name": "salida",
+      "description": "dfgjdfjdjdejdfghdfghdfhdf"
+    },
+    {
+      "id": "2",
+      "centerId": "center-2",
+      "name": "Entrada",
+      "description": "Esto es una entrada"
     }
   ]
 }
