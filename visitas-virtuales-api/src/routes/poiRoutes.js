@@ -38,12 +38,14 @@ export const router = Router()
  *         application/json:
  *           schema:
  *             type: object
- *             required: [name, description]
+ *             required: [name, details]
  *             properties:
  *               name:
  *                 type: string
- *               description:
- *                 type: string
+ *                 example: "POI de ejemplo"
+ *               details:
+ *                 type: object
+ *                 example: { "description": "Descripción del POI" }
  *     responses:
  *       200:
  *         description: POI creado con éxito

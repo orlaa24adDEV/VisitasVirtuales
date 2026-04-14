@@ -227,7 +227,7 @@ export type PoiSelectType = z.infer<typeof poiSelectSchema>;
 export const poiInsertSchema = createInsertSchema(pois);
 export type PoiInsertType = z.infer<typeof poiInsertSchema>;
 
-export const poiCreateSchema = poiInsertSchema.omit({ id: true });
+export const poiCreateSchema = poiInsertSchema.omit({ id: true, userId: true, centerId: true });
 export type PoiCreateType = z.infer<typeof poiCreateSchema>;
 
 export const poiDeleteSchema = z.object({

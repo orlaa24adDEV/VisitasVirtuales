@@ -176,12 +176,12 @@ router.get('/me', hasRole('any'), profileHandler)
  *                     type: string
  *                     maxLength: 120
  *                     format: email
- *                     example: 'alumno_mad@instituto.es'
+ *                     example: 'admin_mad@instituto.es'
  *                   password:
  *                     type: string
  *                     minLength: 8
  *                     maxLength: 32
- *                     example: 'Alumno123!'
+ *                     example: 'Admin123!'
  *               - type: object
  *                 required: [username, password]
  *                 properties:
@@ -189,12 +189,12 @@ router.get('/me', hasRole('any'), profileHandler)
  *                     type: string
  *                     minLength: 6
  *                     maxLength: 24
- *                     example: 'alumno_mad_2'
+ *                     example: 'admin_mad'
  *                   password:
  *                     type: string
  *                     minLength: 8
  *                     maxLength: 32
- *                     example: 'Alumno123!'
+ *                     example: 'Admin123!'
  *     responses:
  *       200:
  *         description: Usuario autenticado con éxito

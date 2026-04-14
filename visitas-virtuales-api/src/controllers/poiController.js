@@ -1,4 +1,5 @@
 import poiService from '../services/poiService.ts'
+import { env } from '../../env.ts'
 
 // Actualizar un POI existente
 export const updatePoiHandler = async (req,res) => {
@@ -19,7 +20,8 @@ export const getPoiHistoryHandler = async (req, res) => {
 
 export const newPoiHandler = async (req, res) => {
   const centerId = req.params.centerId;
-  const userId = req.user?.id;
+  const userId = req.user?.sub;
+  env.APP_STAGE === 'dev' && console.log('Creando POI para el centro con ID ' + centerId + ' por el usuario con ID ' + userId);
   await poiService.createPoi(centerId, userId, req.body);
   return res.json({ message: 'POI creado exitosamente' });
 }
@@ -35,7 +37,7 @@ export const poisByCenterHandler = async (req, res) => {
 
 export const poisByUserAndCenterHandler = async (req, res) => {
   const centerId = req.params.centerId;
-  const userId = req.user?.id;
+  const userId = req.user?.sub;
   const pois = await poiService.getPoisByUserAndCenter(userId, centerId);
   if (pois.length === 0) {
     return res.status(200).json({ message: 'No se encontraron POIs para el usuario con ID ' + userId + ' en el centro con ID ' + centerId, pois: [] });

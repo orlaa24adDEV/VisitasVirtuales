@@ -15,6 +15,18 @@ export const createPoi: (centerId: string, userId: string, poiData: PoiCreateTyp
     throw new ApiError(404, 'Centro no encontrado')
   }
 
+  const existingArr = await db
+    .select()
+    .from(pois)
+    .where(and(eq(pois.name, poiData.name), eq(pois.centerId, Number(centerId))))
+    .limit(1)
+
+  const existing = existingArr[0]
+
+  if (existing) {
+    throw new ApiError(409, 'Ya existe un POI con ese nombre en este centro')
+  }
+
   await db.insert(pois).values({
     name: poiData.name,
     details: poiData.details,
