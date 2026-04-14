@@ -1,9 +1,9 @@
 {
   "CENTERS": [
     {
-      "id_center": "centro-1",
-      "center_Name": "CENTRO 1",
-      "center_Description": "Sede de Sevilla.",
+      "centerId": "centro-1",
+      "centerName": "CENTRO 1",
+      "centerDescription": "Sede de Sevilla.",
       "POIs": [
         { "id": 1, "name": "Entrada ", "description": "Acceso principal al centro con control de seguridad y recepción.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
         { "id": 2, "name": "Recepción", "description": "Zona de atención al visitante e información general del centro.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
@@ -18,9 +18,9 @@
       ]
     },
     {
-      "id_center": "centro-2",
-      "center_Name": "CENTRO 2",
-      "center_Description": "Sede de Malaga.",
+      "centerId": "centro-2",
+      "centerName": "CENTRO 2",
+      "centerDescription": "Sede de Malaga.",
       "POIs": [
         { "id": 1, "name": "Entrada Principal", "description": "Acceso principal con tornos de seguridad y cámeras de vigilancia.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
         { "id": 2, "name": "Secretaría", "description": "Oficina administrativa para gestión de matrículas y documentación.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
@@ -35,9 +35,9 @@
       ]
     },
     {
-      "id_center": "centro-3",
-      "center_Name": "CENTRO 3",
-      "center_Description": "Sede de Madrid.",
+      "centerId": "centro-3",
+      "centerName": "CENTRO 3",
+      "centerDescription": "Sede de Madrid.",
       "POIs": [
         { "id": 1, "name": "Entrada Principal", "description": "Puerta de acceso principal con vigilancia y sistema de tarjetas.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
         { "id": 2, "name": "Conserjería", "description": "Punto de control de acceso y entrega de comunicados.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
@@ -52,9 +52,9 @@
       ]
     },
     {
-      "id_center": "centro-4",
-      "center_Name": "CENTRO 4",
-      "center_Description": "Sede de Cadiz.",
+      "centerId": "centro-4",
+      "centerName": "CENTRO 4",
+      "centerDescription": "Sede de Cadiz.",
       "POIs": [
         { "id": 1, "name": "Entrada Principal", "description": "Acceso principal con aparcamiento para bicicletas y motos.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
         { "id": 2, "name": "Recepción", "description": "Mostrador de bienvenida con información sobre ciclos y horarios.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
@@ -69,9 +69,9 @@
       ]
     },
     {
-      "id_center": "centro-5",
-      "center_Name": "CENTRO 5",
-      "center_Description": "Sede de Almeria.",
+      "centerId": "centro-5",
+      "centerName": "CENTRO 5",
+      "centerDescription": "Sede de Almeria.",
       "POIs": [
         { "id": 1, "name": "Entrada Principal", "description": "Acceso principal con rampa de accesibilidad y portero automático.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
         { "id": 2, "name": "Secretaría", "description": "Gestión de expedientes, certificados y trámites administrativos.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
