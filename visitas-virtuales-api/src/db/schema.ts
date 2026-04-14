@@ -151,8 +151,6 @@ export type Poi = typeof pois.$inferSelect
 export type Stat = typeof stats.$inferSelect
 
 /* Exportar schemas para validación datos recibido en endpoints */
-const EMAIL_PATTERN =
-	/^(?=.{1,120}$)(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 const USERNAME_PATTERN = /^[a-zA-Z0-9_]{6,24}$/
 const PASSWORD_PATTERN =
 	/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,32}$/
@@ -166,10 +164,7 @@ export type UserInsertType = z.infer<typeof userInsertSchema>;
 export const userRegisterBaseSchema = createInsertSchema(users).pick({ email: true, username: true, password: true });
 
 export const userRegisterSchema = userRegisterBaseSchema.safeExtend({
-	email: userRegisterBaseSchema.shape.email.refine(
-		(email) => EMAIL_PATTERN.test(email),
-		'El email proporcionado no tiene un formato válido',
-	),
+	email: z.email(),
 	username: userRegisterBaseSchema.shape.username.refine(
 		(username) => USERNAME_PATTERN.test(username),
 		'El nombre de usuario debe tener entre 6 y 24 caracteres y solo puede contener letras, números y guiones bajos',
@@ -191,10 +186,7 @@ const userLoginBaseSchema = createSelectSchema(users)
 	)
 
 export const userLoginSchema = userLoginBaseSchema.safeExtend({
-	email: userLoginBaseSchema.shape.email.refine(
-		(email) => !email || EMAIL_PATTERN.test(email),
-		'El email proporcionado no tiene un formato válido',
-	),
+	email: z.email(),
 	username: userLoginBaseSchema.shape.username.refine(
 		(username) => !username || USERNAME_PATTERN.test(username),
 		'Credenciales inválidas',
