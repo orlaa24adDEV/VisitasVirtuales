@@ -231,6 +231,6 @@ export const poiCreateSchema = poiInsertSchema.omit({ id: true, userId: true, ce
 export type PoiCreateType = z.infer<typeof poiCreateSchema>;
 
 export const poiDeleteSchema = z.object({
-	centerId: z.number().int().positive(),
-	poiId: z.number().int().positive(),
+	centerId: z.coerce.number().int().positive(),
+	poiId: z.coerce.number().int().positive(),
 })

@@ -7,7 +7,7 @@ import {
 	poisByCenterAndFuzzyNameHandler,
 	updatePoiHandler,
 } from '../controllers/poiController.js'
-import { validateBody } from '../middlewares/validation.ts'
+import { validateBody, validateParams } from '../middlewares/validation.ts'
 import { poiCreateSchema, poiDeleteSchema } from '../db/schema.ts'
 
 export const router = Router()
@@ -182,7 +182,7 @@ router.put('/centers/:centerId/pois/:id', hasRoles(['admin', 'teacher']), update
 router.delete(
 	'/centers/:centerId/pois/:poiId',
 	hasRoles(['admin', 'teacher']),
-	validateBody(poiDeleteSchema),
+	validateParams(poiDeleteSchema),
 	deletePoiHandler,
 )
 
