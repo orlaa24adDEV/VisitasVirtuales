@@ -1,6 +1,7 @@
-import isAdmin from '../middlewares/isAdmin.js'
-import isAuthenticated from '../middlewares/isAuthenticated.js'
+import hasRole from '../middlewares/hasRole.ts'
+import { UserRoleEditSchema } from '../db/schema.ts'
 import { Router } from 'express'
+import { validateBody } from '../middlewares/validation.ts'
 
 const router = Router()
 
@@ -11,8 +12,8 @@ const router = Router()
 /**
  * @openapi
  * /api/v1/users/{id}/role:
- *   put:
- *     summary: Cambiar el rol de un usuario (solo para administradores) (SIN IMPLEMENTAR)
+ *   patch:
+ *     summary: Cambiar el rol de un usuario (solo para administradores) - SIN IMPLEMENTAR
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
@@ -44,140 +45,11 @@ const router = Router()
  *       403:
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
-router.put('/users/:id/role', isAuthenticated, isAdmin, (req, res) => {
+router.patch('/users/:id/role', hasRole('admin'), validateBody(UserRoleEditSchema), (req, res) => {
 	res.json({
 		message: `Ruta para cambiar el rol del usuario con ID ${req.params.id} - solo accesible para administradores`,
 	})
 })
 
-// ============================================================ //
-// ==== CRUD de POIs - solo accesible para administradores ==== //
-// ============================================================ //
-
-/**
- * @openapi
- * /api/v1/admin/pois:
- *   post:
- *     summary: Crear un nuevo POI (solo para administradores) (SIN IMPLEMENTAR)
- *     tags: [POIs]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *     responses:
- *       200:
- *         description: POI creado con éxito
- *       401:
- *         description: No se proporcionó un token de acceso
- *       403:
- *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
- */
-router.post('/pois', isAuthenticated, isAdmin, (req, res) => {
-	res.json({
-		message:
-			'Ruta para crear un nuevo POI - solo accesible para administradores',
-	})
-})
-
-/**
- * @openapi
- * /api/v1/pois:
- *   get:
- *     summary: Listar todos los POIs (solo para administradores) (SIN IMPLEMENTAR)
- *     tags: [POIs]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Lista de POIs obtenida con éxito
- *       401:
- *         description: No se proporcionó un token de acceso
- *       403:
- *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
- */
-router.get('/pois', isAuthenticated, isAdmin, (req, res) => {
-	res.json({
-		message:
-			'Ruta para listar todos los POIs - solo accesible para administradores',
-	})
-})
-
-/**
- * @openapi
- * /api/v1/admin/pois/{id}:
- *   put:
- *     summary: Actualizar un POI existente (solo para administradores) (SIN IMPLEMENTAR)
- *     tags: [POIs]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID del POI a actualizar
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *     responses:
- *       200:
- *         description: POI actualizado con éxito
- *       401:
- *         description: No se proporcionó un token de acceso
- *       403:
- *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
- */
-router.put('/pois/:id', isAuthenticated, isAdmin, (req, res) => {
-	res.json({
-		message: `Ruta para actualizar el POI con ID ${req.params.id} - solo accesible para administradores`,
-	})
-})
-
-/**
- * @openapi
- * /api/v1/admin/pois/{id}:
- *   delete:
- *     summary: Eliminar un POI existente (solo para administradores) (SIN IMPLEMENTAR)
- *     tags: [POIs]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID del POI a eliminar
- *     responses:
- *       200:
- *         description: POI eliminado con éxito
- *       401:
- *         description: No se proporcionó un token de acceso
- *       403:
- *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
- */
-router.delete('/pois/:id', isAuthenticated, isAdmin, (req, res) => {
-	res.json({
-		message: `Ruta para eliminar el POI con ID ${req.params.id} - solo accesible para administradores`,
-	})
-})
 
 export default router

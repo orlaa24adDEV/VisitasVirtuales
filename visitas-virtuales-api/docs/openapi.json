@@ -19,9 +19,9 @@
     }
   ],
   "paths": {
-    "/admin/users/{id}/role": {
-      "put": {
-        "summary": "Cambiar el rol de un usuario (solo para administradores)",
+    "/api/v1/users/{id}/role": {
+      "patch": {
+        "summary": "Cambiar el rol de un usuario (solo para administradores) - SIN IMPLEMENTAR",
         "tags": [
           "Admin"
         ],
@@ -51,9 +51,11 @@
                   "role": {
                     "type": "string",
                     "enum": [
-                      "user",
-                      "admin"
-                    ]
+                      "admin",
+                      "teacher",
+                      "student"
+                    ],
+                    "description": "Nuevo rol para el usuario"
                   }
                 }
               }
@@ -76,9 +78,10 @@
         }
       }
     },
-    "/admin/pois": {
+    "/api/v1/centers/{centerId}/pois": {
       "post": {
-        "summary": "Crear un nuevo POI (solo para administradores)",
+        "summary": "Crear un nuevo POI para un centro específico (solo para administradores o profesores)",
+        "description": "Esta ruta permite a los administradores o profesores crear un nuevo POI asociado a un centro específico. El ID del centro se proporciona como parámetro en la URL, y los detalles del POI, en formato JSON, se incluyen en el cuerpo de la solicitud.",
         "tags": [
           "POIs"
         ],
@@ -87,12 +90,27 @@
             "bearerAuth": []
           }
         ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "centerId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del centro al que se asociará el nuevo POI"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "name",
+                  "description"
+                ],
                 "properties": {
                   "name": {
                     "type": "string"
@@ -113,18 +131,30 @@
             "description": "No se proporcionó un token de acceso"
           },
           "403": {
-            "description": "El token proporcionado no es válido o el usuario no tiene permisos de administrador"
+            "description": "Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso"
           }
         }
       },
       "get": {
-        "summary": "Listar todos los POIs (solo para administradores)",
+        "summary": "Listar todos los POIs de un centro específico",
+        "description": "Esta ruta permite a los usuarios obtener una lista de todos los POIs asociados a un centro específico. El ID del centro se proporciona como parámetro en la URL.",
         "tags": [
           "POIs"
         ],
         "security": [
           {
             "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "centerId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del centro del cual se desean obtener los POIs"
           }
         ],
         "responses": {
@@ -135,14 +165,59 @@
             "description": "No se proporcionó un token de acceso"
           },
           "403": {
-            "description": "El token proporcionado no es válido o el usuario no tiene permisos de administrador"
+            "description": "Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso"
           }
         }
       }
     },
-    "/admin/pois/{id}": {
+    "/api/v1/centers/{centerId}/pois/search": {
+      "get": {
+        "summary": "Buscar POIs por nombre parcial dentro de un centro específico",
+        "description": "Esta ruta permite a los usuarios buscar POIs dentro de un centro específico utilizando un nombre parcial. El ID del centro se proporciona como parámetro en la URL, y el nombre parcial se pasa como un query parameter.",
+        "tags": [
+          "POIs"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "centerId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del centro en el que se realizará la búsqueda de POIs"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Nombre parcial para buscar POIs dentro del centro especificado"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de POIs que coinciden con el nombre parcial obtenida con éxito"
+          },
+          "401": {
+            "description": "No se proporcionó un token de acceso"
+          },
+          "403": {
+            "description": "Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso"
+          }
+        }
+      }
+    },
+    "/api/v1/centers/{id}/pois/{id}": {
       "put": {
-        "summary": "Actualizar un POI existente (solo para administradores)",
+        "summary": "Actualizar un POI existente (solo para administradores o profesores)",
         "tags": [
           "POIs"
         ],
@@ -172,7 +247,7 @@
                   "name": {
                     "type": "string"
                   },
-                  "description": {
+                  "details": {
                     "type": "string"
                   }
                 }
@@ -188,12 +263,14 @@
             "description": "No se proporcionó un token de acceso"
           },
           "403": {
-            "description": "El token proporcionado no es válido o el usuario no tiene permisos de administrador"
+            "description": "Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso"
           }
         }
-      },
+      }
+    },
+    "/api/v1/centers/{centerId}/pois/{id}": {
       "delete": {
-        "summary": "Eliminar un POI existente (solo para administradores)",
+        "summary": "Eliminar un POI existente en un centro específico (solo para administradores o profesores)",
         "tags": [
           "POIs"
         ],
@@ -203,6 +280,15 @@
           }
         ],
         "parameters": [
+          {
+            "in": "path",
+            "name": "centerId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del centro al que pertenece el POI"
+          },
           {
             "in": "path",
             "name": "id",
@@ -221,7 +307,7 @@
             "description": "No se proporcionó un token de acceso"
           },
           "403": {
-            "description": "El token proporcionado no es válido o el usuario no tiene permisos de administrador"
+            "description": "Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso"
           }
         }
       }
@@ -229,7 +315,7 @@
     "/api/v1/users": {
       "post": {
         "summary": "Registrar nuevo usuario",
-        "description": "Registra un nuevo usuario con email, nombre de usuario y contraseña. Al primer usuario registrado se le asignará automáticamente el rol de \"admin\", mientras que los siguientes usuarios registrados tendrán el rol de \"user\". Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.",
+        "description": "Registra un nuevo usuario con email, nombre de usuario, contraseña e ID del centro. Al primer usuario registrado se le asignará automáticamente el rol de \"admin\", mientras que los siguientes usuarios registrados tendrán el rol de \"student\". Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.",
         "tags": [
           "User"
         ],
@@ -240,19 +326,34 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "username",
                   "email",
-                  "password"
+                  "username",
+                  "password",
+                  "centerId"
                 ],
                 "properties": {
-                  "username": {
-                    "type": "string"
-                  },
                   "email": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 120,
+                    "format": "email",
+                    "example": "alumno_mad_2@instituto.es"
+                  },
+                  "username": {
+                    "type": "string",
+                    "minLength": 6,
+                    "maxLength": 24,
+                    "example": "alumno_mad_2"
                   },
                   "password": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 32,
+                    "example": "Alumno123!"
+                  },
+                  "centerId": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 1
                   }
                 }
               }
@@ -260,13 +361,16 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Usuario registrado con éxito",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "message": {
+                      "type": "string"
+                    },
                     "accessToken": {
                       "type": "string"
                     }
@@ -276,7 +380,7 @@
             }
           },
           "400": {
-            "description": "Email, nombre de usuario o contraseña no proporcionados",
+            "description": "Email, nombre de usuario, contraseña o centro no proporcionados, o con formato no válido",
             "content": {
               "application/json": {
                 "schema": {
@@ -321,10 +425,118 @@
             }
           }
         }
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "summary": "Obtener perfil del usuario autenticado",
+        "description": "Devuelve el perfil del usuario autenticado. Requiere un token de acceso válido en el header Authorization.",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Perfil del usuario obtenido con éxito",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "profile": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de acceso no proporcionado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token de acceso inválido o expirado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario no encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor al obtener el perfil del usuario",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
-      "put": {
-        "summary": "Editar perfil del usuario autenticado",
-        "description": "Permite al usuario autenticado editar su propio perfil, incluyendo su nombre de usuario y contraseña. Requiere un token de acceso válido en el header Authorization.",
+      "patch": {
+        "summary": "Editar perfil del usuario autenticado - SIN IMPLEMENTAR",
+        "description": "Permite al usuario autenticado editar su propio perfil, incluyendo su email, nombre de usuario y contraseña. Requiere un token de acceso válido en el header Authorization.",
         "tags": [
           "User"
         ],
@@ -346,10 +558,10 @@
                   "currentPassword": {
                     "type": "string"
                   },
-                  "username": {
+                  "email": {
                     "type": "string"
                   },
-                  "email": {
+                  "username": {
                     "type": "string"
                   },
                   "newPassword": {
@@ -392,7 +604,7 @@
             }
           },
           "401": {
-            "description": "Token de acceso no proporcionado o inválido",
+            "description": "Token de acceso no proporcionado",
             "content": {
               "application/json": {
                 "schema": {
@@ -407,7 +619,7 @@
             }
           },
           "403": {
-            "description": "Usuario autenticado no tiene permiso para actualizar este usuario",
+            "description": "Token de acceso inválido o expirado",
             "content": {
               "application/json": {
                 "schema": {
@@ -439,65 +651,10 @@
         }
       }
     },
-    "/api/v1/me": {
-      "get": {
-        "summary": "Obtener perfil del usuario autenticado",
-        "description": "Devuelve el perfil del usuario autenticado. Requiere un token de acceso válido en el header Authorization.",
-        "tags": [
-          "User"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Perfil del usuario obtenido con éxito",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "username": {
-                      "type": "string"
-                    },
-                    "email": {
-                      "type": "string"
-                    },
-                    "role": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Token de acceso no proporcionado o inválido",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/users/auth": {
       "post": {
         "summary": "Iniciar sesión de usuario",
-        "description": "Permite a un usuario iniciar sesión utilizando su email junto con su contraseña. Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.",
+        "description": "Permite a un usuario iniciar sesión utilizando su email o su nombre de usuario junto con su contraseña. Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.",
         "tags": [
           "User"
         ],
@@ -506,19 +663,50 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "email",
-                  "password"
-                ],
-                "properties": {
-                  "email": {
-                    "type": "string"
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "email",
+                      "password"
+                    ],
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "format": "email",
+                        "example": "alumno_mad@instituto.es"
+                      },
+                      "password": {
+                        "type": "string",
+                        "minLength": 8,
+                        "maxLength": 32,
+                        "example": "Alumno123!"
+                      }
+                    }
                   },
-                  "password": {
-                    "type": "string"
+                  {
+                    "type": "object",
+                    "required": [
+                      "username",
+                      "password"
+                    ],
+                    "properties": {
+                      "username": {
+                        "type": "string",
+                        "minLength": 6,
+                        "maxLength": 24,
+                        "example": "alumno_mad_2"
+                      },
+                      "password": {
+                        "type": "string",
+                        "minLength": 8,
+                        "maxLength": 32,
+                        "example": "Alumno123!"
+                      }
+                    }
                   }
-                }
+                ]
               }
             }
           }
@@ -531,6 +719,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "message": {
+                      "type": "string"
+                    },
                     "accessToken": {
                       "type": "string"
                     }
@@ -540,7 +731,7 @@
             }
           },
           "400": {
-            "description": "Formato de solicitud no válido",
+            "description": "Formato de solicitud no válido o campos requeridos no proporcionados",
             "content": {
               "application/json": {
                 "schema": {
@@ -590,7 +781,7 @@
     "/api/v1/users/auth/refresh": {
       "post": {
         "summary": "Renovar tokens",
-        "description": "Permite a un usuario renovar sus tokens de acceso y actualización utilizando un token de actualización válido. El nuevo token de acceso se devuelve en la respuesta, mientras que el nuevo token de actualización se envía al cliente en una cookie HTTP-only.",
+        "description": "Permite a un usuario renovar sus tokens utilizando un token de actualización válido. Devuelve un nuevo token de acceso en la respuesta y asigna un nuevo token de actualización en una cookie HTTP-only.",
         "tags": [
           "User"
         ],
@@ -607,6 +798,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "message": {
+                      "type": "string"
+                    },
                     "accessToken": {
                       "type": "string"
                     }
@@ -616,7 +810,7 @@
             }
           },
           "401": {
-            "description": "No se proporcionó un token de actualización",
+            "description": "Token de actualización no proporcionado",
             "content": {
               "application/json": {
                 "schema": {
@@ -631,7 +825,7 @@
             }
           },
           "403": {
-            "description": "El token de actualización proporcionado es inválido o ha expirado",
+            "description": "Token de actualización inválido o expirado",
             "content": {
               "application/json": {
                 "schema": {

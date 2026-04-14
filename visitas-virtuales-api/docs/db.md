@@ -15,7 +15,7 @@ Se utiliza el ORM **Drizzle** para generar el schema y realizar migraciones a pa
 
 ## `users` (Usuarios)
 
-**Cada usuario pertenece a un centro y tiene un rol que le otorga diferentes permisos** (_admin_, _teacher_ o _student_)
+**Cada usuario tiene un rol que le otorga diferentes permisos** (_admin_, _teacher_ o _student_)
 
 | Campo         | Tipo       | Restricciones                                    |
 | :------------ | :--------- | :----------------------------------------------- |
@@ -24,10 +24,12 @@ Se utiliza el ORM **Drizzle** para generar el schema y realizar migraciones a pa
 | **username**  | TEXT       | NOT NULL, UNIQUE                                 |
 | **password**  | TEXT       | NOT NULL                                         |
 | **role**      | user_roles | NOT NULL, DEFAULT 'student',                     |
-| **center_id** | INTEGER    | NOT NULL, FK -> `centers(id)`, ON DELETE CASCADE |
 
-> Por defecto, los usuarios tendrán el rol de _student_, a excepción del primer usuario insertado en la base de datos que recibirá el rol de admin.
+> Por defecto, los usuarios tendrán el rol de _student_, a excepción del primer usuario insertado en la base de datos que recibirá el rol de _admin_.
+ Estos usuarios no están asociados a ningún centro en particular.
+
 > Los administradores se encargarán de entregar a los profesores sus correspondientes roles.
+
 
 ## `pois` (POIs)
 
@@ -41,8 +43,10 @@ Se utiliza el ORM **Drizzle** para generar el schema y realizar migraciones a pa
 | **user_id**   | INTEGER | NOT NULL, FK -> `users(id)`, ON DELETE CASCADE   |
 | **center_id** | INTEGER | NOT NULL, FK -> `centers(id)`, ON DELETE CASCADE |
 
-> Restricción de unicidad compuesta: `UNIQUE(name, center_id)`.
-> No pueden existir dos POIs con el mismo nombre dentro de un mismo centro.
+> Restricción de unicidad compuesta: `UNIQUE(name, center_id)`. No pueden existir dos POIs con el mismo nombre dentro de un mismo centro.
+
+> Los POIs son accesibles para todos los usuarios registrados.
+
 
 ## `stats` (Historial_Logs)
 
@@ -95,6 +99,10 @@ Se utiliza el ORM **Drizzle** para generar el schema y realizar migraciones a pa
 ## Datos de prueba
 
 Ejecuta `npm run db:seed` (tras generar y aplicar las migraciones) para insertar datos de prueba en la base de datos.
+> **Atención:** Esto eliminará cualquier información que hayas insertado de forma manual.
+
+Ejecuta `npm run db:studio` y accede a [https://local.drizzle.studio](https://local.drizzle.studio), la aplicación web de Drizzle Kit Studio,
+donde podras explorar y consultar la base de datos.
 
 > El historial de migraciones se encuentra en `./drizzle`.
 
@@ -102,16 +110,16 @@ Ejecuta `npm run db:seed` (tras generar y aplicar las migraciones) para insertar
 
 ### Usuarios de prueba
 
-| email                         | username   | password  | role        | centro (ID ref)     |
-| :---------------------------- | :--------- | :-------- | :---------- | :------------------ |
-| **admin_mad@instituto.es**    | admin_mad  | admin123  | **admin**   | Instituto Madrid    |
-| **admin_bar@instituto.es**    | admin_bar  | admin123  | **admin**   | Instituto Barcelona |
-| **admin_sev@instituto.es**    | admin_sev  | admin123  | **admin**   | Instituto Sevilla   |
-| **profesor_mad@instituto.es** | prof_mad   | prof123   | **teacher** | Instituto Madrid    |
-| **profesor_bar@instituto.es** | prof_bar   | prof123   | **teacher** | Instituto Barcelona |
-| **profesor_sev@instituto.es** | prof_sev   | prof123   | **teacher** | Instituto Sevilla   |
-| **alumno_mad@instituto.es**   | alumno_mad | alumno123 | **student** | Instituto Madrid    |
-| **alumno_bar@instituto.es**   | alumno_bar | alumno123 | **student** | Instituto Barcelona |
-| **alumno_sev@instituto.es**   | alumno_sev | alumno123 | **student** | Instituto Sevilla   |
+| email                         | username   | password  | role        | 
+| :---------------------------- | :--------- | :-------- | :---------- | 
+| **admin_mad@instituto.es**    | admin_mad  | Admin123! | **admin**   |
+| **admin_bar@instituto.es**    | admin_bar  | Admin123! | **admin**   | 
+| **admin_sev@instituto.es**    | admin_sev  | Admin123! | **admin**   | 
+| **profesor_mad@instituto.es** | prof_mad   | Profe123! | **teacher** |
+| **profesor_bar@instituto.es** | prof_bar   | Profe123! | **teacher** | 
+| **profesor_sev@instituto.es** | prof_sev   | Profe123! | **teacher** |
+| **alumno_mad@instituto.es**   | alumno_mad | Alumno123! | **student** |
+| **alumno_bar@instituto.es**   | alumno_bar | Alumno123! | **student** |
+| **alumno_sev@instituto.es**   | alumno_sev | Alumno123! | **student** | 
 
 Cada centro cuenta con POIs de prueba (Cafetería, Biblioteca, Aulas, etc.) asociados a usuarios creadores.

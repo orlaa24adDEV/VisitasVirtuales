@@ -6,7 +6,9 @@ import {
 	refreshTokenHandler,
 	profileHandler,
 } from '../controllers/userController.js'
-import isAuthenticated from '../middlewares/isAuthenticated.js'
+import { userLoginSchema, userRegisterSchema } from '../db/schema.ts'
+import { validateBody } from '../middlewares/validation.ts'
+import hasRole from '../middlewares/hasRole.ts'
 const router = Router()
 
 /**
@@ -14,7 +16,7 @@ const router = Router()
  * /api/v1/users:
  *   post:
  *     summary: Registrar nuevo usuario
- *     description: Registra un nuevo usuario con email, nombre de usuario, contraseña e id del centro. Al primer usuario registrado se le asignará automáticamente el rol de "admin", mientras que los siguientes usuarios registrados tendrán el rol de "student". Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.
+ *     description: Registra un nuevo usuario con email, nombre de usuario, contraseña e ID del centro. Al primer usuario registrado se le asignará automáticamente el rol de "admin", mientras que los siguientes usuarios registrados tendrán el rol de "student". Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.
  *     tags: [User]
  *     requestBody:
  *       required: true
@@ -22,25 +24,27 @@ const router = Router()
  *         application/json:
  *           schema:
  *             type: object
- *             required: [username, email, password, centerId]
+ *             required: [email, username, password, centerId]
  *             properties:
- *               username:
- *                 type: string
- *                 minLength: 6
- *                 maxLength: 24
- *                 pattern: '^[a-zA-Z0-9_]{6,24}$'
  *               email:
  *                 type: string
  *                 maxLength: 120
  *                 format: email
+ *                 example: 'alumno_mad_2@instituto.es'
+ *               username:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 24
+ *                 example: 'alumno_mad_2'
  *               password:
  *                 type: string
  *                 minLength: 8
  *                 maxLength: 32
- *                 pattern: '^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,32}$'
+ *                 example: 'Alumno123!'
  *               centerId:
  *                 type: integer
  *                 minimum: 1
+ *                 example: 1
  *     responses:
  *       201:
  *         description: Usuario registrado con éxito
@@ -51,7 +55,7 @@ const router = Router()
  *               properties:
  *                 message:
  *                   type: string
- *                 tokens:
+ *                 accessToken:
  *                   type: string
  *       400:
  *         description: Email, nombre de usuario, contraseña o centro no proporcionados, o con formato no válido
@@ -81,7 +85,7 @@ const router = Router()
  *                 message:
  *                   type: string
  */
-router.post('/users', registerHandler)
+router.post('/users', validateBody(userRegisterSchema), registerHandler)
 
 /**
  * @openapi
@@ -107,14 +111,23 @@ router.post('/users', registerHandler)
  *                   properties:
  *                     id:
  *                       type: integer
- *                     username:
- *                       type: string
  *                     email:
+ *                       type: string
+ *                     username:
  *                       type: string
  *                     role:
  *                       type: string
  *       401:
- *         description: Token de acceso no proporcionado o inválido
+ *         description: Token de acceso no proporcionado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       403:
+ *         description: Token de acceso inválido o expirado
  *         content:
  *           application/json:
  *             schema:
@@ -141,7 +154,7 @@ router.post('/users', registerHandler)
  *                 message:
  *                   type: string
  */
-router.get('/me', isAuthenticated, profileHandler)
+router.get('/me', hasRole('any'), profileHandler)
 
 /**
  * @openapi
@@ -155,22 +168,33 @@ router.get('/me', isAuthenticated, profileHandler)
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             anyOf:
- *               - required: [email, password]
- *               - required: [username, password]
- *             properties:
- *               email:
- *                 type: string
- *                 maxLength: 120
- *                 format: email
- *               username:
- *                 type: string
- *                 minLength: 1
- *                 maxLength: 24
- *               password:
- *                 type: string
- *                 maxLength: 32
+ *             oneOf:
+ *               - type: object
+ *                 required: [email, password]
+ *                 properties:
+ *                   email:
+ *                     type: string
+ *                     maxLength: 120
+ *                     format: email
+ *                     example: 'alumno_mad@instituto.es'
+ *                   password:
+ *                     type: string
+ *                     minLength: 8
+ *                     maxLength: 32
+ *                     example: 'Alumno123!'
+ *               - type: object
+ *                 required: [username, password]
+ *                 properties:
+ *                   username:
+ *                     type: string
+ *                     minLength: 6
+ *                     maxLength: 24
+ *                     example: 'alumno_mad_2'
+ *                   password:
+ *                     type: string
+ *                     minLength: 8
+ *                     maxLength: 32
+ *                     example: 'Alumno123!'
  *     responses:
  *       200:
  *         description: Usuario autenticado con éxito
@@ -211,14 +235,14 @@ router.get('/me', isAuthenticated, profileHandler)
  *                 message:
  *                   type: string
  */
-router.post('/users/auth', loginHandler)
+router.post('/users/auth', validateBody(userLoginSchema), loginHandler)
 
 /**
  * @openapi
- * /api/v1/users:
- *   put:
- *     summary: Editar perfil del usuario autenticado (SIN IMPLEMENTAR)
- *     description: Permite al usuario autenticado editar su propio perfil, incluyendo su nombre de usuario y contraseña. Requiere un token de acceso válido en el header Authorization.
+ * /api/v1/me:
+ *   patch:
+ *     summary: Editar perfil del usuario autenticado - SIN IMPLEMENTAR
+ *     description: Permite al usuario autenticado editar su propio perfil, incluyendo su email, nombre de usuario y contraseña. Requiere un token de acceso válido en el header Authorization.
  *     tags: [User]
  *     security:
  *       - bearerAuth: []
@@ -232,9 +256,9 @@ router.post('/users/auth', loginHandler)
  *             properties:
  *               currentPassword:
  *                 type: string
- *               username:
- *                 type: string
  *               email:
+ *                 type: string
+ *               username:
  *                 type: string
  *               newPassword:
  *                 type: string
@@ -258,7 +282,7 @@ router.post('/users/auth', loginHandler)
  *                 message:
  *                   type: string
  *       401:
- *         description: Token de acceso no proporcionado o inválido
+ *         description: Token de acceso no proporcionado
  *         content:
  *           application/json:
  *             schema:
@@ -267,7 +291,7 @@ router.post('/users/auth', loginHandler)
  *                 message:
  *                   type: string
  *       403:
- *         description: Usuario autenticado no tiene permiso para actualizar este usuario
+ *         description: Token de acceso inválido o expirado
  *         content:
  *           application/json:
  *             schema:
@@ -285,14 +309,14 @@ router.post('/users/auth', loginHandler)
  *                 message:
  *                   type: string
  */
-router.put('/users/:id', isAuthenticated, userUpdateHandler)
+router.patch('/me', hasRole('any'), userUpdateHandler)
 
 /**
  * @openapi
  * /api/v1/users/auth/refresh:
  *   post:
  *     summary: Renovar tokens
- *     description: Permite a un usuario renovar sus tokens de acceso y actualización utilizando un token de actualización válido. El nuevo token de acceso se devuelve en la respuesta, mientras que el nuevo token de actualización se envía al cliente en una cookie HTTP-only.
+ *     description: Permite a un usuario renovar sus tokens utilizando un token de actualización válido. Devuelve un nuevo token de acceso en la respuesta y asigna un nuevo token de actualización en una cookie HTTP-only.
  *     tags: [User]
  *     security:
  *       - cookieAuth: []
@@ -304,10 +328,12 @@ router.put('/users/:id', isAuthenticated, userUpdateHandler)
  *             schema:
  *               type: object
  *               properties:
+ *                 message:
+ *                   type: string
  *                 accessToken:
  *                   type: string
  *       401:
- *         description: No se proporcionó un token de actualización
+ *         description: Token de actualización no proporcionado
  *         content:
  *           application/json:
  *             schema:
@@ -316,7 +342,7 @@ router.put('/users/:id', isAuthenticated, userUpdateHandler)
  *                 message:
  *                   type: string
  *       403:
- *         description: El token de actualización proporcionado es inválido o ha expirado
+ *         description: Token de actualización inválido o expirado
  *         content:
  *           application/json:
  *             schema:
@@ -325,13 +351,6 @@ router.put('/users/:id', isAuthenticated, userUpdateHandler)
  *                 message:
  *                   type: string
  */
-router.post('/users/auth/refresh', refreshTokenHandler)
-
-// router.get('/pois', isAuthenticated, (req, res) => {
-// 	res.json({
-// 		message:
-// 			'Ruta para listar todos los POIs asociados a un centro',
-// 	})
-// })
+router.post('/users/auth/refresh', hasRole('any'), refreshTokenHandler)
 
 export default router
