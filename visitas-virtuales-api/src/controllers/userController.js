@@ -1,7 +1,7 @@
 import { generateAccessToken, generateRefreshToken } from '../helpers/jwt.js'
 import { verifyToken } from '../helpers/jwt.js'
 import { getHttpOnlyCookieOptions } from '../helpers/cookies.js'
-import userService from '../services/userService.js'
+import userService from '../services/userService.ts'
 import { env } from '../../env.ts'
 
 /**
@@ -76,7 +76,7 @@ export const refreshTokenHandler = async (req, res) => {
 		// Adicionalmente, renovar el token de actualización
 		const newRefreshToken = await generateRefreshToken(payload.sub, payload.role)
 		res.cookie('refreshToken', newRefreshToken, getHttpOnlyCookieOptions())
-		res.json({ message: 'Tokens renovados exitosamente', accessToken: newAccessToken })
+		return res.json({ message: 'Tokens renovados exitosamente', accessToken: newAccessToken })
 	} catch (_) {
 		env.APP_STAGE === 'dev' &&
 			console.warn(
@@ -100,7 +100,7 @@ export const refreshTokenHandler = async (req, res) => {
  */
 export const profileHandler = async (req, res) => {
 	const userProfile = await userService.getUserProfile(req.user.sub)
-	res.json({
+	return res.json({
 		message: 'Perfil de usuario obtenido exitosamente',
 		profile: userProfile,
 	})

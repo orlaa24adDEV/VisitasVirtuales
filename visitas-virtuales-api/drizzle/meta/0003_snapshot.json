@@ -1,6 +1,6 @@
 {
-  "id": "d4078405-d8dd-47cd-8df4-fd4a2677d0ce",
-  "prevId": "9b8ccb06-0569-451b-8d3d-acee6c4c48c1",
+  "id": "e2687342-e568-43eb-a91b-180c2771884e",
+  "prevId": "15f1e526-6559-4b22-960f-965d900da8ea",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -408,30 +408,10 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'student'"
-        },
-        "center_id": {
-          "name": "center_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "users_center_id_centers_id_fk": {
-          "name": "users_center_id_centers_id_fk",
-          "tableFrom": "users",
-          "tableTo": "centers",
-          "columnsFrom": [
-            "center_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "users_email_unique": {
