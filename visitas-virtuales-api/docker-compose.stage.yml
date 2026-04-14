@@ -7,7 +7,7 @@ services:
     environment:
       - APP_STAGE=stage
     env_file:
-      - .env.prod
+      - .env.stage
     depends_on:
       - postgres_service
     networks:
@@ -18,7 +18,7 @@ services:
     container_name: vv-postgres
     restart: always
     env_file:
-      - .env.prod
+      - .env.stage
     environment:
       TZ: Europe/Madrid
     volumes:

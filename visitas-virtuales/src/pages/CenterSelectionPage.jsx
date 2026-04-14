@@ -4,13 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 
 export default function CenterSelectionPage() {
-  const [centers, setCenters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selected, setSelected] = useState(null);
 
   const navigate = useNavigate();
-  const { selectCenter } = useAuth();
+  const { selectCenter, setCenters, centers } = useAuth();
 
   const API_URL = 'http://localhost:5000/api/centers';
 
@@ -39,8 +38,9 @@ export default function CenterSelectionPage() {
   const handleConfirm = () => {
     if (!selected) return;
     const center = centers.find((c) => c.id === selected);
+    if (!center) return;
     selectCenter(center);
-    navigate('/login');
+    navigate('/home?center=' + center.id);
   };
 
   return (
