@@ -116,7 +116,7 @@ router.get('/centers/:centerId/pois/search', hasRoles('any'), poisByCenterAndFuz
 
 /**
  * @openapi
- * /api/v1/centers/{id}/pois/{id}:
+ * /api/v1/centers/{centerId}/pois/{id}:
  *   patch:
  *     summary: Actualizar un POI existente (solo para administradores o profesores)
  *     tags: [POIs]

@@ -15,15 +15,13 @@ export const createPoi: (centerId: string, userId: string, poiData: PoiCreateTyp
     throw new ApiError(404, 'Centro no encontrado')
   }
 
-  const existingArr = await db
+  const [ existingPoi ] = await db
     .select()
     .from(pois)
     .where(and(eq(pois.name, poiData.name), eq(pois.centerId, Number(centerId))))
     .limit(1)
 
-  const existing = existingArr[0]
-
-  if (existing) {
+  if (existingPoi) {
     throw new ApiError(409, 'Ya existe un POI con ese nombre en este centro')
   }
 
@@ -36,11 +34,9 @@ export const createPoi: (centerId: string, userId: string, poiData: PoiCreateTyp
 }
 
 const getPoisByCenter: (centerId: string) => Promise<Poi[]> = async (centerId) => {
-  const centerArr = await db.select({
+  const [ center ] = await db.select({
     id: centers.id,
   }).from(centers).where(eq(centers.id, Number(centerId))).limit(1)
-
-  const center = centerArr[0]
 
   if (!center) {
     throw new ApiError(404, 'Centro no encontrado')
@@ -58,11 +54,9 @@ const getPoisByCenter: (centerId: string) => Promise<Poi[]> = async (centerId) =
 }
 
 export const getPoisByUserAndCenter: (userId: string, centerId: string) => Promise<Poi[]> = async (userId, centerId) => {
-  const centerArr = await db.select({
+  const [ center ] = await db.select({
     id: centers.id,
   }).from(centers).where(eq(centers.id, Number(centerId))).limit(1)
-
-  const center = centerArr[0]
 
   if (!center) {
     throw new ApiError(404, 'Centro no encontrado')
@@ -80,11 +74,9 @@ export const getPoisByUserAndCenter: (userId: string, centerId: string) => Promi
 }
 
 const getPoisByCenterAndFuzzyName: (centerId: string, partialName: string) => Promise<Poi[]> = async (centerId, partialName) => {
-  const centerArr = await db.select({
+  const [ center ] = await db.select({
     id: centers.id,
   }).from(centers).where(eq(centers.id, Number(centerId))).limit(1)
-
-  const center = centerArr[0]
 
   if (!center) {
     throw new ApiError(404, 'Centro no encontrado')
@@ -101,40 +93,35 @@ const getPoisByCenterAndFuzzyName: (centerId: string, partialName: string) => Pr
   return poiArr
 }
 
-const deletePoiByCenterAndId: (centerId: string, poiId: string) => Promise<void> = async (centerId, poiId) => {
-  const centerArr = await db.select({
+const deletePoiByCenterAndId: (centerId: string, poiId: string) => Promise<Poi> = async (centerId, poiId) => {
+  const [ center ] = await db.select({
     id: centers.id,
   }).from(centers).where(eq(centers.id, Number(centerId))).limit(1)
-
-  const center = centerArr[0]
 
   if (!center) {
     throw new ApiError(404, 'Centro no encontrado')
   }
 
-  const poiArr = await db.select().from(pois).where(and(eq(pois.centerId, Number(centerId)), eq(pois.id, Number(poiId)))).limit(1)
-
-  const poi = poiArr[0]
+  const [ poi ] = await db.select().from(pois).where(and(eq(pois.centerId, Number(centerId)), eq(pois.id, Number(poiId)))).limit(1)
 
   if (!poi) {
     throw new ApiError(404, 'POI no encontrado en este centro')
   }
 
   await db.delete(pois).where(and(eq(pois.centerId, Number(centerId)), eq(pois.id, Number(poiId))))
+  return poi;
 }
 
 //Modificar un POI existente y registrar el cambio en el historial
 const updatePoi: (userId: string, centerId: string, poiId: string, name?: string, details?: unknown) => Promise<Poi> = async (userId, centerId, poiId, name, details) => {
     //verificar que el poi exista en el centro indicado
-    const existingArr = await db
+    const [ existingPoi ] = await db
         .select()
         .from(pois)
         .where(and(eq(pois.id, Number(poiId)), eq(pois.centerId, Number(centerId))))
         .limit(1)
 
-    const existing = existingArr[0]
-
-    if(!existing) {
+    if(!existingPoi) {
         throw new ApiError(404, 'POI no encontrado en este centro')
     }
 
@@ -170,14 +157,13 @@ const updatePoi: (userId: string, centerId: string, poiId: string, name?: string
         userId: Number(userId),
         action: 'updated',
         details: {
-          before: { name: existing.name, details: existing.details },
+          before: { name: existingPoi.name, details: existingPoi.details },
           after: { name: updated.name, details: updated.details },
         },
     })
 
     return updated
 }
-
 
 // Obtener el historial de cambios de un POI concreto
 const getPoiHistory: (poiId: string) => Promise<any[]> = async (poiId) => {
