@@ -41,21 +41,67 @@ public class JsonLoader : MonoBehaviour
         }
 
         try
+        {using System.Collections;
+using UnityEngine;
+using System.IO;
+using UnityEngine.Networking;
+using TMPro;
+
+public class JsonLoader : MonoBehaviour
+{
+    [Header("Configuración del Centro")]
+    [SerializeField] private string idCentro = "center-1"; // <- Esto se cambia en el Inspector por cada centro y por cada centro pones una escena
+
+    [Header("Textos UI")]
+    public TMP_Text[] textos;
+
+    [Header("Ajustes")]
+    [SerializeField] private float tiempoActualizacion = 2f; // Velocidad para cambiar el texto del .json
+
+    private string ultimaVersion = "";
+
+    void Start()
+    {
+        StartCoroutine(ActualizarJson());
+    }
+
+    IEnumerator ActualizarJson()
+    {
+        while (true)
         {
-            string json = File.ReadAllText(path);
+            yield return StartCoroutine(LeerJsonWebGL());
+            yield return new WaitForSeconds(tiempoActualizacion);
+        }
+    }
+
+    IEnumerator LeerJsonWebGL()
+    {
+        string path = Path.Combine(Application.streamingAssetsPath, "pois.json");
+
+        using (UnityWebRequest www = UnityWebRequest.Get(path))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogWarning($"[JsonLoader] Error cargando JSON: {www.error}");
+                yield break;
+            }
+
+            string json = www.downloadHandler.text;
 
             // Si el JSON no ha cambiado, no hacemos nada
-            if (json == ultimaVersion) return;
+            if (json == ultimaVersion) yield break;
             ultimaVersion = json;
 
-            // Deserializamos toda la estructura
+            
             CentroList data = JsonUtility.FromJson<CentroList>(json);
 
             // Buscamos el centro que coincide con nuestro idCentro
             Centro centroActual = null;
-            foreach (var centro in data.CENTROS)
+            foreach (var centro in data.CENTERS)
             {
-                if (centro.id_centro == idCentro)
+                if (centro.centerId == idCentro)
                 {
                     centroActual = centro;
                     break;
@@ -65,21 +111,16 @@ public class JsonLoader : MonoBehaviour
             if (centroActual == null)
             {
                 Debug.LogWarning($"[JsonLoader] No se encontró el centro con id: {idCentro}");
-                return;
+                yield break;
             }
 
-            // Actualiza los textos con los POIs del centro encontrado
+            // Actualizamos los textos con los POIs del centro encontrado
             for (int i = 0; i < textos.Length && i < centroActual.POIs.Length; i++)
             {
-                textos[i].text = $"<b>{centroActual.POIs[i].nombre_poi}</b>\n<size=80%>{centroActual.POIs[i].descripcion_poi}</size>";
-
+                textos[i].text = $"<b>{centroActual.POIs[i].name}</b>\n<size=80%>{centroActual.POIs[i].description}</size>";
             }
 
-            Debug.Log($"[JsonLoader] Centro '{centroActual.nombre_centro}' cargado con {centroActual.POIs.Length} POIs.");
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogWarning($"[JsonLoader] Error leyendo JSON: {e.Message}");
+            Debug.Log($"[JsonLoader] Centro '{centroActual.centerName}' cargado con {centroActual.POIs.Length} POIs.");
         }
     }
 }
@@ -97,23 +138,23 @@ public class LocPoi
 [System.Serializable]
 public class Poi
 {
-    public int id_poi;
-    public string nombre_poi;
-    public string descripcion_poi;
+    public int id; 
+    public string name;
+    public string description;
     public LocPoi loc_poi;
 }
 
 [System.Serializable]
 public class Centro
 {
-    public string id_centro;
-    public string nombre_centro;
-    public string descripcion_centro;
+    public string centerId; 
+    public string centerName; 
+    public string centerDescription; 
     public Poi[] POIs;
 }
 
 [System.Serializable]
 public class CentroList
 {
-    public Centro[] CENTROS;
+    public Centro[] CENTERS; 
 }
