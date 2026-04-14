@@ -219,7 +219,7 @@
         }
       }
     },
-    "/api/v1/centers/{id}/pois/{id}": {
+    "/api/v1/centers/{centerId}/pois/{id}": {
       "patch": {
         "summary": "Actualizar un POI existente (solo para administradores o profesores)",
         "tags": [
@@ -279,9 +279,7 @@
             "description": "Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso"
           }
         }
-      }
-    },
-    "/api/v1/centers/{centerId}/pois/{id}": {
+      },
       "delete": {
         "summary": "Eliminar un POI existente en un centro específico (solo para administradores o profesores)",
         "tags": [
