@@ -109,14 +109,18 @@
                 "type": "object",
                 "required": [
                   "name",
-                  "description"
+                  "details"
                 ],
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "POI de ejemplo"
                   },
-                  "description": {
-                    "type": "string"
+                  "details": {
+                    "type": "object",
+                    "example": {
+                      "description": "Descripción del POI"
+                    }
                   }
                 }
               }
@@ -675,13 +679,13 @@
                         "type": "string",
                         "maxLength": 120,
                         "format": "email",
-                        "example": "alumno_mad@instituto.es"
+                        "example": "admin_mad@instituto.es"
                       },
                       "password": {
                         "type": "string",
                         "minLength": 8,
                         "maxLength": 32,
-                        "example": "Alumno123!"
+                        "example": "Admin123!"
                       }
                     }
                   },
@@ -696,13 +700,13 @@
                         "type": "string",
                         "minLength": 6,
                         "maxLength": 24,
-                        "example": "alumno_mad_2"
+                        "example": "admin_mad"
                       },
                       "password": {
                         "type": "string",
                         "minLength": 8,
                         "maxLength": 32,
-                        "example": "Alumno123!"
+                        "example": "Admin123!"
                       }
                     }
                   }
