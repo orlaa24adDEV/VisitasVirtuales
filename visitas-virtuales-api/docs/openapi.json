@@ -220,7 +220,7 @@
       }
     },
     "/api/v1/centers/{id}/pois/{id}": {
-      "put": {
+      "patch": {
         "summary": "Actualizar un POI existente (solo para administradores o profesores)",
         "tags": [
           "POIs"
@@ -231,6 +231,15 @@
           }
         ],
         "parameters": [
+          {
+            "in": "path",
+            "name": "centerId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del centro al que pertenece el POI"
+          },
           {
             "in": "path",
             "name": "id",
