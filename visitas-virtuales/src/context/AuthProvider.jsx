@@ -26,6 +26,8 @@ export const AuthProvider = ({children}) => {
         sessionStorage.removeItem('selectedCenter');
     };
 
+    const [centers, setCenters] = useState([]);
+
     const selectCenter = (center) => {
         setSelectedCenter(center);
         sessionStorage.setItem('selectedCenter', JSON.stringify(center));
@@ -35,7 +37,7 @@ export const AuthProvider = ({children}) => {
     const isTeacher = isAdmin || user?.role === 'teacher';
 
     return (
-        <AuthContext.Provider value={{user, login, logout, selectedCenter, selectCenter, isAdmin, isTeacher}}>
+        <AuthContext.Provider value={{user, login, logout, selectedCenter, selectCenter, centers, setCenters, isAdmin, isTeacher}}>
             {children}
         </AuthContext.Provider>
     );
