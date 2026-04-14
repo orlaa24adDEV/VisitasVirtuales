@@ -1,13 +1,19 @@
 import { useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth.js';
+import { useSearchParams } from 'react-router-dom';
 
-// TODO: cambiar a "true" cuando los archivos del build de Unity estén en el folder de unity-build
-//Revisa si tenemos archivos del build en Unity
-const UNITY_BUILD_LISTO = false;
+// TODO: cambiar a "true" cuando los archivos del build de Unity estén en el folder de Built_Unity
+//Ver instrucciones en public/Build_Unity/.gitkeep
+const UNITY_BUILD_LISTO = true;
 
 export default function UnityViewer() {
   // Obtenemos el centro seleccionado del contexto global
     const { selectedCenter } = useAuth();
+
+    // Leemos el parámetro scene de la URL (ej: ?center=2&scene=1)
+    // Si no hay parámetro scene en la URL, sceneId será null
+    const [searchParams] = useSearchParams();
+    const sceneId = searchParams.get('scene');
 
     // Referencia directa al canvas del DOM
     // Es como un "puntero" para que Unity sepa dónde pintarse
@@ -52,6 +58,17 @@ export default function UnityViewer() {
                 );
 
                 console.log('ID enviado a Unity:', selectedCenter.id);
+
+                if(sceneId !== null) {
+                    unityInstance.SendMessage(
+                        'WebBridge',
+                        'RecibirIdEscena',
+                        sceneId.toString()
+                    );
+                    console.log('ID de escena enviado a Unity:', sceneId);
+                } else {
+                    console.log('No se especificó escena en la URL, Unity usará la escena por defecto');
+                }
             })
 
             // Si Unity falla al cargar
@@ -68,7 +85,7 @@ export default function UnityViewer() {
             document.body.removeChild(script);
         };
 
-    }, [selectedCenter.id]); // <-- [] ejecutar solo una vez al montar el componente
+    }, [selectedCenter.id, sceneId]); // <-- [] ejecutar solo una vez al montar el componente
 
     // Lo que se muestra en pantalla
     return (
