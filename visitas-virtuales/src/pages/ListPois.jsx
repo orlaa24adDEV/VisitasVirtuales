@@ -18,8 +18,6 @@ export default function ListPois({ centerId }) {
     const firstIndex = lastIndex - itemsPerPage;
     const currentPois = filteredPois.slice(firstIndex, lastIndex);
 
-    const API_URL = `https://visitasvirtuales.dedyn.io/api/v1/centers/${centerId}/pois`;
-
     useEffect(() => {
         const maxPage = Math.max(1, totalPages);
 
@@ -38,7 +36,10 @@ export default function ListPois({ centerId }) {
 
     const deletePois = async (id) => {
         try {
-            const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+            const response = await fetch('/api/centers/' + centerId + '/pois/' + id, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+            });
             if (response.ok) {
                 const updatedPois = pois.filter(poi => poi.id !== id);
                 setPois(updatedPois);
@@ -51,7 +52,7 @@ export default function ListPois({ centerId }) {
     useEffect(() => {
         async function getPois() {
             try {
-                const response = await fetch(API_URL);
+                const response = await fetch(`/api/centers/${centerId}/pois`);
                 if (response.ok) {
                     const data = await response.json();
                     setPois(data);

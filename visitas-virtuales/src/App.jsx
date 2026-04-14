@@ -63,7 +63,7 @@ function App() {
                                     <>
                                         {/* Contenido General */}
                                         <Route path="/home" element={<Home />} />
-                                        <Route path="/listpois" element={<ListPois />} />
+                                        <Route path="/listpois" element={<ListPois centerId={selectedCenter.id} />} />
                                         <Route path="/perfil" element={<div className="p-10 text-center text-black text-3xl font-bold">Perfil de {selectedCenter.name}</div>} />
                                         <Route path="/mensajes" element={<div className="p-10 text-center text-black text-3xl font-bold">Mensajes de {selectedCenter.name}</div>} />
 
