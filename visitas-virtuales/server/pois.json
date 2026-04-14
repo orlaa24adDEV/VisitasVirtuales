@@ -53,6 +53,12 @@
       "centerId": "center-2",
       "name": "Entrada",
       "description": "Esto es una entrada"
+    },
+    {
+      "id": "4",
+      "centerId": "center-1",
+      "name": "Tablón de anuncios",
+      "description": "asrhgwerhwerthywertyweyweywe"
     }
   ]
 }
