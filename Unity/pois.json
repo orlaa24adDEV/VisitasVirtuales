@@ -1,8 +1,8 @@
 {
   "CENTERS": [
     {
-      "centerId": "centro-1",
-      "centerName": "CENTRO 1",
+      "centerId": "center-1",
+      "centerName": "CENTER 1",
       "centerDescription": "Sede de Sevilla.",
       "POIs": [
         { "id": 1, "name": "Entrada ", "description": "Acceso principal al centro con control de seguridad y recepción.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
@@ -18,8 +18,8 @@
       ]
     },
     {
-      "centerId": "centro-2",
-      "centerName": "CENTRO 2",
+      "centerId": "center-2",
+      "centerName": "CENTER 2",
       "centerDescription": "Sede de Malaga.",
       "POIs": [
         { "id": 1, "name": "Entrada Principal", "description": "Acceso principal con tornos de seguridad y cámeras de vigilancia.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
@@ -35,8 +35,8 @@
       ]
     },
     {
-      "centerId": "centro-3",
-      "centerName": "CENTRO 3",
+      "centerId": "center-3",
+      "centerName": "CENTER 3",
       "centerDescription": "Sede de Madrid.",
       "POIs": [
         { "id": 1, "name": "Entrada Principal", "description": "Puerta de acceso principal con vigilancia y sistema de tarjetas.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
@@ -52,8 +52,8 @@
       ]
     },
     {
-      "centerId": "centro-4",
-      "centerName": "CENTRO 4",
+      "centerId": "center-4",
+      "centerName": "CENTER 4",
       "centerDescription": "Sede de Cadiz.",
       "POIs": [
         { "id": 1, "name": "Entrada Principal", "description": "Acceso principal con aparcamiento para bicicletas y motos.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
@@ -69,8 +69,8 @@
       ]
     },
     {
-      "centerId": "centro-5",
-      "centerName": "CENTRO 5",
+      "centerId": "center-5",
+      "centerName": "CENTER 5",
       "centerDescription": "Sede de Almeria.",
       "POIs": [
         { "id": 1, "name": "Entrada Principal", "description": "Acceso principal con rampa de accesibilidad y portero automático.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
