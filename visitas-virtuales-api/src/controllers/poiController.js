@@ -1,11 +1,28 @@
-import poiService from '../services/poiService.ts';
+import poiService from '../services/poiService.ts'
+
+// Actualizar un POI existente
+export const updatePoiHandler = async (req,res) => {
+  const centerId = req.params.centerId
+  const poiId = req.params.id 
+  const {name, details} = req.body
+  const userId = req.user.sub
+  const updated = await poiService.updatePoi(userId, centerId, poiId, name, details)
+    res.json(updated)
+}
+
+// Obtener el historial de cambios de un POI
+export const getPoiHistoryHandler = async (req, res) => {
+    const poiId = req.params.id
+    const history = await poiService.getPoiHistory(poiId)
+    res.json(history)
+}
 
 export const newPoiHandler = async (req, res) => {
   const centerId = req.params.centerId;
   const userId = req.user?.id;
   await poiService.createPoi(centerId, userId, req.body);
   return res.json({ message: 'POI creado exitosamente' });
-};
+}
 
 export const poisByCenterHandler = async (req, res) => {
   const centerId = req.params.centerId;
@@ -14,7 +31,7 @@ export const poisByCenterHandler = async (req, res) => {
     return res.status(200).json({ message: 'No se encontraron POIs para el centro con ID ' + centerId, pois: [] });
   }
   return res.json({ message: 'POIs obtenidos exitosamente', pois });
-};
+}
 
 export const poisByUserAndCenterHandler = async (req, res) => {
   const centerId = req.params.centerId;

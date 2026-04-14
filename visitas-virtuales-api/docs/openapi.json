@@ -217,7 +217,7 @@
     },
     "/api/v1/centers/{id}/pois/{id}": {
       "put": {
-        "summary": "Actualizar un POI existente (solo para administradores o profesores) - SIN IMPLEMENTAR",
+        "summary": "Actualizar un POI existente (solo para administradores o profesores)",
         "tags": [
           "POIs"
         ],
@@ -247,7 +247,7 @@
                   "name": {
                     "type": "string"
                   },
-                  "description": {
+                  "details": {
                     "type": "string"
                   }
                 }

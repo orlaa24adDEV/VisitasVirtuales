@@ -5,6 +5,7 @@ import {
 	newPoiHandler,
 	deletePoiHandler,
 	poisByCenterAndFuzzyNameHandler,
+	updatePoiHandler,
 } from '../controllers/poiController.js'
 import { validateBody } from '../middlewares/validation.ts'
 import { poiCreateSchema, poiDeleteSchema } from '../db/schema.ts'
@@ -115,7 +116,7 @@ router.get('/centers/:centerId/pois/search', hasRoles('any'), poisByCenterAndFuz
  * @openapi
  * /api/v1/centers/{id}/pois/{id}:
  *   put:
- *     summary: Actualizar un POI existente (solo para administradores o profesores) - SIN IMPLEMENTAR
+ *     summary: Actualizar un POI existente (solo para administradores o profesores)
  *     tags: [POIs]
  *     security:
  *       - bearerAuth: []
@@ -135,7 +136,7 @@ router.get('/centers/:centerId/pois/search', hasRoles('any'), poisByCenterAndFuz
  *             properties:
  *               name:
  *                 type: string
- *               description:
+ *               details:
  *                 type: string
  *     responses:
  *       200:
@@ -145,11 +146,7 @@ router.get('/centers/:centerId/pois/search', hasRoles('any'), poisByCenterAndFuz
  *       403:
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
-router.put('/centers/:centerId/pois/:id', hasRoles(['admin', 'teacher']), (req, res) => {
-	res.json({
-		message: `Ruta para actualizar el POI con ID ${req.params.id} - solo accesible para administradores o profesores`,
-	})
-})
+router.put('/centers/:centerId/pois/:id', hasRoles(['admin', 'teacher']), updatePoiHandler)
 
 /**
  * @openapi

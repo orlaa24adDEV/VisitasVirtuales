@@ -72,6 +72,20 @@ export const statsPois = pgTable('stats_pois', {
 		.references(() => pois.id, { onDelete: 'cascade' }),
 })
 
+//tabla de trazabilidad
+export const poiHistory = pgTable('poi_history', {
+	id: serial('id').primaryKey(),
+	poiId: integer('poi_id')
+		.notNull()
+		.references(() => pois.id, {onDelete: 'cascade'}),
+	userId: integer('user_id')
+		.notNull()
+		.references(() => users.id, { onDelete: 'cascade' }),
+	action: text('action').notNull(),
+	timestamp: timestamp('timestamp').notNull().defaultNow(),
+	details: jsonb('details'),
+})
+
 /* Definir relaciones entre tablas para permitir a Drizzle simplificar 
    consultas con joins */
 
