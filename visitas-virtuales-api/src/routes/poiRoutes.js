@@ -1,11 +1,11 @@
 import { Router } from 'express'
 import hasRoles from '../middlewares/hasRole.ts'
 import {
-	poisByCenterHandler,
-	newPoiHandler,
-	deletePoiHandler,
-	poisByCenterAndFuzzyNameHandler,
-	updatePoiHandler,
+  poisByCenterHandler,
+  newPoiHandler,
+  deletePoiHandler,
+  poisByCenterAndFuzzyNameHandler,
+  updatePoiHandler,
 } from '../controllers/poiController.js'
 import { validateBody, validateParams } from '../middlewares/validation.ts'
 import { poiCreateSchema, poiDeleteSchema } from '../db/schema.ts'
@@ -117,12 +117,18 @@ router.get('/centers/:centerId/pois/search', hasRoles('any'), poisByCenterAndFuz
 /**
  * @openapi
  * /api/v1/centers/{id}/pois/{id}:
- *   put:
+ *   patch:
  *     summary: Actualizar un POI existente (solo para administradores o profesores)
  *     tags: [POIs]
  *     security:
  *       - bearerAuth: []
  *     parameters:
+ *       - in: path
+ *         name: centerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del centro al que pertenece el POI
  *       - in: path
  *         name: id
  *         required: true
@@ -148,7 +154,8 @@ router.get('/centers/:centerId/pois/search', hasRoles('any'), poisByCenterAndFuz
  *       403:
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
-router.put('/centers/:centerId/pois/:id', hasRoles(['admin', 'teacher']), updatePoiHandler)
+// TODO: Validar el body usando el middleware validation
+router.patch('/centers/:centerId/pois/:id', hasRoles(['admin', 'teacher']), updatePoiHandler)
 
 /**
  * @openapi
@@ -180,10 +187,10 @@ router.put('/centers/:centerId/pois/:id', hasRoles(['admin', 'teacher']), update
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
 router.delete(
-	'/centers/:centerId/pois/:poiId',
-	hasRoles(['admin', 'teacher']),
-	validateParams(poiDeleteSchema),
-	deletePoiHandler,
+  '/centers/:centerId/pois/:poiId',
+  hasRoles(['admin', 'teacher']),
+  validateParams(poiDeleteSchema),
+  deletePoiHandler,
 )
 
 export default router

@@ -8,7 +8,7 @@ export const updatePoiHandler = async (req,res) => {
   const {name, details} = req.body
   const userId = req.user.sub
   const updated = await poiService.updatePoi(userId, centerId, poiId, name, details)
-    res.json(updated)
+  return res.json({ message: 'POI actualizado exitosamente', updated })
 }
 
 // Obtener el historial de cambios de un POI
@@ -22,8 +22,8 @@ export const newPoiHandler = async (req, res) => {
   const centerId = req.params.centerId;
   const userId = req.user?.sub;
   env.APP_STAGE === 'dev' && console.log('Creando POI para el centro con ID ' + centerId + ' por el usuario con ID ' + userId);
-  await poiService.createPoi(centerId, userId, req.body);
-  return res.json({ message: 'POI creado exitosamente' });
+  const newPoi = await poiService.createPoi(centerId, userId, req.body);
+  return res.json({ message: 'POI creado exitosamente', poi: newPoi });
 }
 
 export const poisByCenterHandler = async (req, res) => {
