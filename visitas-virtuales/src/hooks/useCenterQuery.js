@@ -7,12 +7,12 @@ import { useNavigate } from 'react-router-dom';
 // TODO: confirmar el índice exacto de cada escena
 //asignamos los centros con ID especificos
 const ESCENAS_POR_CENTRO = {
-    'center-1': 0,
-    'center-2': 1,
-    'center-3': 2,
-    'center-4': 3,
-    'center-5': 4,
-}
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 4,
+    5: 5,
+};
 
 /** Hook encargado de sincronizar el centro seleccionado en el context con el query param "center" de la URL. */
 export const useCenterQuery = () => {
@@ -37,17 +37,12 @@ export const useCenterQuery = () => {
                 // Si no hay centro seleccionado ni en el context ni en la URL, redirigir a selección de centro
                 navigate('/select-center');
             }
-        }
-    }, [selectedCenter, searchParams, centers]);
-
-    useEffect(() => {
-
-        if (selectedCenter) {
+        } else {
             //obtener el ID de escena correspondiente al centro seleccionado
             const sceneId = ESCENAS_POR_CENTRO[selectedCenter.id] ?? 0;
 
             //ir actualizando la URL con centro y la escena
             setSearchParams({ center: selectedCenter.id, scene: sceneId });
         }
-    }, [selectedCenter]);
+    }, [selectedCenter, searchParams, centers]);
 }
