@@ -1,16 +1,24 @@
+
 # Visitas Virtuales API
 
-API para ofrecer servicio de visitas virtuales a centros educativos.
 
-Esta aplicación de Express permite **registrar y autenticar usuarios** de forma segura mediante JWTs y HTTP-only cookies. Los administradores tienen permisos para **gestionar centros y puntos de interés (POIs)** (añadir, editar o eliminar), así como para administrar los roles de otros usuarios.
+API para visitas virtuales en centros educativos.
 
-La arquitectura es **multi-inquilino**, lo que permite que una sola instancia de Express y de la base de datos PostgreSQL ofrezca servicio a múltiples centros educativos simultáneamente, sin necesidad de replicar la infraestructura.
+Arquitectura **multi-inquilino**: una sola instancia de Express y PostgreSQL da servicio a múltiples centros educativos. Autenticación con JWT y cookies HTTP-only.
 
-Para su despliegue, la aplicación está _dockerizada_ y gestionada mediante el gestor de procesos **PM2**. (consultar [docker-compose.prod.yml](./docker-compose.prod.yml), [Dockerfile](./Dockerfile) y [docker-entrypoint.sh](./docker-entrypoint.sh))
+Permite registrar y autenticar usuarios de tres tipos:
+- **Administradores (_admin_)**: pueden gestionar todos los centros y Puntos de Interés (POIs), administrar roles, ver estadísticas y logs.
+- **Profesores (_teacher_)**: pueden crear, leer, actualizar y eliminar POIs de su propio centro.
+- **Estudiantes (_student_)** y cualquier usuario autenticado: pueden consultar POIs de cualquier centro.
+
+
+
+Desplegado mediante Docker y PM2. Consulta [docker-compose.prod.yml](./docker-compose.prod.yml), [Dockerfile](./Dockerfile) y [docker-entrypoint.sh](./docker-entrypoint.sh).
+
+Entorno de staging disponible para pruebas antes de producción ([docker-compose.stage.yml](./docker-compose.stage.yml)).
+
 
 ### Guía rápida para desarrollo
-
-Para iniciar la API en modo desarrollo será necesario:
 
 1.  **Preparar el proyecto**:
 
@@ -19,44 +27,50 @@ Para iniciar la API en modo desarrollo será necesario:
     git switch Web_Zaitec
     cd VisitasVirtualesZaitec/visitas-virtuales-api
     ```
-
-2.  **Instalar dependencias**: Ejecutar `npm install`.
-
-3.  **Configurar el entorno**: Copiar `.env.template` (plantilla) a `.env`. Este fichero contiene las variables de entorno que la API de Express recibirá mediante `env.ts`.
-
-4.  **Definir credenciales**: En `.env`, asignar credenciales seguras a:
+2.  **Instalar dependencias**: `npm install`
+3.  **Configurar el entorno**: Copia `.env.template` a `.env` y define credenciales seguras para:
     - `POSTGRES_PASSWORD`
-    - `PGADMIN_DEFAULT_PASSWORD`
     - `JWT_SECRET`
+    > Puedes usar `openssl rand -hex 32` para generar credenciales seguras. Usa valores distintos para cada variable.
 
-    > Puedes usar `openssl rand -hex 32` para generar credenciales seguras. Es importante utilizar diferentes credenciales para cada variable.
+4.  **Iniciar la base de datos**:
 
-5.  **Iniciar la base de datos**: Ejecutar el script `npm run db:up`. Puedes comprobar si has definido las variables de entorno correctamente observando los logs mediante `npm run db:logs`.
+    ```bash
+    npm run db:up
+    npm run db:logs # opcional, para ver logs
+    ```
+5.  **Aplicar migraciones e insertar datos de prueba**:
+    ```bash
+    npm run db:generate
+    npm run db:migrate
+    npm run db:seed
+    ```
+    > Las migraciones versionan el esquema y permiten revertir cambios. Más info: [db](./docs/db.md)
 
-6.  **Generar migraciones, aplicarlas a la base de datos e insertar datos de prueba (Drizzle ORM)**:
-    1.  `npm run db:generate`
-    2.  `npm run db:migrate`
-    3.  `npm run db:seed`
-
-    > Las migraciones se encargan de versionar el schema de la base de datos. Evitan inconsistencias y permiten revertir cambios.
-
-    > Para más información sobre la base de datos consulta [db](./docs/db.md)
-
-7.  **Iniciar aplicación de Express**: Ejecutar `npm run dev`.
+6.  **Iniciar la aplicación**: `npm run dev`
 
 ---
 
+> Para producción utiliza `.env.prod` (no definitivo) y para staging `.env.stage`. Ambos pueden generarse a partir de `.env.template`
+
+---
+
+
 ### Herramientas útiles
 
-- **Documentación API**: Puedes acceder la documentación generada mediante la especificación OpenAPI en [http://localhost:8000/api-docs](http://localhost:8000/api-docs)
-- **Gestión de Base de Datos**:
-  - **Drizzle Kit Studio**: Interfaz web para explorar y consultar la base de datos.
-    1. Ejecuta `npm run db:studio`
-    2. Abre [https://local.drizzle.studio](https://local.drizzle.studio)
-
-  - **psql**: Cliente de PostgreSQL en la terminal (`psql -h localhost -U postgres -p 5433 -d visitas_virtuales_db`)
-
-    > **\dt** para listar las tablas presentes en la base de datos.\
-    > **\d <nombre_tabla>** para obtener información sobre las columnas de una tabla.
-
-> Para más información sobre los scripts disponibles consulta [scripts](./docs/scripts.md)
+#### Documentación API
+- OpenAPI / Swagger: [http://localhost:8000/api-docs](http://localhost:8000/api-docs)
+#### Gestión de Base de Datos
+  - **Drizzle Kit Studio**:
+    ```bash
+    npm run db:studio
+    # luego abre https://local.drizzle.studio
+    ```
+  - **psql**:
+    ```bash
+    psql -h localhost -U postgres -p 5433 -d visitas_virtuales_db
+    -- dentro de psql:
+    \dt               -- listar tablas
+    \d <nombre_tabla> -- ver columnas
+    ```
+  - **Scripts disponibles**: [scripts.md](./docs/scripts.md)
