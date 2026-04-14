@@ -32,7 +32,6 @@ export default function CenterSelectionPage() {
 
   const handleSelect = (center) => {
     setSelected(center.id);
-    
   };
 
   const handleConfirm = () => {
@@ -78,11 +77,11 @@ export default function CenterSelectionPage() {
           {!loading && !error && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {centers.map((center) => {
+                {centers.map((center, index) => {
                   const isActive = selected === center.id;
                   return (
                     <button
-                      key={center.id}
+                      key={`${center.id}-${index}`}
                       onClick={() => handleSelect(center)}
                       className={`
                         group text-left rounded-2xl overflow-hidden bg-white

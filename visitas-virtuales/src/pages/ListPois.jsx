@@ -24,6 +24,7 @@ export default function ListPois({ centerId }) {
         const maxPage = Math.max(1, totalPages);
 
         if (currentPage > maxPage) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setCurrentPage(maxPage);
         } else if (currentPage < 1) {
             setCurrentPage(1);
