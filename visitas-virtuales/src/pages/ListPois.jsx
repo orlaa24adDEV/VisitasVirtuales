@@ -2,7 +2,7 @@ import { Search, Plus, Pencil, Trash, ChevronLeft, ChevronRight } from "lucide-r
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function ListPois({ idCentro }) {
+export default function ListPois({ centerId }) {
     const [pois, setPois] = useState([]);
     const [search, setSearch] = useState("");
 
@@ -18,7 +18,7 @@ export default function ListPois({ idCentro }) {
     const firstIndex = lastIndex - itemsPerPage;
     const currentPois = filteredPois.slice(firstIndex, lastIndex);
 
-    const API_URL = 'http://localhost:5000/api/pois';
+    const API_URL = `https://visitasvirtuales.dedyn.io/api/v1/centers/${centerId}/pois`;
 
     useEffect(() => {
         const maxPage = Math.max(1, totalPages);
@@ -37,8 +37,11 @@ export default function ListPois({ idCentro }) {
 
     const deletePois = async (id) => {
         try {
-            const updatedPois = pois.filter(poi => poi.id !== id);
-            setPois(updatedPois);
+            const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+            if (response.ok) {
+                const updatedPois = pois.filter(poi => poi.id !== id);
+                setPois(updatedPois);
+            }
         } catch (error) {
             console.error('Error al eliminar POI:', error);
         }
@@ -48,15 +51,17 @@ export default function ListPois({ idCentro }) {
         async function getPois() {
             try {
                 const response = await fetch(API_URL);
-                const data = await response.json();
-                setPois(data);
+                if (response.ok) {
+                    const data = await response.json();
+                    setPois(data);
+                }
             } catch (error) {
                 setPois([]);
                 console.error('Error al obtener POIs:', error);
             }
         }
         getPois();
-    }, [idCentro]);
+    }, [centerId]);
 
     //He metido todo el section dentro de un div para centrarlo.
     return (
