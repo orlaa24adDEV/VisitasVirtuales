@@ -5,22 +5,15 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
 
-
-
-
 TopHeader.propTypes = {
     onMenuClick: PropTypes.func.isRequired,
     isLog: PropTypes.bool.isRequired,
-    onLogin: PropTypes.func.isRequired,
     onLogout: PropTypes.func.isRequired,
-    onRegister: PropTypes.func.isRequired,
     userName: PropTypes.string.isRequired,
     userImg: PropTypes.string.isRequired,
     userEmail: PropTypes.string.isRequired,
     role: PropTypes.string.isRequired,
 };
-
-
 
 /**
  * TopHeader — Barra superior de la aplicación
@@ -30,7 +23,6 @@ TopHeader.propTypes = {
  *     isLog={isLog}                    > boolean, si el usuario está logueado
  *     onLogin={handleLogin}            > función, se ejecuta al iniciar sesión
  *     onLogout={handleLogout}          > función, se ejecuta al cerrar sesión
- *     onRegister={handleOnRegister}    > función, se ejecuta al cerrar sesión
  *     userName="Bruno García"          > nombre de usuario
  *     userEmail="bruno@mail.com"       > email de usuario
  *     userImg="https://..."            > avatar de usuario
@@ -58,7 +50,7 @@ export default function TopHeader({
     };
 
     return (
-        <header className="h-16 w-full bg-blue-100 border-b border-slate-100 flex items-center justify-between px-4 lg:justify-end lg:px-8 shadow-sm">
+        <header className="h-16 w-full bg-gray-100 border-b border-slate-100 flex items-center justify-between px-4 lg:justify-end lg:px-8 shadow-sm">
             <button onClick={onMenuClick} className="p-2 text-slate-600 hover:bg-slate-200 rounded-lg lg:hidden">
                 <Menu size={24} />
             </button>
@@ -116,13 +108,13 @@ export default function TopHeader({
                         {/* ✅ Corregido: Usamos Link de react-router-dom */}
                         <Link
                             to="/login"
-                            className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors px-3 py-2"
+                            className="text-sm font-medium text-slate-600  px-4 py-2 rounded-lg hover:text-white hover:bg-blue-600  transition-colors"
                         >
                             Iniciar Sesión
                         </Link>
                         <Link
                             to="/register" // O a tu ruta de registro si la tienes
-                            className="text-sm font-bold bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                            className="text-sm font-medium  text-slate-600 px-4 py-2 rounded-lg hover:text-white hover:bg-blue-600 transition-colors"
                         >
                             Registrarte
                         </Link>
@@ -132,4 +124,3 @@ export default function TopHeader({
         </header>
     );
 };
-
