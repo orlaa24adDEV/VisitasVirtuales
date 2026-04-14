@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 
+//import { useAuth } from '../context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
+
 function Crud() {
+    const { selectedCenter } = useAuth();
     const [pois, setPois] = useState([])
     const [formData, setFormData] = useState({
         id: '',
@@ -10,6 +14,8 @@ function Crud() {
     })
     const [isEditing, setIsEditing] = useState(false)
 
+    const API_URL = 'http://localhost:5000/api/pois';
+
     // Cargar POIs al montar el componente
     useEffect(() => {
         // eslint-disable-next-line react-hooks/immutability
@@ -18,7 +24,7 @@ function Crud() {
 
     const readPois = async () => {
         try {
-            const response = await fetch('/api/pois')
+            const response = await fetch(API_URL)
             const data = await response.json()
             setPois(data)
         } catch (error) {
@@ -26,43 +32,65 @@ function Crud() {
         }
     }
 
+    
+    
     const createPois = async () => {
+        if (!selectedCenter) {
+            alert("No hay un centro seleccionado");
+            return;
+        }
+
         try {
             const newPoi = {
-                ...formData,
-                // eslint-disable-next-line react-hooks/purity
-                id: Date.now().toString() // Generar ID único
+                name: formData.name,
+                description: formData.description,
+                centerId: selectedCenter.id 
+            };
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newPoi)
+            });
+
+            if (response.ok) {
+                readPois(); 
+                resetForm();
             }
-           
-            //  Actualizar en local
-            setPois([...pois, newPoi])
-            resetForm()
         } catch (error) {
-            console.error('Error al crear POI:', error)
+            console.error('Error:', error);
         }
-    }
+    };
+
+    
 
     const updatePois = async () => {
-        try {
-            const updatedPois = pois.map(poi =>
-                poi.id === formData.id ? formData : poi
-            )
-            setPois(updatedPois)
-            resetForm()
-            setIsEditing(false)
-        } catch (error) {
-            console.error('Error al actualizar POI:', error)
+        const response = await fetch(`${API_URL}/${formData.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...formData, centerId: selectedCenter.id })
+        });
+        if (response.ok) {
+            readPois();
+            resetForm();
+            setIsEditing(false);
         }
-    }
+    };
 
     const deletePois = async (id) => {
         try {
-            const filteredPois = pois.filter(poi => poi.id !== id)
-            setPois(filteredPois)
-        } catch (error) {
-            console.error('Error al eliminar POI:', error)
+        
+        const url = `http://localhost:5000/api/pois/${id}?centerId=${selectedCenter.id}`;
+        const response = await fetch(url, { method: 'DELETE' });
+        
+        if (response.ok) {
+            readPois();
         }
-    }
+        } catch (error) {
+            console.error('Error al eliminar:', error);
+        }
+    };
+
 
     const editPoi = (poi) => {
         setFormData(poi)
@@ -176,8 +204,8 @@ function Crud() {
                 </tr>
             </thead>
             <tbody>
-                {pois.map((poi) => (
-                    <tr key={poi.id} className="hover:bg-gray-50">
+                {pois.filter(poi => poi.centerId === selectedCenter?.id) .map((poi) => (
+                    <tr key={`${poi.centerId}-${poi.id}`} className="hover:bg-gray-50">
                         <td className="border border-gray-300 px-4 py-2">{poi.id}</td>
                         <td className="border border-gray-300 px-4 py-2">{poi.centerId}</td>
                         <td className="border border-gray-300 px-4 py-2">{poi.name}</td>

@@ -1,29 +1,22 @@
+import { env } from '../env.ts'
 import express from 'express'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
-import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import userRoutes from './routes/userRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
+import poiRoutes from './routes/poiRoutes.js'
 import apiErrorThrown from './middlewares/apiErrorThrown.js'
 import cors from 'cors'
-import assert from 'node:assert'
-
-// Garantizar que las variables de entorno necesarias estén definidas
-assert(
-	process.env.JWT_SECRET,
-	'Error: JWT_SECRET no está definido en las variables de entorno',
-)
-assert(
-	process.env.FRONTEND_URL,
-	'Error: FRONTEND_URL no está definido en las variables de entorno',
-)
+import { readFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const app = express()
 
 // Logger para solicitudes HTTP
 morgan.token('status-message', (req, res) => res.statusMessage || '')
-app.use(morgan(':method :url :status :status-message - :response-time ms'))
+app.use(morgan('dev'))
 
 // Middleware para extraer JSON de las solicitudes
 app.use(express.json())
@@ -34,7 +27,7 @@ app.use(cookieParser())
 // Permitir CORS desde la app de React (Vite)
 app.use(
 	cors({
-		origin: process.env.FRONTEND_URL,
+		origin: env.FRONTEND_URL,
 		methods: ['GET', 'POST', 'PUT', 'DELETE'],
 		credentials: true, // Compartir cookies entre frontend y backend
 	}),
@@ -46,29 +39,20 @@ app.use('/api/v1/', userRoutes)
 // Montar rutas de administración
 app.use('/api/v1/', adminRoutes)
 
+// Montar rutas de POIs
+app.use('/api/v1/', poiRoutes)
+
 // Montar ruta de especificación OpenAPI
-const swaggerSpec = swaggerJSDoc({
-	definition: {
-		openapi: '3.0.0',
-		info: { title: 'Visitas Virtuales API', version: '0.1.0' },
-		components: {
-			securitySchemes: {
-				bearerAuth: {
-					type: 'http',
-					scheme: 'bearer',
-					bearerFormat: 'JWT',
-				},
-			},
-		},
-		security: [{ bearerAuth: [] }],
-	},
-	apis: ['./src/routes/*.js'],
-})
+const currentDir = dirname(fileURLToPath(import.meta.url))
+const openApiPath = resolve(currentDir, '../docs/openapi.json')
+const swaggerSpec = JSON.parse(readFileSync(openApiPath, 'utf-8'))
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 // Middleware para manejar errores lanzados desde servicios
 app.use(apiErrorThrown)
 
-app.listen(8000, () => console.log('Servidor escuchando en puerto 8000'))
+app.listen(env.APP_PORT, () =>
+	console.log(`Servidor escuchando en puerto ${env.APP_PORT}`),
+)
 
 export default app

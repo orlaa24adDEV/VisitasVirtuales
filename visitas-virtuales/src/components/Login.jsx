@@ -49,6 +49,10 @@ function Login() {
 		setErrors({});
 	};
 
+	const handleUsernameChange = (e) => {
+        setUsername(e.target.value);
+    };
+
 	const handlePasswordChange = (e) => {
 		const value = e.target.value;
 		setPassword(value);

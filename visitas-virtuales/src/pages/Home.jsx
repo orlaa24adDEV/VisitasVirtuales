@@ -1,9 +1,15 @@
 import { useAuth } from '@/hooks/useAuth.js';
-import { UserCheck, ShieldCheck } from 'lucide-react'; // Iconos para darle estilo
+import { useCenterQuery } from '@/hooks/useCenterQuery.js';
+import { UserCheck, ShieldCheck, GraduationCap } from 'lucide-react'; // Iconos para darle estilo
 import UnityViewer from '../components/UnityViewer';
 
 const Home = () => {
-    const { user, isAdmin, isTeacher,selectedCenter } = useAuth();
+    const { user, isAdmin, isTeacher, selectedCenter, } = useAuth();
+
+    // Si el context no contiene un centro, utilizar el query param "center" de la URL, 
+    // proporcionado por la página de selección de centro. Esto es un fallback y además
+    // permite compartir URLs directas a centros específicos.
+    useCenterQuery();
 
     return (
         <div className="p-8">
@@ -51,7 +57,7 @@ const Home = () => {
                 </div>
                 
                 {/* Mensaje de ayuda dinámico */}
-                <div className={`h-full mt-6 p-4 rounded-lg border-l-4 ${
+                <div className={`h-[500px] mt-6 p-4 rounded-lg border-l-4 ${
                     isAdmin ? 'bg-red-50 border-red-300' : isTeacher ? 'bg-blue-50 border-blue-300' : 'bg-green-50 border-green-300'
                 }`}>
                     {isAdmin && (

@@ -1,17 +1,17 @@
-import { generateAccessToken } from '../helpers/jwt.js'
+import { generateAccessToken, generateRefreshToken } from '../helpers/jwt.js'
 import { verifyToken } from '../helpers/jwt.js'
 import { getHttpOnlyCookieOptions } from '../helpers/cookies.js'
-import userService from '../services/userService.js'
+import userService from '../services/userService.ts'
+import { env } from '../../env.ts'
 
 /**
  *
- * @param request.body debe contener email, username y password
+ * @param request.body debe contener email, username, password y centerId
  * @returns objeto con accessToken (refreshToken se envía al cliente en una cookie HTTP-only)
  * @throws manejados por middleware apiErrorHandler
  */
 export const registerHandler = async (req, res) => {
 	const tokenPair = await userService.register(req.body)
-	res.locals.statusMessage = 'Usuario registrado exitosamente'
 	res.cookie('refreshToken', tokenPair.refreshToken, getHttpOnlyCookieOptions())
 	res.status(201).json({
 		message: 'Usuario registrado exitosamente',
@@ -27,7 +27,7 @@ export const registerHandler = async (req, res) => {
  */
 export const loginHandler = async (req, res) => {
 	const tokenPair = await userService.login(req.body)
-	res.locals.statusMessage = 'Usuario autenticado exitosamente'
+	// Insertar token de actualización en cookie HTTP-only para que el cliente lo envíe automáticamente en cada solicitud
 	res.cookie('refreshToken', tokenPair.refreshToken, getHttpOnlyCookieOptions())
 	res.json({
 		message: 'Usuario autenticado exitosamente',
@@ -38,55 +38,69 @@ export const loginHandler = async (req, res) => {
 // TODO: implementar endpoint para que el usuario pueda actualizar su perfil
 export const userUpdateHandler = (req, res) => {
 	res.json({
-		message: `Ruta para actualizar el usuario con ID ${req.params.id} - solo accesible para el propio usuario`,
+		message:
+			'Ruta para actualizar el perfil del usuario autenticado - ID obtenido desde el token de acceso',
 	})
 }
 
+/**
+ * 
+ * @param req debe contener la cookie HTTP-only refreshToken enviada automáticamente por el navegador
+ * @returns objeto con un nuevo accessToken si el refreshToken es válido (refreshToken se envía al cliente en una cookie HTTP-only)
+ * 
+ * El token de actualización se enviará desde el cliente en una cookie HTTP-only para evitar ataques XSS. 
+ * El cliente no tiene acceso directo a esta cookie, el navegador la envía automáticamente en cada solicitud al backend. 
+ */
 export const refreshTokenHandler = async (req, res) => {
-	console.log('Cookies recibidas en refreshTokenHandler')
-	// El token de actualización se enviará desde el cliente en una cookie HTTP-only para evitar ataques XSS
-	// El frontend, por diseño, no tiene acceso a esta cookie, el backend la entrega al navegador y el navegador la envía en cada solicitud
+	
 	const token = req.cookies?.refreshToken
 
+	// Denegar acceso si no se proporciona un token de actualización
 	if (!token) {
-		res.locals.statusMessage =
-			'error(refreshTokenHandler): No se proporcionó un token de actualización'
+		env.APP_STAGE === 'dev' &&
+			console.warn(
+				'Token de actualización no proporcionado para ruta protegida: ' +
+					req.method +
+					' ' +
+					req.originalUrl,
+			)
 		return res
 			.status(401)
-			.json({ message: 'Error: No se proporcionó un token de actualización' })
+			.json({ message: 'Token de actualización no proporcionado' })
 	}
 
 	// Verificar token de actualización y generar un nuevo token de acceso si es válido
-	verifyToken(token)
-		.then(async (payload) => {
-			const newAccessToken = await generateAccessToken(
-				payload.sub,
-				payload.role,
+	try {
+		const { payload } = await verifyToken(token)
+		const newAccessToken = await generateAccessToken(payload.sub, payload.role)
+		// Adicionalmente, renovar el token de actualización
+		const newRefreshToken = await generateRefreshToken(payload.sub, payload.role)
+		res.cookie('refreshToken', newRefreshToken, getHttpOnlyCookieOptions())
+		return res.json({ message: 'Tokens renovados exitosamente', accessToken: newAccessToken })
+	} catch (_) {
+		env.APP_STAGE === 'dev' &&
+			console.warn(
+				'Token de actualización inválido o expirado para ruta protegida: ' +
+					req.method +
+					' ' +
+					req.originalUrl,
 			)
-			res.locals.statusMessage = 'Nuevo token de acceso generado exitosamente'
-			res.json({ accessToken: newAccessToken })
+		// Denegar acceso si el token de actualización es inválido o ha expirado
+		return res.status(403).json({
+			message: 'Token de actualización inválido o expirado',
 		})
-		.catch((err) => {
-			res.locals.statusMessage =
-				'error(refreshTokenHandler): El token de actualización proporcionado es inválido o ha expirado - ' +
-				err.message
-			return res.status(403).json({
-				message:
-					'Error: El token de actualización proporcionado es inválido o ha expirado',
-			})
-		})
+	}
 }
 
 /**
  *
- * @param request.user.id es asignado por el middleware isAuthenticated después de verificar el token de acceso
+ * @param req contiene el ID del usuario autenticado en req.user.sub, proporcionado por el middleware isAuthenticated
  * @returns perfil del usuario autenticado
  * @throws manejados por middleware apiErrorHandler
  */
 export const profileHandler = async (req, res) => {
 	const userProfile = await userService.getUserProfile(req.user.sub)
-	res.locals.statusMessage = 'Perfil de usuario obtenido exitosamente'
-	res.json({
+	return res.json({
 		message: 'Perfil de usuario obtenido exitosamente',
 		profile: userProfile,
 	})

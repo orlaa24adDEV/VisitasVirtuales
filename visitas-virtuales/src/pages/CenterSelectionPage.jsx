@@ -4,18 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 
 export default function CenterSelectionPage() {
-  const [centers, setCenters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selected, setSelected] = useState(null);
 
   const navigate = useNavigate();
-  const { selectCenter } = useAuth();
+  const { selectCenter, setCenters, centers } = useAuth();
+
+  const API_URL = 'http://localhost:5000/api/centers';
 
   useEffect(() => {
     const fetchCenters = async () => {
       try {
-        const response = await fetch('/api/centers');
+        const response = await fetch(API_URL);
         if (!response.ok) throw new Error('Error al cargar los centros');
         const data = await response.json();
         setCenters(data);
@@ -37,8 +38,9 @@ export default function CenterSelectionPage() {
   const handleConfirm = () => {
     if (!selected) return;
     const center = centers.find((c) => c.id === selected);
+    if (!center) return;
     selectCenter(center);
-    navigate('/login');
+    navigate('/home?center=' + center.id);
   };
 
   return (
