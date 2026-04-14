@@ -50,7 +50,7 @@ export default function TopHeader({
     };
 
     return (
-        <header className="h-16 w-full bg-gray-100 border-b border-slate-100 flex items-center justify-between px-4 lg:justify-end lg:px-8 shadow-sm">
+        <header className="h-16 w-full bg-blue-100 border-b border-slate-100 flex items-center justify-between px-4 lg:justify-end lg:px-8 shadow-sm">
             <button onClick={onMenuClick} className="p-2 text-slate-600 hover:bg-slate-200 rounded-lg lg:hidden">
                 <Menu size={24} />
             </button>
@@ -114,7 +114,7 @@ export default function TopHeader({
                         </Link>
                         <Link
                             to="/register" // O a tu ruta de registro si la tienes
-                            className="text-sm font-medium  text-slate-600 px-4 py-2 rounded-lg hover:text-white hover:bg-blue-600 transition-colors"
+                            className="text-sm font-bold bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                         >
                             Registrarte
                         </Link>
