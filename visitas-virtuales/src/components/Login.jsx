@@ -5,51 +5,66 @@ import { useAuth } from '@/hooks/useAuth.js';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
-	const [username, setUsername] = useState('');
+	const [email, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [errors, setErrors] = useState({});
+	const [isCreateMode, setIsCreateMode] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const { login } = useAuth();
 	const navigate = useNavigate();
 
-	
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-
-		let role = 'invitado'; // Rol por defecto.
-		const lowerUsername = username.toLowerCase();
-		if (lowerUsername.includes('admin')) {
-			role = 'admin';
-		} else if (lowerUsername.includes('profesor')) {
-			role = 'teacher';
-		}
-
-		const userData = {
-			id: Math.floor(Math.random() * 1000) + 1,
-			username,
-			role,
-			password,
-			name: username.split(' ')[0] || username,
-		};
-
-		const timestamp = new Date().toLocaleString('es-ES');
-
-		login(userData); // Guardar el usuario en el contexto global
-		if (role === 'admin' || role === 'teacher') {
-			navigate('/dashboard');
-		} else {
-			navigate('/home');
-		}
-
-		alert(`Login exitoso - ${timestamp}\nBienvenido, ${userData.role} (${userData.name})`);
-
-		// Limpiar el formulario
-		setUsername('');
-		setPassword('');
+		setIsLoading(true);
 		setErrors({});
+
+		try {
+			// Peticion a la API
+			const response = await fetch('/api/users/auth', {
+				method: 'POST',
+				mode: 'cors',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ email: email, password: password }),
+			});
+			const data = await response.json();
+			console.log('Respuesta del servidor:', data);
+
+			if (!response.ok) {
+				// Mostrar errores de validación del backend si existen
+				if (data.details && Array.isArray(data.details)) {
+					const errorMessages = data.details.map(d => `${d.field}: ${d.message}`).join(' | ');
+					setErrors({ auth: errorMessages });
+				} else {
+					setErrors({ auth: data.message || 'Error al iniciar sesión' });
+				}
+				return;
+			}
+
+			const token = data.accessToken;
+			const userData = {
+				email: email,
+				username: email.split('@')[0],
+				role: email.includes('admin') ? 'admin' :
+					email.includes('profesor') ? 'teacher' : 'student'
+			};
+
+			console.log(`Login exitoso (${userData.username}) - ${new Date().toLocaleString('es-ES')}`);
+
+			login(userData, token);
+			navigate('/home');
+
+		} catch (error) {
+			console.error('Error al iniciar sesión:', error);
+			setErrors({ auth: error.message });
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
-	const handleUsernameChange = (e) => {
+	const handleEmailChange = (e) => {
         setUsername(e.target.value);
     };
 
@@ -65,8 +80,6 @@ function Login() {
 	const handleCreateAccount = (e) => {
 		e.preventDefault();
 		navigate('/register');
-		
-	
 	};
 
 	const handlePeek = () => {
@@ -76,15 +89,18 @@ function Login() {
 	return (
 		<main className="main-content">
 			<section className="login-section">
-				<h2>Iniciar Sesión</h2>
-				<form onSubmit={handleSubmit} action="#" method="post">
+				<h2>{isCreateMode ? 'Crear Cuenta' : 'Iniciar Sesión'}</h2>
+				<form onSubmit={handleSubmit}>
+					{errors.auth && <div className="error-message">{errors.auth}</div>}
 					<div className="form-group">
 						<input
 							type="text"
-							id="username"
-							value={username}
-							onChange={handleUsernameChange}
-							placeholder="Usuario"
+							id="email"
+							value={email}
+							onChange={handleEmailChange}
+							placeholder="Correo electrónico"
+							disabled={isLoading}
+							required
 						/>
 					</div>
 
@@ -96,6 +112,8 @@ function Login() {
 								value={password}
 								onChange={handlePasswordChange}
 								placeholder="Contraseña"
+								disabled={isLoading}
+								required
 							/>
 							<span className="password-toggle" onClick={handlePeek}>
 								{showPassword ?
@@ -103,20 +121,20 @@ function Login() {
 								:	<EyeIcon className="icon" />}
 							</span>
 						</div>
-						{errors.password && (
-							<span className="error-message">{errors.password}</span>
-						)}
 					</div>
+					<button type='submit' disabled={isLoading} className="submit-button">
+						{isLoading ? 'Cargando...' : (isCreateMode ? 'Crear Cuenta' : 'Login')}
+					</button>
+
+					{!isCreateMode && (
 						<p>
 							¿Aún no tienes cuenta?
 							<a href="#" onClick={handleCreateAccount}>
 								Crear cuenta.
 							</a>
 						</p>
+					)}
 
-					<button type="submit">
-						Login
-					</button>
 				</form>
 			</section>
 		</main>

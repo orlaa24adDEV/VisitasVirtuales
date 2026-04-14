@@ -9,20 +9,28 @@ export const AuthProvider = ({children}) => {
         return savedUser ? JSON.parse(savedUser) : null;
     });
 
+    const [token, setToken] = useState(() => {
+        return sessionStorage.getItem('token') || null;
+    });
+
     const [selectedCenter, setSelectedCenter] = useState(() => {
         const savedCenter = sessionStorage.getItem('selectedCenter');
         return savedCenter ? JSON.parse(savedCenter) : null;
     });
 
-    const login = (userData) => {
+    const login = (userData, userToken) => {
         setUser(userData);
+        setToken(userToken);
         sessionStorage.setItem('user', JSON.stringify(userData));
+        sessionStorage.setItem('token', userToken);
     };
 
     const logout = () => {
         setUser(null);
+        setToken(null);
         setSelectedCenter(null);
         sessionStorage.removeItem('user');
+        sessionStorage.removeItem('token');
         sessionStorage.removeItem('selectedCenter');
     };
 
