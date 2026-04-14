@@ -1,0 +1,69 @@
+# Scripts
+
+## Desarrollo
+
+### Base de datos
+
+- **Generar migraciones** (sentencias DDL que se ejecutarán en la DB)
+  > `npm run db:generate`
+- **Iniciar base de datos** (PostgreSQL y pgAdmin en Docker Compose)
+  > `npm run db:up` \
+  > `npm run db:up:watch`
+- **Insertar datos de prueba**
+  > `npm run db:seed`
+- **Aplicar migraciones**
+  > `npm run db:migrate`
+- **Detener base de datos**
+  > `npm run db:down`
+- **Ver logs**
+  > `npm run db:logs`
+
+### Aplicación
+
+- **Iniciar la aplicación**
+  > `npm run dev`
+
+### API & Documentación
+
+- **Generar especificación OpenAPI**
+  > `npm run openapi:generate`
+
+## Producción
+
+### Base de datos
+
+- **Aplicar migraciones**
+  > `npm run db:migrate` (se ejecuta en cada arranque del contenedor de la API en producción)
+
+### Aplicación
+
+- **Iniciar la aplicación**
+  > `npm run deploy:prod:up`
+- **Detener la aplicación**
+  > `npm run deploy:prod:down`
+- **Reiniciar la aplicación**
+  > `npm run deploy:prod:restart`
+- **Ver logs**
+  > `npm run deploy:prod:logs`
+- **Ver estado de contenedores**
+  > `npm run deploy:prod:ps`
+
+## Staging
+
+### Base de datos
+
+- **Aplicar migraciones**
+  > `npm run db:migrate` (se ejecuta en cada arranque del contenedor de la API en staging)
+
+### Aplicación
+
+- **Iniciar la aplicación**
+  > `npm run deploy:stage:up`
+- **Detener la aplicación**
+  > `npm run deploy:stage:down`
+- **Reiniciar la aplicación**
+  > `npm run deploy:stage:restart`
+- **Ver logs**
+  > `npm run deploy:stage:logs`
+- **Ver estado de contenedores**
+  > `npm run deploy:stage:ps`
