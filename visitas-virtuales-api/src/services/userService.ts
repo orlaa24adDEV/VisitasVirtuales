@@ -11,11 +11,13 @@ import type {
 } from '../db/schema.ts'
 import ApiError from '../helpers/ApiError.js'
 
-const register = async (userRegisterRequest: UserRegisterType): Promise<TokenResponseType> => {
+const register = async (
+	userRegisterRequest: UserRegisterType,
+): Promise<TokenResponseType> => {
 	const { email, username, password } = userRegisterRequest
 
 	// Verificar que el email o el nombre de usuario no estén ya en uso
-	const [ existingUser ] = await db
+	const [existingUser] = await db
 		.select()
 		.from(users)
 		.where(or(eq(users.email, email), eq(users.username, username)))
@@ -29,17 +31,14 @@ const register = async (userRegisterRequest: UserRegisterType): Promise<TokenRes
 
 	// Aplicar hashing a la contraseña (bcrypt)
 	const hashedPassword = await bcrypt.hash(password, 10)
-	const userToInsert = userInsertSchema.omit({id: true}).parse({
+	const userToInsert = userInsertSchema.omit({ id: true }).parse({
 		email,
 		username,
 		password: hashedPassword,
 		// El primer usuario registrado será admin, los siguientes serán student por defecto
-		role: isFirstUser ? 'admin' : 'student'
+		role: isFirstUser ? 'admin' : 'student',
 	})
-	const [ newUser ] = await db
-		.insert(users)
-		.values(userToInsert)
-		.returning()
+	const [newUser] = await db.insert(users).values(userToInsert).returning()
 	if (!newUser) {
 		throw new ApiError(500, 'Error al registrar el usuario')
 	}
@@ -53,10 +52,12 @@ const register = async (userRegisterRequest: UserRegisterType): Promise<TokenRes
 	return tokenPair
 }
 
-const login = async (userLoginRequest: UserLoginType): Promise<TokenResponseType> => {
+const login = async (
+	userLoginRequest: UserLoginType,
+): Promise<TokenResponseType> => {
 	const { email, username, password } = userLoginRequest
 
-	const [ existingUser ] = await db
+	const [existingUser] = await db
 		.select()
 		.from(users)
 		.where(email ? eq(users.email, email) : eq(users.username, username!))
@@ -76,7 +77,10 @@ const login = async (userLoginRequest: UserLoginType): Promise<TokenResponseType
 
 	const tokenPair = {
 		accessToken: await generateAccessToken(existingUser.id, existingUser.role),
-		refreshToken: await generateRefreshToken(existingUser.id, existingUser.role),
+		refreshToken: await generateRefreshToken(
+			existingUser.id,
+			existingUser.role,
+		),
 	}
 	if (!tokenPair.accessToken || !tokenPair.refreshToken) {
 		throw new ApiError(500, 'Error al generar los tokens de autenticación')
@@ -86,7 +90,7 @@ const login = async (userLoginRequest: UserLoginType): Promise<TokenResponseType
 
 const getUserProfile = async (sub: string): Promise<UserProfileType> => {
 	const userId = sub
-	const [ userProfile ] = await db
+	const [userProfile] = await db
 		.select({
 			id: users.id,
 			email: users.email,

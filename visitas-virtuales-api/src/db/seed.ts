@@ -1,6 +1,14 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
-import { users, centers, pois, UserInsertType, PoiInsertType, UserSelectType, UserSelectMinusPasswordType } from './schema.ts'
+import {
+	users,
+	centers,
+	pois,
+	UserInsertType,
+	PoiInsertType,
+	UserSelectType,
+	UserSelectMinusPasswordType,
+} from './schema.ts'
 import 'dotenv/config'
 import { env } from '../../env.ts'
 import bcrypt from 'bcrypt'
@@ -51,58 +59,58 @@ async function main() {
 				email: 'admin_mad@instituto.es',
 				username: 'admin_mad',
 				password: adminPassword,
-				role: 'admin'
+				role: 'admin',
 			},
 			{
 				email: 'admin_bar@instituto.es',
 				username: 'admin_bar',
 				password: adminPassword,
-				role: 'admin'
+				role: 'admin',
 			},
 			{
 				email: 'admin_sev@instituto.es',
 				username: 'admin_sev',
 				password: adminPassword,
-				role: 'admin'
+				role: 'admin',
 			},
 			{
 				email: 'profesor_mad@instituto.es',
 				username: 'prof_mad',
 				password: teacherPassword,
-				role: 'teacher'
+				role: 'teacher',
 			},
 			{
 				email: 'profesor_bar@instituto.es',
 				username: 'prof_bar',
 				password: teacherPassword,
-				role: 'teacher'
+				role: 'teacher',
 			},
 			{
 				email: 'profesor_sev@instituto.es',
 				username: 'prof_sev',
 				password: teacherPassword,
-				role: 'teacher'
+				role: 'teacher',
 			},
 			{
 				email: 'alumno_mad@instituto.es',
 				username: 'alumno_mad',
 				password: studentPassword,
-				role: 'student'
+				role: 'student',
 			},
 			{
 				email: 'alumno_bar@instituto.es',
 				username: 'alumno_bar',
 				password: studentPassword,
-				role: 'student'
+				role: 'student',
 			},
 			{
 				email: 'alumno_sev@instituto.es',
 				username: 'alumno_sev',
 				password: studentPassword,
-				role: 'student'
+				role: 'student',
 			},
 		]
-		const insertedUsers: { id: number, username: string }[] = await db
+		const insertedUsers: { id: number; username: string }[] = await db
 			.insert(users)
 			.values(mockUserData)
 			.returning({ id: users.id, username: users.username })
