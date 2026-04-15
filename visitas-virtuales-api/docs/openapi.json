@@ -219,6 +219,31 @@
         }
       }
     },
+    "/api/v1/pois": {
+      "get": {
+        "summary": "Listar todos los POIs de todos los centros (solo para administradores)",
+        "description": "Esta ruta permite a los administradores obtener una lista de todos los POIs existentes en todos los centros. Esta ruta es útil para la gestión global de POIs y no requiere un ID de centro específico.",
+        "tags": [
+          "POIs"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de todos los POIs obtenida con éxito"
+          },
+          "401": {
+            "description": "No se proporcionó un token de acceso"
+          },
+          "403": {
+            "description": "Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso"
+          }
+        }
+      }
+    },
     "/api/v1/centers/{centerId}/pois/{id}": {
       "patch": {
         "summary": "Actualizar un POI existente (solo para administradores o profesores)",
@@ -773,6 +798,82 @@
           },
           "500": {
             "description": "Error del servidor al autenticar el usuario",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/auth/logout": {
+      "post": {
+        "summary": "Cerrar sesión de usuario",
+        "description": "Permite a un usuario cerrar su sesión actual. Requiere un token de acceso válido en el header Authorization. El token de actualización asociado al usuario se invalidará y eliminará del cliente.",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sesión cerrada con éxito",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de acceso no proporcionado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token de acceso inválido o expirado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor al cerrar la sesión del usuario",
             "content": {
               "application/json": {
                 "schema": {

@@ -105,6 +105,14 @@ export const poisByCenterAndFuzzyNameHandler = async (req, res) => {
 	return res.json({ message: 'POIs obtenidos exitosamente', pois: pois })
 }
 
+export const allPoisHandler = async (req, res) => {
+	const pois = await poiService.getAllPois()
+	if (pois.length === 0) {
+		return res.status(200).json({ message: 'No se encontraron POIs', pois: [] })
+	}
+	return res.json({ message: 'POIs obtenidos exitosamente', pois: pois })
+}
+
 export const deletePoiHandler = async (req, res) => {
 	const centerId = req.params.centerId
 	const poiId = req.params.poiId

@@ -5,6 +5,7 @@ import {
 	newPoiHandler,
 	deletePoiHandler,
 	poisByCenterAndFuzzyNameHandler,
+	allPoisHandler,
 	updatePoiHandler,
 } from '../controllers/poiController.js'
 import { validateBody, validateParams } from '../middlewares/validation.ts'
@@ -122,6 +123,25 @@ router.get(
 	hasRoles('any'),
 	poisByCenterAndFuzzyNameHandler,
 )
+
+/**
+ * @openapi
+ * /api/v1/pois:
+ *   get:
+ *     summary: Listar todos los POIs de todos los centros (solo para administradores)
+ *     description: Esta ruta permite a los administradores obtener una lista de todos los POIs existentes en todos los centros. Esta ruta es útil para la gestión global de POIs y no requiere un ID de centro específico.
+ *     tags: [POIs]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de todos los POIs obtenida con éxito
+ *       401:
+ *         description: No se proporcionó un token de acceso
+ *       403:
+ *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
+ */
+router.get('/pois', hasRoles('admin'), allPoisHandler)
 
 /**
  * @openapi

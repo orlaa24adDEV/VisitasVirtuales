@@ -7,9 +7,8 @@ const Historial = () => {
   useEffect(() => {
     const fetchCommits = async () => {
       try {
-        // Añadimos &per_page=10 al final de la URL
         const response = await fetch(
-          "https://api.github.com/repos/jaimemoya-bit/VisitasVirtualesZaitec/commits?sha=Web_Zaitec&per_page=10"
+          "https://api.github.com/repos/jaimemoya-bit/VisitasVirtualesZaitec/commits?sha=Web_Zaitec"
         );
         const data = await response.json();
         setCommits(Array.isArray(data) ? data : []);
@@ -26,7 +25,7 @@ const Historial = () => {
     <div className="flex h-full items-center justify-center">
        <div className="flex flex-col items-center gap-2">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="italic text-gray-500">Obteniendo los últimos 10 cambios...</p>
+          <p className="italic text-gray-500">Obteniendo los últimos cambios...</p>
        </div>
     </div>
   );
@@ -36,7 +35,7 @@ const Historial = () => {
       <div className="flex flex-col mb-10 space-y-2 border-b border-slate-200 pb-6">
         <h1 className="text-3xl font-bold text-gray-800">Historial de Auditoría</h1>
         <div className="flex items-center gap-2">
-          <p className="text-gray-500 italic">Últimos 10 cambios en el repositorio</p>
+          <p className="text-gray-500 italic">Últimos cambios en el repositorio</p>
           <span className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Live</span>
         </div>
       </div>
@@ -96,7 +95,7 @@ const Historial = () => {
 
       {/* Footer de la lista */}
       <div className="text-center py-6">
-        <p className="text-sm text-slate-400 italic">Ultimos 10 cambios del repositorio.</p>
+        <p className="text-sm text-slate-400 italic">Ultimos cambios del repositorio.</p>
       </div>
     </div>
   );
