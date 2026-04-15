@@ -3,6 +3,7 @@ import { verifyToken } from '../helpers/jwt.js'
 import { getHttpOnlyCookieOptions } from '../helpers/cookies.js'
 import userService from '../services/userService.ts'
 import { env } from '../../env.ts'
+import { clear } from 'node:console'
 
 /**
  *
@@ -33,6 +34,19 @@ export const loginHandler = async (req, res) => {
 		message: 'Usuario autenticado exitosamente',
 		accessToken: tokenPair.accessToken,
 	})
+}
+
+/**
+ *
+ * @param req debe contener la cookie HTTP-only refreshToken enviada automáticamente por el navegador
+ * 
+ * Logout envia instrucciones al navegador para eliminar la cookie HTTP-only refreshToken
+ */
+export const logoutHandler = (req, res) => {
+	const options = getHttpOnlyCookieOptions()
+	delete options.maxAge;
+	res.clearCookie('refreshToken', options);
+	res.status(200).json({ message: 'Logout successful' })
 }
 
 // TODO: implementar endpoint para que el usuario pueda actualizar su perfil
