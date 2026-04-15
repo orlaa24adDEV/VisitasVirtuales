@@ -1,6 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import '@/assets/Login.css';
 
 function Register() {
@@ -12,12 +13,21 @@ function Register() {
     const [phone, setPhone] = useState('');
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { register } = useAuth();
 
    const validateUsername = (value) => {
         if (!value) {
             return "El usuario es requerido";
         }
+        if (value.length < 6 || value.length > 24) {
+            return 'El usuario debe tener entre 6 y 24 caracteres';
+        }
+        if (!/^[a-zA-Z0-9_]{6,24}$/.test(value)) {
+            return 'El usuario solo puede contener letras, números y guiones bajos';
+        }
+        return null;
 	}
 
     const validateName = (value) => {
@@ -63,11 +73,17 @@ function Register() {
         if (!value) {
             return 'La contrasena es requerida';
         }
+        if (value.length < 8 || value.length > 32) {
+            return 'La contrasena debe tener entre 8 y 32 caracteres';
+        }
         if (!/[A-Z]/.test(value)) {
             return 'La contrasena debe contener al menos una mayuscula';
         }
         if (!/[0-9]/.test(value)) {
             return 'La contrasena debe contener al menos un numero';
+        }
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+            return 'La contrasena debe contener al menos un simbolo (!@#$%^&*(),.?":{}|<>)';
         }
         return null;
     };
@@ -90,23 +106,34 @@ function Register() {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
 
-        console.log('Registro valido:', { username, password, name, age, email, phone });
-        setUsername('');
-        setPassword('');
-        setName('');
-        setAge('');
-        setEmail('');
-        setPhone('');
-        setErrors({});
-        navigate('/login');
+        setLoading(true);
+        const result = await register(email, username, password);
+        setLoading(false);
+
+        if (result.success) {
+            // Limpiar formulario
+            setUsername('');
+            setPassword('');
+            setName('');
+            setAge('');
+            setEmail('');
+            setPhone('');
+            setErrors({});
+            // Redirigir a página de selección de centro o dashboard
+            navigate('/select-center');
+        } else {
+            // Mostrar error
+            setErrors({ submit: result.error });
+        }
     };
 
     const handleUsernameChange = (e) => {
         setUsername(e.target.value);
+        if (errors.username) setErrors({ ...errors, username: null });
     };
 
     const handlePasswordChange = (e) => {
@@ -127,6 +154,7 @@ function Register() {
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
         if (errors.email) setErrors({ ...errors, email: null });
+        if (errors.submit) setErrors({ ...errors, submit: null });
     };
 
     const handlePhoneChange = (e) => {
@@ -229,7 +257,10 @@ function Register() {
                         </a>
                     </p>
 
-                    <button type='submit'>Registrase</button>
+                    {errors.submit && <span className='error-message'>{errors.submit}</span>}
+                    <button type='submit' disabled={loading}>
+                        {loading ? 'Registrando...' : 'Registrarse'}
+                    </button>
                 </form>
             </section>
         </main>
