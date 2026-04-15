@@ -9,6 +9,7 @@ export const AuthProvider = ({children}) => {
         return savedUser ? JSON.parse(savedUser) : null;
     });
 
+    // eslint-disable-next-line no-unused-vars
     const [token, setToken] = useState(() => {
         return sessionStorage.getItem('token') || null;
     });
@@ -21,8 +22,8 @@ export const AuthProvider = ({children}) => {
     const login = (userData, userToken) => {
         setUser(userData);
         setToken(userToken);
-        sessionStorage.setItem('user', JSON.stringify(userData));
-        sessionStorage.setItem('token', userToken);
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('accessToken', userToken);
     };
 
     const logout = () => {
@@ -30,7 +31,7 @@ export const AuthProvider = ({children}) => {
         setToken(null);
         setSelectedCenter(null);
         sessionStorage.removeItem('user');
-        sessionStorage.removeItem('token');
+        localStorage.removeItem('accessToken');
         sessionStorage.removeItem('selectedCenter');
     };
 
