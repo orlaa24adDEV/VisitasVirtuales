@@ -14,8 +14,6 @@ const envSchema = z.object({
 	POSTGRES_PASSWORD: z.string().min(32),
 	POSTGRES_DB: z.string().min(1),
 	DATABASE_URL: z.string().startsWith('postgres://'),
-	PGADMIN_DEFAULT_EMAIL: z.email(),
-	PGADMIN_DEFAULT_PASSWORD: z.string().min(32),
 	JWT_SECRET: z.string().min(32),
 	JWT_ACCESS_TOKEN_TTL: z.string().default('15m'),
 	JWT_REFRESH_TOKEN_TTL: z.string().default('7d'),

@@ -1,69 +1,40 @@
-# Scripts
+## Scripts útiles
 
-## Desarrollo
+### Desarrollo
 
-### Base de datos
+#### Base de datos
+- Iniciar base de datos: `npm run db:up`
+- Generar migraciones: `npm run db:generate`
+- Aplicar migraciones: `npm run db:migrate`
+- Insertar datos de prueba: `npm run db:seed`
+- Detener base de datos: `npm run db:down`
+- Ver logs: `npm run db:logs`
 
-- **Generar migraciones** (sentencias DDL que se ejecutarán en la DB)
-  > `npm run db:generate`
-- **Iniciar base de datos** (PostgreSQL y pgAdmin en Docker Compose)
-  > `npm run db:up` \
-  > `npm run db:up:watch`
-- **Insertar datos de prueba**
-  > `npm run db:seed`
-- **Aplicar migraciones**
-  > `npm run db:migrate`
-- **Detener base de datos**
-  > `npm run db:down`
-- **Ver logs**
-  > `npm run db:logs`
+#### Aplicación
+- Iniciar en desarrollo: `npm run dev`
 
-### Aplicación
+#### Documentación
+- Generar documentación Swagger / OpenAPI: `npm run openapi:generate`
 
-- **Iniciar la aplicación**
-  > `npm run dev`
+---
 
-### API & Documentación
+### Staging
+- Desplegar y e iniciar todo: `npm run deploy:stage:up`
+- Detener: `npm run deploy:stage:down`
+- Reiniciar: `npm run deploy:stage:restart`
+- Ver logs: `npm run deploy:stage:logs`
+- Ver estado de contenedores: `npm run deploy:stage:ps`
 
-- **Generar especificación OpenAPI**
-  > `npm run openapi:generate`
+> En staging, solo es necesario `npm run deploy:stage:up`. La base de datos y migraciones se gestionan automáticamente por el contenedor.
 
-## Producción
+---
 
-### Base de datos
+### Producción
+- Desplegar y e iniciar todo (API, DB, etc): `npm run deploy:prod:up`
+- Detener: `npm run deploy:prod:down`
+- Reiniciar: `npm run deploy:prod:restart`
+- Ver logs: `npm run deploy:prod:logs`
+- Ver estado de contenedores: `npm run deploy:prod:ps`
 
-- **Aplicar migraciones**
-  > `npm run db:migrate` (se ejecuta en cada arranque del contenedor de la API en producción)
+> En producción, solo es necesario `npm run deploy:prod:up`. La base de datos y migraciones se gestionan automáticamente por el contenedor.
 
-### Aplicación
-
-- **Iniciar la aplicación**
-  > `npm run deploy:prod:up`
-- **Detener la aplicación**
-  > `npm run deploy:prod:down`
-- **Reiniciar la aplicación**
-  > `npm run deploy:prod:restart`
-- **Ver logs**
-  > `npm run deploy:prod:logs`
-- **Ver estado de contenedores**
-  > `npm run deploy:prod:ps`
-
-## Staging
-
-### Base de datos
-
-- **Aplicar migraciones**
-  > `npm run db:migrate` (se ejecuta en cada arranque del contenedor de la API en staging)
-
-### Aplicación
-
-- **Iniciar la aplicación**
-  > `npm run deploy:stage:up`
-- **Detener la aplicación**
-  > `npm run deploy:stage:down`
-- **Reiniciar la aplicación**
-  > `npm run deploy:stage:restart`
-- **Ver logs**
-  > `npm run deploy:stage:logs`
-- **Ver estado de contenedores**
-  > `npm run deploy:stage:ps`
