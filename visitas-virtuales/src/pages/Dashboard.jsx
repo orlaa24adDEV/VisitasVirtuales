@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth.js';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -6,14 +7,12 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const API_URL = 'http://localhost:5000/api/pois';
-
   useEffect(() => {
     const fetchPois = async () => {
       setLoading(true);
       setError('');
       try {
-        const response = await fetch(API_URL);
+        const response = await fetch(`/api/pois`);  
         if (!response.ok) throw new Error('No se pudo cargar el listado de POIs');
         const data = await response.json();
         setPois(data);

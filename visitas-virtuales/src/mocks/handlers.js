@@ -2,6 +2,10 @@ import { http, HttpResponse } from 'msw';
 
 // Mocks de los endpoints de la API para desarrollo
 export const handlers = [
+  // Listado de todos los POIs
+  http.get('*/api/pois', () => {
+    return HttpResponse.json(POIS);
+  }),
 
   // Listado de POIs de un centro específico
   http.get('*/api/centers/:centerId/pois', ({ params }) => {
