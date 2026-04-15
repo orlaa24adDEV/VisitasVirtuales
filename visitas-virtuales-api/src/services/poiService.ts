@@ -137,6 +137,20 @@ const getPoisByCenterAndFuzzyName: (
 	return poiArr
 }
 
+const getAllPois: () => Promise<Poi[]> = async () => {
+	const poiArr: Poi[] = await db
+		.select({
+			id: pois.id,
+			name: pois.name,
+			details: pois.details,
+			userId: pois.userId,
+			centerId: pois.centerId,
+		})
+		.from(pois)
+
+	return poiArr
+}
+
 const deletePoiByCenterAndId: (
 	centerId: string,
 	poiId: string,
@@ -249,6 +263,7 @@ export default {
 	getPoisByCenterAndFuzzyName,
 	deletePoiByCenterAndId,
 	getPoisByUserAndCenter,
+	getAllPois,
 	updatePoi,
 	getPoiHistory,
 }
