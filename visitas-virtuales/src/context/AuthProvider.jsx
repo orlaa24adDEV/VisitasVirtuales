@@ -5,11 +5,13 @@ export const AuthProvider = ({children}) => {
     //Vamos a simular un usuario ya autenticado para probar la funcionalidad del código.
 
     const [user, setUser] = useState(() => {
+        const savedUser = localStorage.getItem('user');
+        return savedUser ? JSON.parse(savedUser) : null;
     });
 
     // eslint-disable-next-line no-unused-vars
     const [token, setToken] = useState(() => {
-        return sessionStorage.getItem('token') || null;
+        return localStorage.getItem('token') || null;
     });
 
     const [selectedCenter, setSelectedCenter] = useState(() => {
@@ -28,9 +30,9 @@ export const AuthProvider = ({children}) => {
         setUser(null);
         setToken(null);
         setSelectedCenter(null);
-        sessionStorage.removeItem('user');
+        localStorage.removeItem('user');
         localStorage.removeItem('accessToken');
-        sessionStorage.removeItem('selectedCenter');
+        localStorage.removeItem('selectedCenter');
     };
 
     const [centers, setCenters] = useState([]);
