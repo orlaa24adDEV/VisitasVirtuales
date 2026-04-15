@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth.js';
 import { Link } from 'react-router-dom';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const Dashboard = () => {
   const [pois, setPois] = useState([]);
@@ -32,12 +33,26 @@ const Dashboard = () => {
     .sort((a, b) => Number(b.id) - Number(a.id))
     .slice(0, 5);
 
+  // Calcular distribución de POIs por centro
+  const poisByCenter = pois.reduce((acc, poi) => {
+    const existingCenter = acc.find((c) => c.name === String(poi.centerId));
+    if (existingCenter) {
+      existingCenter.value++;
+    } else {
+      acc.push({ name: String(poi.centerId), value: 1 });
+    }
+    return acc;
+  }, []);
+
+  // Ordenar por nombre para consistent visualization
+  poisByCenter.sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <div className="flex flex-col h-full gap-4 p-10">
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl text-center font-bold text-slate-900">Dashboard</h1>
-          <p className="text- text-center mt-1">Resumen rápido de POIs y última actividad</p>
+          <h1 className="text-3xl text-center font-bold text-slate-900">DASHBOARD</h1>
+          <p className="text-center mt-1">Resumen rápido de POIs y última actividad</p>
         </div>
         <Link
           to="/listpois"
@@ -83,6 +98,36 @@ const Dashboard = () => {
                   </li>
                 ))}
               </ul>
+              
+            )}
+          </section>
+
+          <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <h2 className="text-lg font-semibold text-slate-800 mb-3">Distribución de POIs por Centro</h2>
+            {poisByCenter.length === 0 ? (
+              <p className="text-slate-500">No hay datos disponibles para mostrar el gráfico.</p>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={poisByCenter} margin={{ top: 20, right: 30, left: 0, bottom: 60 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="name" 
+                    label={{ value: 'Centro', position: 'insideBottomRight', offset: -10 }}
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                  />
+                  <YAxis 
+                    label={{ value: 'Cantidad de POIs', angle: -90, position: 'insideLeft' }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}
+                    formatter={(value) => [value, 'POIs']}
+                  />
+                  <Legend />
+                  <Bar dataKey="value" fill="#2563eb" name="POIs" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             )}
           </section>
         </>
