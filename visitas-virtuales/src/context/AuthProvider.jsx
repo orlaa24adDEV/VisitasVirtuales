@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
-import { setAccessToken, removeAccessToken, getAccessToken, removeRefreshToken } from '../helpers/auth.js';
+import { setAccessToken, removeAccessToken, getAccessToken } from '../helpers/auth.js';
 
 export const AuthProvider = ({children}) => {
 
@@ -12,9 +12,9 @@ export const AuthProvider = ({children}) => {
     const fetchProfile = async () => {
         const token = getAccessToken();
         if (!token) {
-        setUser(null);
-        setIsInitialLoading(false);
-        return;
+            setUser(null);
+            setIsInitialLoading(false);
+            return;
         }
 
         try {
@@ -46,11 +46,21 @@ export const AuthProvider = ({children}) => {
     }
 
     // Al cerrar sesión, limpiar usuario, centro, y tokens de acceso y refresco
-    const logout = () => {
+    const logout = async () => {
         setUser(null);
         setSelectedCenter(null);
+        // Pedir al backend que envie instrucciones al navegador para eliminar 
+        // el refresh token (cookie httpOnly)
+        try {
+            await fetch('/api/users/auth/logout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                headers: { Authorization: `Bearer ${getAccessToken()}` }
+            });
+        } catch (err) {
+            console.error("Logout failed:", err);
+        }
         removeAccessToken();
-        removeRefreshToken();
     };
 
     const selectCenter = (center) => {

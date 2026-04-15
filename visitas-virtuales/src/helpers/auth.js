@@ -9,7 +9,3 @@ export const getAccessToken = () => {
 export const removeAccessToken = () => {
   localStorage.removeItem('accessToken');
 };
-
-export const removeRefreshToken = () => {
-  cookieStore.delete('refreshToken');
-}
