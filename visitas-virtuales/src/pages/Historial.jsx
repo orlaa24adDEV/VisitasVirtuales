@@ -7,7 +7,6 @@ const Historial = () => {
   useEffect(() => {
     const fetchCommits = async () => {
       try {
-        // Añadimos &per_page=10 al final de la URL
         const response = await fetch(
           "https://api.github.com/repos/jaimemoya-bit/VisitasVirtualesZaitec/commits?sha=Web_Zaitec"
         );

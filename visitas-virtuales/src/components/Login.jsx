@@ -8,6 +8,7 @@ function Login() {
 	const [email, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [errors, setErrors] = useState({});
+	// eslint-disable-next-line no-unused-vars
 	const [isCreateMode, setIsCreateMode] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -44,16 +45,27 @@ function Login() {
 			}
 
 			const token = data.accessToken;
-			const userData = {
-				email: email,
-				username: email.split('@')[0],
-				role: email.includes('admin') ? 'admin' :
-					email.includes('profesor') ? 'teacher' : 'student'
-			};
+			// const userData = {
+			// 	email: email,
+			// 	username: email.split('@')[0],
+			// 	role: email.includes('admin') ? 'admin' :
+			// 		email.includes('profesor') ? 'teacher' : 'student'
+			// };
 
-			console.log(`Login exitoso (${userData.username}) - ${new Date().toLocaleString('es-ES')}`);
+			const profile = await fetch('/api/me', {
+				method: 'GET',
+				mode: 'cors',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+				}
+			});
+			const Data = await profile.json();
+			const ProfileData = Data.profile; // En caso de que la API devuelva el perfil directamente o dentro de un objeto "profile"{
+			console.log('Perfil del usuario:', ProfileData);
+			console.log(`Login exitoso (${ProfileData.username}) - ${new Date().toLocaleString('es-ES')}`);
 
-			login(userData, token);
+			login(ProfileData, token);
 			navigate('/home');
 
 		} catch (error) {

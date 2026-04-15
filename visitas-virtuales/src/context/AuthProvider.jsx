@@ -5,8 +5,6 @@ export const AuthProvider = ({children}) => {
     //Vamos a simular un usuario ya autenticado para probar la funcionalidad del código.
 
     const [user, setUser] = useState(() => {
-        const savedUser = sessionStorage.getItem('user');
-        return savedUser ? JSON.parse(savedUser) : null;
     });
 
     // eslint-disable-next-line no-unused-vars
