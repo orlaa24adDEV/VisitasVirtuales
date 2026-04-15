@@ -45,11 +45,15 @@ const router = Router()
  *       403:
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
-router.patch('/users/:id/role', hasRole('admin'), validateBody(UserRoleEditSchema), (req, res) => {
-	res.json({
-		message: `Ruta para cambiar el rol del usuario con ID ${req.params.id} - solo accesible para administradores`,
-	})
-})
-
+router.patch(
+	'/users/:id/role',
+	hasRole('admin'),
+	validateBody(UserRoleEditSchema),
+	(req, res) => {
+		res.json({
+			message: `Ruta para cambiar el rol del usuario con ID ${req.params.id} - solo accesible para administradores`,
+		})
+	},
+)
 
 export default router

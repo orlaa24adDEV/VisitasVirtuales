@@ -44,15 +44,14 @@ export const userUpdateHandler = (req, res) => {
 }
 
 /**
- * 
+ *
  * @param req debe contener la cookie HTTP-only refreshToken enviada automáticamente por el navegador
  * @returns objeto con un nuevo accessToken si el refreshToken es válido (refreshToken se envía al cliente en una cookie HTTP-only)
- * 
- * El token de actualización se enviará desde el cliente en una cookie HTTP-only para evitar ataques XSS. 
- * El cliente no tiene acceso directo a esta cookie, el navegador la envía automáticamente en cada solicitud al backend. 
+ *
+ * El token de actualización se enviará desde el cliente en una cookie HTTP-only para evitar ataques XSS.
+ * El cliente no tiene acceso directo a esta cookie, el navegador la envía automáticamente en cada solicitud al backend.
  */
 export const refreshTokenHandler = async (req, res) => {
-	
 	const token = req.cookies?.refreshToken
 
 	// Denegar acceso si no se proporciona un token de actualización
@@ -74,9 +73,15 @@ export const refreshTokenHandler = async (req, res) => {
 		const { payload } = await verifyToken(token)
 		const newAccessToken = await generateAccessToken(payload.sub, payload.role)
 		// Adicionalmente, renovar el token de actualización
-		const newRefreshToken = await generateRefreshToken(payload.sub, payload.role)
+		const newRefreshToken = await generateRefreshToken(
+			payload.sub,
+			payload.role,
+		)
 		res.cookie('refreshToken', newRefreshToken, getHttpOnlyCookieOptions())
-		return res.json({ message: 'Tokens renovados exitosamente', accessToken: newAccessToken })
+		return res.json({
+			message: 'Tokens renovados exitosamente',
+			accessToken: newAccessToken,
+		})
 	} catch (_) {
 		env.APP_STAGE === 'dev' &&
 			console.warn(

@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import swaggerUi from 'swagger-ui-express'
 import userRoutes from './routes/userRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
+import centerRoutes from './routes/centerRoutes.ts'
 import poiRoutes from './routes/poiRoutes.js'
 import apiErrorThrown from './middlewares/apiErrorThrown.js'
 import cors from 'cors'
@@ -38,6 +39,9 @@ app.use('/api/v1/', userRoutes)
 
 // Montar rutas de administración
 app.use('/api/v1/', adminRoutes)
+
+// Montar rutas de centros
+app.use('/api/v1/', centerRoutes)
 
 // Montar rutas de POIs
 app.use('/api/v1/', poiRoutes)

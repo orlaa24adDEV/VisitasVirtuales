@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
+import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 
 export default function CenterSelectionPage() {
   const [loading, setLoading] = useState(true);
@@ -11,21 +12,22 @@ export default function CenterSelectionPage() {
   const navigate = useNavigate();
   const { selectCenter, setCenters, centers } = useAuth();
 
-  const API_URL = 'http://localhost:5000/api/centers';
-
-  useEffect(() => {
-    const fetchCenters = async () => {
+  const fetchCenters = async () => {
       try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error('Error al cargar los centros');
+        const response = await fetchWithTimeout('/api/centers', {
+          headers: { Authorization: 'Bearer ' + localStorage.getItem('accessToken') }
+        }, 5000);
         const data = await response.json();
-        setCenters(data);
+        if (!response.ok) throw new Error('Error al cargar los centros: ' + (data.message));
+        setCenters(data.centers);
       } catch (err) {
-        setError(err.message);
+        setError(err.message || 'Error desconocido');
       } finally {
         setLoading(false);
       }
     };
+
+  useEffect(() => {
     fetchCenters();
   }, []);
 

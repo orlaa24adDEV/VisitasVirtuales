@@ -1,11 +1,11 @@
 import { Router } from 'express'
 import hasRoles from '../middlewares/hasRole.ts'
 import {
-  poisByCenterHandler,
-  newPoiHandler,
-  deletePoiHandler,
-  poisByCenterAndFuzzyNameHandler,
-  updatePoiHandler,
+	poisByCenterHandler,
+	newPoiHandler,
+	deletePoiHandler,
+	poisByCenterAndFuzzyNameHandler,
+	updatePoiHandler,
 } from '../controllers/poiController.js'
 import { validateBody, validateParams } from '../middlewares/validation.ts'
 import { poiCreateSchema, poiDeleteSchema } from '../db/schema.ts'
@@ -54,7 +54,12 @@ export const router = Router()
  *       403:
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
-router.post('/centers/:centerId/pois', hasRoles(['admin', 'teacher']), validateBody(poiCreateSchema), newPoiHandler)
+router.post(
+	'/centers/:centerId/pois',
+	hasRoles(['admin', 'teacher']),
+	validateBody(poiCreateSchema),
+	newPoiHandler,
+)
 
 /**
  * @openapi
@@ -112,7 +117,11 @@ router.get('/centers/:centerId/pois', hasRoles('any'), poisByCenterHandler)
  *       403:
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
-router.get('/centers/:centerId/pois/search', hasRoles('any'), poisByCenterAndFuzzyNameHandler)
+router.get(
+	'/centers/:centerId/pois/search',
+	hasRoles('any'),
+	poisByCenterAndFuzzyNameHandler,
+)
 
 /**
  * @openapi
@@ -155,7 +164,11 @@ router.get('/centers/:centerId/pois/search', hasRoles('any'), poisByCenterAndFuz
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
 // TODO: Validar el body usando el middleware validation
-router.patch('/centers/:centerId/pois/:id', hasRoles(['admin', 'teacher']), updatePoiHandler)
+router.patch(
+	'/centers/:centerId/pois/:id',
+	hasRoles(['admin', 'teacher']),
+	updatePoiHandler,
+)
 
 /**
  * @openapi
@@ -187,10 +200,10 @@ router.patch('/centers/:centerId/pois/:id', hasRoles(['admin', 'teacher']), upda
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
 router.delete(
-  '/centers/:centerId/pois/:poiId',
-  hasRoles(['admin', 'teacher']),
-  validateParams(poiDeleteSchema),
-  deletePoiHandler,
+	'/centers/:centerId/pois/:poiId',
+	hasRoles(['admin', 'teacher']),
+	validateParams(poiDeleteSchema),
+	deletePoiHandler,
 )
 
 export default router

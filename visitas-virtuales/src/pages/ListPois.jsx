@@ -1,6 +1,7 @@
 import { Search, Plus, Pencil, Trash, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import fetchWithTimeout from "@/helpers/fetchWithTimeout.js";
 
 export default function ListPois({ centerId }) {
     const [pois, setPois] = useState([]);
@@ -36,13 +37,13 @@ export default function ListPois({ centerId }) {
 
     const deletePois = async (id) => {
         try {
-            const response = await fetch('/api/centers/' + centerId + '/pois/' + id, {
+            const response = await fetchWithTimeout('/api/centers/' + centerId + '/pois/' + id, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-            });
-            if (response.ok) {
-                const updatedPois = pois.filter(poi => poi.id !== id);
-                setPois(updatedPois);
+                headers: { Authorization: 'Bearer ' + localStorage.getItem('accessToken') }
+            }, 5000);
+            const data = await response.json();
+            if (response.ok && !!data) {
+                setPois(Array.isArray(data.pois) ? data.pois : []);
             }
         } catch (error) {
             console.error('Error al eliminar POI:', error);
@@ -52,10 +53,12 @@ export default function ListPois({ centerId }) {
     useEffect(() => {
         async function getPois() {
             try {
-                const response = await fetch(`/api/centers/${centerId}/pois`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setPois(data);
+                const response = await fetchWithTimeout('/api/centers/' + centerId + '/pois', {
+                    headers: { Authorization: 'Bearer ' + localStorage.getItem('accessToken') }
+                }, 5000);
+                const data = await response.json();
+                if (response.ok && !!data) {
+                    setPois(Array.isArray(data.pois) ? data.pois : []);
                 }
             } catch (error) {
                 setPois([]);

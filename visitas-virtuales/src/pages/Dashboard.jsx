@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth.js';
 import { Link } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 
 const Dashboard = () => {
   const [pois, setPois] = useState([]);
@@ -9,23 +9,24 @@ const Dashboard = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchPois = async () => {
-      setLoading(true);
-      setError('');
+    const fetchData = async () => {
+      const fetchPois = fetchWithTimeout('/api/pois', {
+        headers: { Authorization: 'Bearer ' + localStorage.getItem('accessToken') }
+      }, 5000);
       try {
-        const response = await fetch(`/api/pois`);  
-        if (!response.ok) throw new Error('No se pudo cargar el listado de POIs');
+        const response = await fetchPois;
         const data = await response.json();
-        setPois(data);
+        if (!response.ok) throw new Error('No se pudo cargar el listado de POIs: ' + (data.message));
+        setPois(Array.isArray(data) ? data : Array.isArray(data.pois) ? data.pois : []);
       } catch (err) {
         setError(err.message || 'Error desconocido');
       } finally {
         setLoading(false);
       }
     };
-
-    fetchPois();
+    fetchData();
   }, []);
+
 
   const totalPois = pois.length;
   const uniqueCenters = [...new Set(pois.map((p) => p.centerId))].length;
