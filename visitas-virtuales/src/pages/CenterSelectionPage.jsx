@@ -5,24 +5,14 @@ import { useAuth } from '@/hooks/useAuth.js';
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 
 export default function CenterSelectionPage() {
-  const [selected, setSelected] = useState(null);
-
   const navigate = useNavigate();
-  const { selectCenter, allCenters, centersError, isCentersLoading } = useAuth();
-
-  const handleSelect = (center) => {
-    setSelected(center.id);
-  };
+  const { selectCenter, allCenters, centersError, isCentersLoading, selectedCenter, setSelectedCenter } = useAuth();
 
   const handleConfirm = () => {
-    if (!selected) return;
-    const center = allCenters.find((c) => c.id === selected);
-    if (!center) return;
-    selectCenter(center);
-    navigate('/home?center=' + center.id);
+    if (selectedCenter) {
+      navigate('/home');
+    }
   };
-
-  console.log('Render CenterSelectionPage', { allCenters, centersError, isCentersLoading });
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -60,11 +50,11 @@ export default function CenterSelectionPage() {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {allCenters.map((center, index) => {
-                  const isActive = selected === center.id;
+                  const isActive = selectedCenter?.id === center.id;
                   return (
                     <button
                       key={`${center.id}-${index}`}
-                      onClick={() => handleSelect(center)}
+                      onClick={() => setSelectedCenter(center)}
                       className={`
                         group text-left rounded-2xl overflow-hidden bg-white
                         border-2 transition-all duration-200 focus:outline-none
@@ -141,9 +131,9 @@ export default function CenterSelectionPage() {
               <div className="mt-8 flex justify-center">
                 <button
                   onClick={handleConfirm}
-                  disabled={!selected}
+                  disabled={!selectedCenter}
                   className={`px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                    selected
+                    selectedCenter
                       ? 'bg-blue-700 text-white hover:bg-blue-800 shadow-md hover:shadow-lg'
                       : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                   }`}

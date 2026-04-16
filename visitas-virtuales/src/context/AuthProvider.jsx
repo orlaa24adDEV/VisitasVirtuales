@@ -113,6 +113,7 @@ export const AuthProvider = ({ children }) => {
                 login,
                 logout,
                 selectedCenter,
+                setSelectedCenter,
                 selectCenter,
                 allCenters,
                 setAllCenters,

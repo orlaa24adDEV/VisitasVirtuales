@@ -8,8 +8,9 @@ const Dashboard = () => {
   const [pois, setPois] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { centers } = useAuth();
+  const { allCenters } = useAuth();
 
+  // Cargar todos los POIs al montar el componente
   useEffect(() => {
     const fetchData = async () => {
       const fetchPois = fetchWithTimeout('/api/pois', {
@@ -29,7 +30,6 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-
   const totalPois = pois.length;
   const uniqueCenters = [...new Set(pois.map((p) => p.centerId))].length;
   const lastChanges = [...pois]
@@ -39,13 +39,13 @@ const Dashboard = () => {
 
   // Helper para obtener el nombre del centro por ID
   const getCenterName = (centerId) => {
-    if (!centers || centers.length === 0) return null;
-    const center = centers.find((c) => Number(c.id) === Number(centerId));
+    if (!allCenters || allCenters.length === 0) return null;
+    const center = allCenters.find((c) => Number(c.id) === Number(centerId));
     return center ? center.name : null;
   };
 
   // Calcular distribución de POIs por centro
-  const poisByCenter = (centers && centers.length > 0)
+  const poisByCenter = (allCenters && allCenters.length > 0)
     ? pois.reduce((acc, poi) => {
         const centerName = getCenterName(poi.centerId);
         if (!centerName) return acc; // Ignorar POIs sin centro válido
@@ -126,20 +126,19 @@ const Dashboard = () => {
               <p className="text-slate-500">No hay datos disponibles para mostrar el gráfico.</p>
             ) : (
               <ResponsiveContainer width="100%" height={500}>
-                <BarChart data={poisByCenter} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
+                <BarChart data={poisByCenter} margin={{ top: 20, right: 40, left: 20, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
                     dataKey="name" 
-                    label={{ value: 'Centro', position: 'insideBottomRight', offset: -10 }}
-                    angle={-45}
-                    textAnchor="end"
+                    label={{ value: 'Centro', position: 'insideBottomRight'}}
+                    textAnchor="middle"
                     height={80}
                   />
                   <YAxis 
                     label={{ value: 'Cantidad de POIs', angle: -90, position: 'insideLeft', offset: 0, textAnchor: 'middle' }}
                   />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}
+                    contentStyle={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6x' }}
                     formatter={(value) => [value, 'POIs']}
                   />
                   <Legend />
