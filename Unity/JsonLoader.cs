@@ -128,10 +128,9 @@ public class JsonLoader : MonoBehaviour
 
             string json = www.downloadHandler.text;
 
-            // JsonUtility no puede deserializar arrays en la raíz del JSON
-            // Lo envolvemos en un objeto para que funcione correctamente
-            string jsonWrapped = "{\"pois\":" + json + "}";
-            PoiWrapper data = JsonUtility.FromJson<PoiWrapper>(jsonWrapped);
+            // La API devuelve un objeto con dos propiedades: message y pois
+            // // JsonUtility mapea directamente el JSON al PoiWrapper sin necesidad de manipularlo
+            PoiWrapper data = JsonUtility.FromJson<PoiWrapper>(json);
 
             if (data == null || data.pois == null || data.pois.Length == 0)
             {
