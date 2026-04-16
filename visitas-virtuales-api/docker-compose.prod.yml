@@ -37,6 +37,8 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       # Montar los certificados SSL desde el host
       - /etc/letsencrypt:/etc/letsencrypt:ro
+      # Montar app de React/Vite
+      - ../visitas-virtuales/dist:/usr/share/nginx/html:ro
     depends_on:
       - postgres_service
       - api_service
