@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth.js';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 
@@ -7,6 +8,7 @@ const Dashboard = () => {
   const [pois, setPois] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { centers } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,16 +36,28 @@ const Dashboard = () => {
     .sort((a, b) => Number(b.id) - Number(a.id))
     .slice(0, 5);
 
+
+  // Helper para obtener el nombre del centro por ID
+  const getCenterName = (centerId) => {
+    if (!centers || centers.length === 0) return null;
+    const center = centers.find((c) => Number(c.id) === Number(centerId));
+    return center ? center.name : null;
+  };
+
   // Calcular distribución de POIs por centro
-  const poisByCenter = pois.reduce((acc, poi) => {
-    const existingCenter = acc.find((c) => c.name === String(poi.centerId));
-    if (existingCenter) {
-      existingCenter.value++;
-    } else {
-      acc.push({ name: String(poi.centerId), value: 1 });
-    }
-    return acc;
-  }, []);
+  const poisByCenter = (centers && centers.length > 0)
+    ? pois.reduce((acc, poi) => {
+        const centerName = getCenterName(poi.centerId);
+        if (!centerName) return acc; // Ignorar POIs sin centro válido
+        const existingCenter = acc.find((c) => c.name === centerName);
+        if (existingCenter) {
+          existingCenter.value++;
+        } else {
+          acc.push({ name: centerName, value: 1 });
+        }
+        return acc;
+      }, [])
+    : [];
 
   // Ordenar por nombre para consistent visualization
   poisByCenter.sort((a, b) => a.name.localeCompare(b.name));
@@ -91,13 +105,16 @@ const Dashboard = () => {
               <p className="text-slate-500">No hay POIs disponibles.</p>
             ) : (
               <ul className="space-y-3">
-                {lastChanges.map((poi) => (
-                  <li key={poi.id} className="border border-slate-100 rounded-lg p-3 hover:bg-slate-50">
-                    <p className="font-semibold text-slate-800">{poi.name}</p>
-                    <p className="text-xs text-slate-500">Centro: {poi.centerId}</p>
-                    <p className="text-sm text-slate-600 mt-1">{poi.description}</p>
-                  </li>
-                ))}
+                {lastChanges.map((poi) => {
+                  const centerName = getCenterName(poi.centerId) || 'Sin centro';
+                  return (
+                    <li key={poi.id} className="border border-slate-100 rounded-lg p-3 hover:bg-slate-50">
+                      <p className="font-semibold text-slate-800">{poi.name}</p>
+                      <p className="text-xs text-slate-500">Centro: {centerName}</p>
+                      <p className="text-sm text-slate-600 mt-1">{poi.description}</p>
+                    </li>
+                  );
+                })}
               </ul>
               
             )}
@@ -108,8 +125,8 @@ const Dashboard = () => {
             {poisByCenter.length === 0 ? (
               <p className="text-slate-500">No hay datos disponibles para mostrar el gráfico.</p>
             ) : (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={poisByCenter} margin={{ top: 20, right: 30, left: 0, bottom: 60 }}>
+              <ResponsiveContainer width="100%" height={500}>
+                <BarChart data={poisByCenter} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
                     dataKey="name" 
@@ -119,7 +136,7 @@ const Dashboard = () => {
                     height={80}
                   />
                   <YAxis 
-                    label={{ value: 'Cantidad de POIs', angle: -90, position: 'insideLeft' }}
+                    label={{ value: 'Cantidad de POIs', angle: -90, position: 'insideLeft', offset: 0, textAnchor: 'middle' }}
                   />
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}
