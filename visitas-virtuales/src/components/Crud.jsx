@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import CenterBanner from './CenterBanner';
 
 //import { useAuth } from '../context/AuthContext';
 import { useAuth } from '@/hooks/useAuth';
@@ -11,11 +12,12 @@ function Crud() {
         centerId: '',
         name: '',
         description: ''
-    })
+    });
 
     const location = useLocation();
-    const isEditing = location.state?.isEditing;
-    
+    const state = location.state || {};
+    const isEditing = !!state.isEditing;
+
     const navigate = useNavigate();
 
     const API_URL = import.meta.env.VITE_API_URL;
@@ -24,13 +26,15 @@ function Crud() {
 
     // Cargar POIs al montar el componente
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/immutability
-        readPois();
-    }, [])
-
-    const readPois = () => {
-        setFormData(location.state);
-    }
+        if (isEditing && state) {
+            setFormData({
+                id: state.id || '',
+                centerId: state.centerId || '',
+                name: state.name || '',
+                description: state.description || state.details?.description || ''
+            });
+        }
+    }, [isEditing, state]);
 
     const createPois = async () => {
         if (!selectedCenter) {
@@ -78,7 +82,6 @@ function Crud() {
         }
     };
 
-
     const resetForm = () => {
         setFormData({
             id: '',
@@ -106,30 +109,16 @@ function Crud() {
     }
 
     return (
-        <main className="p-6">
+        <main className="p-6 flex-col flex gap-2">
             <h2 className="text-2xl font-bold mb-6">Gestionar Puntos de Interés</h2>
-
+            <CenterBanner centerName={selectedCenter.name} />
             {/* Formulario */}
-            <form onSubmit={handleSubmit} className="mb-8 p-4 border rounded-lg bg-gray-50">
+            <form action={handleSubmit} onSubmit={handleSubmit} className="mb-8 p-4 border rounded-lg bg-gray-50">
                 <h3 className="text-lg font-semibold mb-4">
                     {isEditing ? 'Editar POI' : 'Crear Nuevo POI'}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Centro:</label>
-                        <input
-                            type="text"
-                            name="centerId"
-                            value={formData.centerId || ''}
-                            onChange={handleInputChange}
-                            className="w-full p-2 border rounded"
-                            placeholder="Ej: MEDAC Málaga"
-                            disabled
-                            required
-                        />
-                    </div>
-                    <div>
+                    <div className="md:col-span-2">
                         <label className="block text-sm font-medium mb-1">Nombre:</label>
                         <input
                             type="text"

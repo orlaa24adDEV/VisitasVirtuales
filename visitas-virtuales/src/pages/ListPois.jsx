@@ -1,5 +1,6 @@
 import { Search, Plus, Pencil, Trash, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import CenterBanner from "@/components/CenterBanner.jsx";
 import { Link } from "react-router-dom";
 import { useAuth } from '@/hooks/useAuth';
 
@@ -80,9 +81,7 @@ export default function ListPois({ centerId }) {
     return (
         <div className="flex flex-col items-center justify-center min-h-full w-full p-6">
             <section className="flex flex-col gap-2 w-full max-w-4xl p-5 shadow-sm rounded-2xl bg-white min-h-125">
-                <div className="flex h-full justify-center">
-                    <h1 className="w-full border p-1 text-white text-center uppercase border-blue-400 bg-blue-400 rounded-lg">{selectedCenter.name}</h1>
-                </div>
+                <CenterBanner centerName={selectedCenter.name} />
                 <div className="flex flex-row gap-2 border-2 border-gray-200 rounded-lg items-center focus-within:border-2 hover:border-blue-600 focus-within:border-blue-600 focus-within:border-solid">
                     <Search size={24} className="text-gray-300 ml-2" />
                     <input
