@@ -6,7 +6,10 @@ export const AuthProvider = ({children}) => {
 
     const [user, setUser] = useState(null);
     const [centers, setCenters] = useState([]);
-    const [selectedCenter, setSelectedCenter] = useState(null);
+    const [selectedCenter, setSelectedCenter] = useState(() => {
+        const stored = localStorage.getItem('selectedCenter');
+        return stored ? JSON.parse(stored) : null;
+    });
     const [isInitialLoading, setIsInitialLoading] = useState(true);
 
     const fetchProfile = async () => {
@@ -54,8 +57,10 @@ export const AuthProvider = ({children}) => {
         try {
             await fetch('/api/users/auth/logout', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                headers: { Authorization: `Bearer ${getAccessToken()}` }
+                headers: { 
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${getAccessToken()}`
+                }
             });
         } catch (err) {
             console.error("Logout failed:", err);
@@ -65,7 +70,7 @@ export const AuthProvider = ({children}) => {
 
     const selectCenter = (center) => {
         setSelectedCenter(center);
-        sessionStorage.setItem('selectedCenter', JSON.stringify(center));
+        localStorage.setItem('selectedCenter', JSON.stringify(center));
     };
 
     const isAdmin = user?.role === 'admin';
