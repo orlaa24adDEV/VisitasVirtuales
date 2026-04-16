@@ -29,7 +29,7 @@ app.use(cookieParser())
 app.use(
 	cors({
 		origin: env.FRONTEND_URL,
-		methods: ['GET', 'POST', 'PUT', 'DELETE'],
+		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
 		credentials: true, // Compartir cookies entre frontend y backend
 	}),
 )
