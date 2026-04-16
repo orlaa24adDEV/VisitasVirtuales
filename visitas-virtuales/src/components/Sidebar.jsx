@@ -25,11 +25,16 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
         { id: 'perfil', name: 'Perfil', icon: <User size={20} />, path: 'login' },
         { id: 'mensajes', name: 'Mensajes', icon: <Mail size={20} />, path: 'mensajes' },
         { id: 'seleccion-centro', name: 'Selección de Centro', icon: <Building2 size={22} />, path: '/centros'},
-        { id: 'gestion-pois', name: 'Gestión de POIs', icon: <MapPin size={22} />, path: 'listpois' },
-        
+        // Gestión de POIs incluye también /crud
+        { 
+            id: 'gestion-pois', 
+            name: 'Gestión de POIs', 
+            icon: <MapPin size={22} />, 
+            path: 'listpois', 
+            extraActivePaths: ['/crud'], // Para marcar activo también en /crud
+        },
         // Items solo para ADMIN
         { id: 'dashboard', name: 'Dashboard', icon: <LayoutDashboard size={22} />, path: '/dashboard', adminOnly: true },
-        { id: 'crud', name: 'Gestión (CRUD)', icon: <Database size={22} />, path: '/crud', adminOnly: true },
         { id: 'auditoria', name: 'Auditoría', icon: <ClipboardCheck size={22} />, path: '/historial', adminOnly: true },
     ];
 
@@ -73,24 +78,38 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 
                 {/* Lista de Navegación filtrada */}
                 <nav className="flex-1 px-4 py-6 space-y-3">
-                    {menuItems.map((item) => (
-                        <NavLink
-                            key={item.id}
-                            to={item.path}
-                            onClick={() => {
-                                if (window.innerWidth < 1024) setIsMobileMenuOpen(false);
-                            }}
-                            className={({isActive}) => `flex w-full items-center rounded-lg px-4 py-3 cursor-pointer transition-all duration-200 
-                                ${isActive ? 'bg-white text-blue-600 shadow-md font-bold' : 'hover:bg-blue-700 text-blue-100 hover:text-white'}
-                                ${isExpanded ? 'justify-start gap-4' : 'lg:justify-center'}`}>
-                            <div className="shrink-0">{item.icon}</div>
-                            <span
-                                className={`font-medium transition-all duration-300 whitespace-nowrap overflow-hidden
-                                ${isExpanded ? 'opacity-100 w-auto' : 'lg:opacity-0 lg:w-0'}`}>
-                                {item.name}
-                            </span>
-                        </NavLink>
-                    ))}
+                    {menuItems.map((item) => {
+                        // Custom active logic for 'Gestión de POIs' to include /crud
+                        return (
+                            <NavLink
+                                key={item.id}
+                                to={item.path}
+                                onClick={() => {
+                                    if (window.innerWidth < 1024) setIsMobileMenuOpen(false);
+                                }}
+                                className={({ isActive, isPending, location }) => {
+                                    let active = isActive;
+                                    // Defensive: location may be undefined in some react-router-dom versions
+                                    const currentPath = location && location.pathname ? location.pathname : window.location.pathname;
+                                    if (item.extraActivePaths && item.extraActivePaths.length > 0) {
+                                        if (item.extraActivePaths.some(p => currentPath.startsWith(p))) {
+                                            active = true;
+                                        }
+                                    }
+                                    return `flex w-full items-center rounded-lg px-4 py-3 cursor-pointer transition-all duration-200 
+                                        ${active ? 'bg-white text-blue-600 shadow-md font-bold' : 'hover:bg-blue-700 text-blue-100 hover:text-white'}
+                                        ${isExpanded ? 'justify-start gap-4' : 'lg:justify-center'}`;
+                                }}
+                            >
+                                <div className="shrink-0">{item.icon}</div>
+                                <span
+                                    className={`font-medium transition-all duration-300 whitespace-nowrap overflow-hidden
+                                    ${isExpanded ? 'opacity-100 w-auto' : 'lg:opacity-0 lg:w-0'}`}>
+                                    {item.name}
+                                </span>
+                            </NavLink>
+                        );
+                    })}
                 </nav>
 
                 {/* Pie: Botón colapsar */}
