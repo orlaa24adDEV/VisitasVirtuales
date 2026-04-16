@@ -8,7 +8,7 @@ export default function Login() {
 	const [errors, setErrors] = useState([]);
 	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
-	const { login, fetchProfile } = useAuth();
+	const { login } = useAuth();
 	const navigate = useNavigate();
 
 	const handleSubmit = async (formData) => {
