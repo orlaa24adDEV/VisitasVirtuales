@@ -50,7 +50,7 @@ async function main() {
 				name: 'Instituto Córdoba',
 				description: 'Centro educativo principal en Córdoba',
 				location: 'Córdoba, España',
-			}
+			},
 		]
 		const insertedCenters = await db
 			.insert(centers)

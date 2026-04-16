@@ -45,12 +45,10 @@ export const poisByCenterHandler = async (req, res) => {
 	const centerId = req.params.centerId
 	const pois = await poiService.getPoisByCenter(centerId)
 	if (pois.length === 0) {
-		return res
-			.status(200)
-			.json({
-				message: 'No se encontraron POIs para el centro con ID ' + centerId,
-				pois: [],
-			})
+		return res.status(200).json({
+			message: 'No se encontraron POIs para el centro con ID ' + centerId,
+			pois: [],
+		})
 	}
 	return res.json({ message: 'POIs obtenidos exitosamente', pois: pois })
 }
@@ -60,16 +58,14 @@ export const poisByUserAndCenterHandler = async (req, res) => {
 	const userId = req.user?.sub
 	const pois = await poiService.getPoisByUserAndCenter(userId, centerId)
 	if (pois.length === 0) {
-		return res
-			.status(200)
-			.json({
-				message:
-					'No se encontraron POIs para el usuario con ID ' +
-					userId +
-					' en el centro con ID ' +
-					centerId,
-				pois: [],
-			})
+		return res.status(200).json({
+			message:
+				'No se encontraron POIs para el usuario con ID ' +
+				userId +
+				' en el centro con ID ' +
+				centerId,
+			pois: [],
+		})
 	}
 	return res.json({ message: 'POIs obtenidos exitosamente', pois: pois })
 }
@@ -89,18 +85,16 @@ export const poisByCenterAndFuzzyNameHandler = async (req, res) => {
 		partialName,
 	)
 	if (pois.length === 0) {
-		return res
-			.status(200)
-			.json({
-				message:
-					'No se encontraron POIs para el centro con ID ' +
-					centerId +
-					' con nombre que contenga ' +
-					"'" +
-					partialName +
-					"'",
-				pois: [],
-			})
+		return res.status(200).json({
+			message:
+				'No se encontraron POIs para el centro con ID ' +
+				centerId +
+				' con nombre que contenga ' +
+				"'" +
+				partialName +
+				"'",
+			pois: [],
+		})
 	}
 	return res.json({ message: 'POIs obtenidos exitosamente', pois: pois })
 }

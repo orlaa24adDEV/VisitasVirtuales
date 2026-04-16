@@ -39,13 +39,13 @@ export const loginHandler = async (req, res) => {
 /**
  *
  * @param req debe contener la cookie HTTP-only refreshToken enviada automáticamente por el navegador
- * 
+ *
  * Logout envia instrucciones al navegador para eliminar la cookie HTTP-only refreshToken
  */
 export const logoutHandler = (req, res) => {
 	const options = getHttpOnlyCookieOptions()
-	delete options.maxAge;
-	res.clearCookie('refreshToken', options);
+	delete options.maxAge
+	res.clearCookie('refreshToken', options)
 	res.status(200).json({ message: 'Logout successful' })
 }
 

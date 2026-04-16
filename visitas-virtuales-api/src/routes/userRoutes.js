@@ -1,11 +1,11 @@
 import { Router } from 'express'
 import {
-  registerHandler,
-  loginHandler,
-  userUpdateHandler,
-  refreshTokenHandler,
-  profileHandler,
-  logoutHandler,
+	registerHandler,
+	loginHandler,
+	userUpdateHandler,
+	refreshTokenHandler,
+	profileHandler,
+	logoutHandler,
 } from '../controllers/userController.js'
 import { userLoginSchema, userRegisterSchema } from '../db/schema.ts'
 import { validateBody } from '../middlewares/validation.ts'

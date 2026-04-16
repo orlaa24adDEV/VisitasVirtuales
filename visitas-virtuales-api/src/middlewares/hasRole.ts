@@ -6,7 +6,11 @@ import type { JWTPayload } from 'jose'
 const hasRole = (roles: string | string[]) => {
 	const allowedRoles = Array.isArray(roles) ? roles : [roles]
 
-	return async (req: Request & { user: JWTPayload }, res: Response, next: NextFunction) => {
+	return async (
+		req: Request & { user: JWTPayload },
+		res: Response,
+		next: NextFunction,
+	) => {
 		// Comprobar que el usuario esté autenticado y tenga un rol válido
 		const authHeader = req.headers['authorization']
 		// Authorization: Bearer <token>
