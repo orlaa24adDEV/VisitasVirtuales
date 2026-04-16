@@ -22,7 +22,7 @@ services:
     environment:
       TZ: Europe/Madrid
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata-stage:/var/lib/postgresql/data
     networks:
       - vv-network
 
@@ -48,4 +48,4 @@ networks:
     driver: bridge
 
 volumes:
-  pgdata:
+  pgdata-stage:
