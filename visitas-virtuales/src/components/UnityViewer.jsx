@@ -89,7 +89,7 @@ export default function UnityViewer() {
 
     // Lo que se muestra en pantalla
     return (
-        <div className="flex flex-col w-full h-full">
+        <div className="flex flex-col w-200 h-200">
 
             {/* Texto de bienvenida */}
             <div className="flex flex-col items-center justify-center py-4 space-y-2">
