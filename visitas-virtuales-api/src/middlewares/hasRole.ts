@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import { verifyToken } from '../helpers/jwt.js'
 import { env } from '../../env.ts'
-import { JWTPayload } from 'jose'
+import type { JWTPayload } from 'jose'
 
 const hasRole = (roles: string | string[]) => {
 	const allowedRoles = Array.isArray(roles) ? roles : [roles]
