@@ -12,7 +12,7 @@ public class JsonLoader : MonoBehaviour
     public TMP_Text[] textos;
 
     [Header("Ajustes")]
-    [SerializeField] private float tiempoActualizacion = 2f; // Velocidad de refresco de datos desde la API
+    [SerializeField] private float tiempoActualizacion = 30f; // Refresco cada 30 segundos para no sobrecargar el servidor
 
     // URL base de la API donde está desplegado el servidor
     private const string API_BASE_URL = "https://visitasvirtuales.dedyn.io";
@@ -34,10 +34,10 @@ public class JsonLoader : MonoBehaviour
 
     IEnumerator IniciarConexion()
     {
-        // Paso 1 - Login para obtener el token
+        // Login para obtener el token
         yield return StartCoroutine(Login());
 
-        // Paso 2 - Si tenemos token arrancamos el bucle de actualización
+        // Si tenemos token arrancamos el bucle de actualización
         if (!string.IsNullOrEmpty(accessToken))
         {
             Debug.Log("[JsonLoader] Login correcto, iniciando carga de POIs...");
@@ -112,7 +112,7 @@ public class JsonLoader : MonoBehaviour
 
             yield return www.SendWebRequest();
 
-            // Si el token ha expirado (403) hacemos login de nuevo automáticamente
+            // Si el token ha expirado, hacemos login de nuevo automáticamente
             if (www.responseCode == 403)
             {
                 Debug.LogWarning("[JsonLoader] Token expirado, renovando...");
@@ -128,10 +128,9 @@ public class JsonLoader : MonoBehaviour
 
             string json = www.downloadHandler.text;
 
-            // JsonUtility no puede deserializar arrays en la raíz del JSON
-            // Lo envolvemos en un objeto para que funcione correctamente
-            string jsonWrapped = "{\"pois\":" + json + "}";
-            PoiWrapper data = JsonUtility.FromJson<PoiWrapper>(jsonWrapped);
+            // La API devuelve un objeto con dos propiedades: message y pois
+            // JsonUtility mapea directamente el JSON al PoiWrapper sin necesidad de manipularlo
+            PoiWrapper data = JsonUtility.FromJson<PoiWrapper>(json);
 
             if (data == null || data.pois == null || data.pois.Length == 0)
             {
@@ -181,5 +180,6 @@ public class Poi
 [System.Serializable]
 public class PoiWrapper
 {
+    public string message;
     public Poi[] pois;
 }
