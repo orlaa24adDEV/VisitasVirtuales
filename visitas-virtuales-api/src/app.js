@@ -9,6 +9,7 @@ import centerRoutes from './routes/centerRoutes.ts'
 import poiRoutes from './routes/poiRoutes.js'
 import apiErrorThrown from './middlewares/apiErrorThrown.js'
 import cors from 'cors'
+import helmet from 'helmet'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -18,6 +19,9 @@ const app = express()
 // Logger para solicitudes HTTP
 morgan.token('status-message', (req, res) => res.statusMessage || '')
 app.use(morgan('dev'))
+
+// Middleware para establecer headers de seguridad en las respuestas
+app.use(helmet())
 
 // Middleware para extraer JSON de las solicitudes
 app.use(express.json())
