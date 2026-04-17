@@ -19,14 +19,15 @@ export const centers = pgTable('centers', {
 	location: text('location').notNull(),
 })
 
-export const userRoles = pgEnum('user_roles', ['admin', 'teacher', 'student'])
+export const userRolesArray = ['admin', 'teacher', 'guest'] as const
+export const userRoles = pgEnum('user_roles', userRolesArray)
 
 export const users = pgTable('users', {
 	id: serial('id').primaryKey(),
 	email: text('email').notNull().unique(),
 	username: text('username').notNull().unique(),
 	password: text('password').notNull(),
-	role: userRoles('role').notNull().default('student'),
+	role: userRoles('role').notNull().default('guest'),
 })
 
 export const pois = pgTable(
@@ -164,6 +165,7 @@ export const userRegisterBaseSchema = createInsertSchema(users).pick({
 	email: true,
 	username: true,
 	password: true,
+	role: true,
 })
 
 export const userRegisterSchema = userRegisterBaseSchema.safeExtend({
@@ -211,6 +213,9 @@ export const UserProfileSchema = createSelectSchema(users).omit({
 	password: true,
 })
 export type UserProfileType = z.infer<typeof UserProfileSchema>
+
+export const UserRoleSchema = z.enum([...userRolesArray])
+export type UserRoleType = z.infer<typeof UserRoleSchema>
 
 export const UserRoleEditSchema = z.object({
 	userId: z.number().int().positive(),
