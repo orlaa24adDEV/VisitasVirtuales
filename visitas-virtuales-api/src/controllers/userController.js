@@ -3,19 +3,19 @@ import { verifyToken } from '../helpers/jwt.js'
 import { getHttpOnlyCookieOptions } from '../helpers/cookies.js'
 import userService from '../services/userService.ts'
 import { env } from '../../env.ts'
+import { clear } from 'node:console'
 
 /**
  *
- * @param request.body debe contener email, username, password y centerId
- * @returns objeto con accessToken (refreshToken se envía al cliente en una cookie HTTP-only)
+ * @param request.body debe contener email, username, password y role (opcional, guest por defecto)
  * @throws manejados por middleware apiErrorHandler
+ * 
+ * No se devuelven tokens de autenticación al registrar un nuevo usuario, se obtendrán al iniciar sesión.
  */
 export const registerHandler = async (req, res) => {
-	const tokenPair = await userService.register(req.body)
-	res.cookie('refreshToken', tokenPair.refreshToken, getHttpOnlyCookieOptions())
+	await userService.register(req.body)
 	res.status(201).json({
-		message: 'Usuario registrado exitosamente',
-		accessToken: tokenPair.accessToken,
+		message: 'Usuario registrado exitosamente'
 	})
 }
 
@@ -35,6 +35,19 @@ export const loginHandler = async (req, res) => {
 	})
 }
 
+/**
+ *
+ * @param req debe contener la cookie HTTP-only refreshToken enviada automáticamente por el navegador
+ *
+ * Logout envia instrucciones al navegador para eliminar la cookie HTTP-only refreshToken
+ */
+export const logoutHandler = (req, res) => {
+	const options = getHttpOnlyCookieOptions()
+	delete options.maxAge
+	res.clearCookie('refreshToken', options)
+	res.status(200).json({ message: 'Logout successful' })
+}
+
 // TODO: implementar endpoint para que el usuario pueda actualizar su perfil
 export const userUpdateHandler = (req, res) => {
 	res.json({
@@ -44,15 +57,14 @@ export const userUpdateHandler = (req, res) => {
 }
 
 /**
- * 
+ *
  * @param req debe contener la cookie HTTP-only refreshToken enviada automáticamente por el navegador
  * @returns objeto con un nuevo accessToken si el refreshToken es válido (refreshToken se envía al cliente en una cookie HTTP-only)
- * 
- * El token de actualización se enviará desde el cliente en una cookie HTTP-only para evitar ataques XSS. 
- * El cliente no tiene acceso directo a esta cookie, el navegador la envía automáticamente en cada solicitud al backend. 
+ *
+ * El token de actualización se enviará desde el cliente en una cookie HTTP-only para evitar ataques XSS.
+ * El cliente no tiene acceso directo a esta cookie, el navegador la envía automáticamente en cada solicitud al backend.
  */
 export const refreshTokenHandler = async (req, res) => {
-	
 	const token = req.cookies?.refreshToken
 
 	// Denegar acceso si no se proporciona un token de actualización
@@ -74,9 +86,15 @@ export const refreshTokenHandler = async (req, res) => {
 		const { payload } = await verifyToken(token)
 		const newAccessToken = await generateAccessToken(payload.sub, payload.role)
 		// Adicionalmente, renovar el token de actualización
-		const newRefreshToken = await generateRefreshToken(payload.sub, payload.role)
+		const newRefreshToken = await generateRefreshToken(
+			payload.sub,
+			payload.role,
+		)
 		res.cookie('refreshToken', newRefreshToken, getHttpOnlyCookieOptions())
-		return res.json({ message: 'Tokens renovados exitosamente', accessToken: newAccessToken })
+		return res.json({
+			message: 'Tokens renovados exitosamente',
+			accessToken: newAccessToken,
+		})
 	} catch (_) {
 		env.APP_STAGE === 'dev' &&
 			console.warn(
