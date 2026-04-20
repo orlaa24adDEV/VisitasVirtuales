@@ -86,7 +86,7 @@ router.post(
  *       403:
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
-router.get('/centers/:centerId/pois', hasRoles('any'), poisByCenterHandler)
+router.get('/centers/:centerId/pois', hasRoles(['admin', 'teacher', 'guest']), poisByCenterHandler)
 
 /**
  * @openapi
@@ -120,7 +120,7 @@ router.get('/centers/:centerId/pois', hasRoles('any'), poisByCenterHandler)
  */
 router.get(
 	'/centers/:centerId/pois/search',
-	hasRoles('any'),
+	hasRoles(['admin', 'teacher', 'guest']),
 	poisByCenterAndFuzzyNameHandler,
 )
 
