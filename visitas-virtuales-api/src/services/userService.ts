@@ -10,11 +10,12 @@ import type {
 	TokenResponseType,
 } from '../db/schema.ts'
 import ApiError from '../helpers/ApiError.js'
+import { userRoles } from '../db/schema.ts'
 
 const register = async (
 	userRegisterRequest: UserRegisterType,
-): Promise<TokenResponseType> => {
-	const { email, username, password } = userRegisterRequest
+): Promise<void> => {
+	const { email, username, password, role } = userRegisterRequest
 
 	// Verificar que el email o el nombre de usuario no estén ya en uso
 	const [existingUser] = await db
@@ -35,21 +36,14 @@ const register = async (
 		email,
 		username,
 		password: hashedPassword,
-		// El primer usuario registrado será admin, los siguientes serán student por defecto
-		role: isFirstUser ? 'admin' : 'student',
+		// Si el administrador no especifica un rol, asignar "guest" al nuevo usuario por defecto
+		role: role ? role : 'guest',
 	})
 	const [newUser] = await db.insert(users).values(userToInsert).returning()
 	if (!newUser) {
 		throw new ApiError(500, 'Error al registrar el usuario')
 	}
-	const tokenPair = {
-		accessToken: await generateAccessToken(newUser.id, newUser.role),
-		refreshToken: await generateRefreshToken(newUser.id, newUser.role),
-	}
-	if (!tokenPair.accessToken || !tokenPair.refreshToken) {
-		throw new ApiError(500, 'Error al generar los tokens de autenticación')
-	}
-	return tokenPair
+	// No es necesario generar tokens de autenticación, se obtendrán al iniciar sesión
 }
 
 const login = async (

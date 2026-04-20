@@ -7,6 +7,7 @@ const issuer = process.env.JWT_ISSUER
 const audience = process.env.JWT_AUDIENCE
 const alg = 'HS256'
 
+
 const generateToken = (sub, role, ttl) => {
 	const payload = {
 		sub: Number(sub),
@@ -41,4 +42,9 @@ const verifyToken = async (token) => {
 	}
 }
 
-export { generateAccessToken, generateRefreshToken, verifyToken }
+const getGuestUser = () => ({
+  sub: '0',
+  role: 'guest',
+})
+
+export { generateAccessToken, generateRefreshToken, verifyToken, getGuestUser }

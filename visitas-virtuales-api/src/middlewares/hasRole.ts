@@ -1,22 +1,34 @@
 import type { Request, Response, NextFunction } from 'express'
-import { verifyToken } from '../helpers/jwt.js'
+import { getGuestUser, verifyToken } from '../helpers/jwt.js'
 import { env } from '../../env.ts'
 import type { JWTPayload } from 'jose'
+import type { UserRoleType } from '../db/schema.ts'
 
-const hasRole = (roles: string | string[]) => {
+type GuestJWTPayload = JWTPayload & {
+  role: UserRoleType;
+  sub: string;
+};
+
+export type AuthenticatedRequest = Request & {
+  user?: JWTPayload | GuestJWTPayload;
+};
+
+const hasRole = (roles: UserRoleType | UserRoleType[]) => {
 	const allowedRoles = Array.isArray(roles) ? roles : [roles]
 
 	return async (
-		req: Request & { user: JWTPayload },
+		req: Request,
 		res: Response,
 		next: NextFunction,
 	) => {
+		const authReq = req as AuthenticatedRequest
 		// Comprobar que el usuario esté autenticado y tenga un rol válido
-		const authHeader = req.headers['authorization']
+		const authHeader = authReq.headers['authorization']
 		// Authorization: Bearer <token>
 		const token = authHeader && authHeader.split(' ')[1]
 
-		if (!token) {
+		// Si no se proporciona un token y no se permiten invitados, denegar el acceso
+		if (!token && !allowedRoles.includes('guest')) {
 			env.APP_STAGE === 'dev' &&
 				console.warn(
 					`Acceso denegado - no se proporcionó un token de acceso: + ${req.method} ${req.originalUrl}`,
@@ -26,25 +38,31 @@ const hasRole = (roles: string | string[]) => {
 			})
 		}
 
-		// Verificar token y extraer claims del usuario
-		try {
+		// Si se proporciona un token, verificarlo y extraer el rol del usuario
+		if (token) {
+			try {
 			const { payload } = await verifyToken(token)
-			req.user = payload
-		} catch (err) {
-			env.APP_STAGE === 'dev' &&
-				console.warn(
-					'Token de acceso inválido o expirado para ruta protegida: ' +
-						req.method +
-						' ' +
-						req.originalUrl,
-				)
-			return res.status(403).json({
-				message: 'Token de acceso inválido o expirado',
-			})
+			authReq.user = payload
+			} catch (err) {
+				env.APP_STAGE === 'dev' &&
+					console.warn(
+						'Token de acceso inválido o expirado para ruta protegida: ' +
+							req.method +
+							' ' +
+							req.originalUrl,
+					)
+				return res.status(403).json({
+					message: 'Token de acceso inválido o expirado',
+				})
+			}
+		// Si no se proporciona un token pero se permiten invitados, asignar un rol de invitado al usuario
+		} else {
+			authReq.user = getGuestUser() as GuestJWTPayload
 		}
+		
+		const userRole = authReq.user?.role
 
-		const userRole = req.user?.role
-
+		// Si el token no contiene un rol, denegar el acceso
 		if (!userRole) {
 			env.APP_STAGE === 'dev' &&
 				console.warn(
@@ -55,7 +73,8 @@ const hasRole = (roles: string | string[]) => {
 			})
 		}
 
-		if (!allowedRoles.includes(userRole) && !allowedRoles.includes('any')) {
+		// Si el rol del usuario no está en la lista de roles permitidos, denegar el acceso
+		if (!allowedRoles.includes(userRole as UserRoleType)) {
 			env.APP_STAGE === 'dev' &&
 				console.warn(
 					`Acceso denegado - el rol del usuario (${userRole}) no tiene permisos para acceder a este recurso: + ${req.method} ${req.originalUrl}`,
@@ -65,6 +84,7 @@ const hasRole = (roles: string | string[]) => {
 			})
 		}
 
+		// Si el rol del usuario es válido, permitir el acceso
 		next()
 	}
 }
