@@ -26,25 +26,6 @@ services:
     networks:
       - vv-network
 
-  nginx_service:
-    image: nginx:alpine
-    container_name: vv-nginx
-    restart: always
-    ports:
-      - '8080:80'
-      - '443:443'
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      # Montar los certificados SSL desde el host
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-      # Montar app de React/Vite
-      - ../visitas-virtuales/dist:/usr/share/nginx/html:ro
-    depends_on:
-      - postgres_service
-      - api_service
-    networks:
-      - vv-network
-
 networks:
   vv-network:
     driver: bridge
