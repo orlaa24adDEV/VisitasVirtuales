@@ -87,6 +87,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
                                 onClick={() => {
                                     if (window.innerWidth < 1024) setIsMobileMenuOpen(false);
                                 }}
+                                // eslint-disable-next-line no-unused-vars
                                 className={({ isActive, isPending, location }) => {
                                     let active = isActive;
                                     // Defensive: location may be undefined in some react-router-dom versions
