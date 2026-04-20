@@ -1,6 +1,6 @@
 import '../assets/App.css';
 
-import { ChevronDown, LogOut, Menu } from 'lucide-react';
+import { ChevronDown, LogOut, Menu, User, User2 } from 'lucide-react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
@@ -86,12 +86,21 @@ export default function TopHeader({
                                     className="fixed inset-0 z-10 cursor-default"
                                     onClick={() => setIsOpen(false)}
                                 ></button>
-                                <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in duration-200">
-                                    <div className="px-4 py-3 border-b border-slate-50 bg-slate-50/50">
+                                <div className="absolute py-1 right-0 top-full mt-2 w-56 bg-white border border-slate-100 rounded-xl shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in duration-200">
+                                    <div className="px-4 pb-3 pt-3 border-b border-slate-50 bg-slate-50/50">
                                         <p className="text-xs text-slate-500 font-medium">Conectado</p>
                                         <p className="text-sm font-bold text-slate-700 truncate">{userEmail}</p>
                                     </div>
-
+                                    <hr className="my-1 border-slate-200" />
+                                    {/* TODO: Cambiar a Link de React Router */}
+                                    <button
+                                        onClick={() => {}}
+                                        className="w-full text-left px-4 py-2.5 text-sm text-neutral-700 hover:bg-red-50 font-semibold flex items-center gap-2 transition-colors"
+                                    >
+                                        <User className="w-4 h-4 text-neutral-800" />
+                                        Mi Perfil
+                                    </button>
+                                    <hr className="my-1 border-slate-200" />
                                     <button
                                         onClick={handleLogoutClick}
                                         className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 font-semibold flex items-center gap-2 transition-colors"

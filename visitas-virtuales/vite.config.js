@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => {
                     rewrite: (path) => path.replace(/^\/api/, '/api/v1'),
                 },
             },
+            allowedHosts: ['app.visitasvirtuales.dedyn.io'],
         },
     };
 });

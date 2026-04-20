@@ -9,13 +9,16 @@ import type {
 	UserProfileType,
 	TokenResponseType,
 } from '../db/schema.ts'
+import { env } from '../../env.ts'
 import ApiError from '../helpers/ApiError.js'
 
-const register = async (userRegisterRequest: UserRegisterType): Promise<TokenResponseType> => {
-	const { email, username, password } = userRegisterRequest
+const register = async (
+	userRegisterRequest: UserRegisterType,
+): Promise<void> => {
+	const { email, username, password, role } = userRegisterRequest
 
 	// Verificar que el email o el nombre de usuario no estén ya en uso
-	const [ existingUser ] = await db
+	const [existingUser] = await db
 		.select()
 		.from(users)
 		.where(or(eq(users.email, email), eq(users.username, username)))
@@ -28,35 +31,27 @@ const register = async (userRegisterRequest: UserRegisterType): Promise<TokenRes
 	const isFirstUser = (await db.select().from(users)).length === 0
 
 	// Aplicar hashing a la contraseña (bcrypt)
-	const hashedPassword = await bcrypt.hash(password, 10)
-	const userToInsert = userInsertSchema.omit({id: true}).parse({
+	const hashedPassword = await bcrypt.hash(password, env.BCRYPT_ROUNDS)
+	const userToInsert = userInsertSchema.omit({ id: true }).parse({
 		email,
 		username,
 		password: hashedPassword,
-		// El primer usuario registrado será admin, los siguientes serán student por defecto
-		role: isFirstUser ? 'admin' : 'student'
+		// Si el administrador no especifica un rol, asignar "guest" al nuevo usuario por defecto
+		role: role ? role : 'guest',
 	})
-	const [ newUser ] = await db
-		.insert(users)
-		.values(userToInsert)
-		.returning()
+	const [newUser] = await db.insert(users).values(userToInsert).returning()
 	if (!newUser) {
 		throw new ApiError(500, 'Error al registrar el usuario')
 	}
-	const tokenPair = {
-		accessToken: await generateAccessToken(newUser.id, newUser.role),
-		refreshToken: await generateRefreshToken(newUser.id, newUser.role),
-	}
-	if (!tokenPair.accessToken || !tokenPair.refreshToken) {
-		throw new ApiError(500, 'Error al generar los tokens de autenticación')
-	}
-	return tokenPair
+	// No es necesario generar tokens de autenticación, se obtendrán al iniciar sesión
 }
 
-const login = async (userLoginRequest: UserLoginType): Promise<TokenResponseType> => {
+const login = async (
+	userLoginRequest: UserLoginType,
+): Promise<TokenResponseType> => {
 	const { email, username, password } = userLoginRequest
 
-	const [ existingUser ] = await db
+	const [existingUser] = await db
 		.select()
 		.from(users)
 		.where(email ? eq(users.email, email) : eq(users.username, username!))
@@ -76,7 +71,10 @@ const login = async (userLoginRequest: UserLoginType): Promise<TokenResponseType
 
 	const tokenPair = {
 		accessToken: await generateAccessToken(existingUser.id, existingUser.role),
-		refreshToken: await generateRefreshToken(existingUser.id, existingUser.role),
+		refreshToken: await generateRefreshToken(
+			existingUser.id,
+			existingUser.role,
+		),
 	}
 	if (!tokenPair.accessToken || !tokenPair.refreshToken) {
 		throw new ApiError(500, 'Error al generar los tokens de autenticación')
@@ -86,7 +84,7 @@ const login = async (userLoginRequest: UserLoginType): Promise<TokenResponseType
 
 const getUserProfile = async (sub: string): Promise<UserProfileType> => {
 	const userId = sub
-	const [ userProfile ] = await db
+	const [userProfile] = await db
 		.select({
 			id: users.id,
 			email: users.email,

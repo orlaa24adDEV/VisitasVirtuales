@@ -121,28 +121,6 @@ export const handlers = [
     return HttpResponse.json(POIS);
   }),
 
-  // Listado de POIs de un centro específico
-  http.get('*/api/centers/:centerId/pois', ({ params }) => {
-    const { centerId } = params;
-    // Buscar POIs que pertenezcan a este centro (por id)
-    const pois = POIS.filter((p) => p.centerId === centerId)
-      .map(poi => ({ ...poi, description: poi.details?.description || '' }));
-    return HttpResponse.json(pois);
-  }),
-
-  // Obtener detalles de un POI específico de un centro
-  http.get('*/api/centers/:centerId/pois/:id', ({ params }) => {
-    const { centerId, id } = params;
-    const poi = POIS.find(p => p.id === id && p.centerId === centerId);
-    if (!poi) return new HttpResponse(null, { status: 404 });
-    return HttpResponse.json({ ...poi, description: poi.details?.description || '' });
-  }),
-
-  // Listado de centros
-  http.get('*/api/centers', () => {
-    return HttpResponse.json(CENTERS);
-  }),
-
   // Detalle de centro específico
   http.get('*/api/centers/:id', ({params}) => {
     const center = CENTERS.find(c => c.id === params.id);

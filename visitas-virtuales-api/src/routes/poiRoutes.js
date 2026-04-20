@@ -1,11 +1,12 @@
 import { Router } from 'express'
 import hasRoles from '../middlewares/hasRole.ts'
 import {
-  poisByCenterHandler,
-  newPoiHandler,
-  deletePoiHandler,
-  poisByCenterAndFuzzyNameHandler,
-  updatePoiHandler,
+	poisByCenterHandler,
+	newPoiHandler,
+	deletePoiHandler,
+	poisByCenterAndFuzzyNameHandler,
+	allPoisHandler,
+	updatePoiHandler,
 } from '../controllers/poiController.js'
 import { validateBody, validateParams } from '../middlewares/validation.ts'
 import { poiCreateSchema, poiDeleteSchema } from '../db/schema.ts'
@@ -54,7 +55,12 @@ export const router = Router()
  *       403:
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
-router.post('/centers/:centerId/pois', hasRoles(['admin', 'teacher']), validateBody(poiCreateSchema), newPoiHandler)
+router.post(
+	'/centers/:centerId/pois',
+	hasRoles(['admin', 'teacher']),
+	validateBody(poiCreateSchema),
+	newPoiHandler,
+)
 
 /**
  * @openapi
@@ -80,7 +86,7 @@ router.post('/centers/:centerId/pois', hasRoles(['admin', 'teacher']), validateB
  *       403:
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
-router.get('/centers/:centerId/pois', hasRoles('any'), poisByCenterHandler)
+router.get('/centers/:centerId/pois', hasRoles(['admin', 'teacher', 'guest']), poisByCenterHandler)
 
 /**
  * @openapi
@@ -112,7 +118,30 @@ router.get('/centers/:centerId/pois', hasRoles('any'), poisByCenterHandler)
  *       403:
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
-router.get('/centers/:centerId/pois/search', hasRoles('any'), poisByCenterAndFuzzyNameHandler)
+router.get(
+	'/centers/:centerId/pois/search',
+	hasRoles(['admin', 'teacher', 'guest']),
+	poisByCenterAndFuzzyNameHandler,
+)
+
+/**
+ * @openapi
+ * /api/v1/pois:
+ *   get:
+ *     summary: Listar todos los POIs de todos los centros (solo para administradores)
+ *     description: Esta ruta permite a los administradores obtener una lista de todos los POIs existentes en todos los centros. Esta ruta es útil para la gestión global de POIs y no requiere un ID de centro específico.
+ *     tags: [POIs]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de todos los POIs obtenida con éxito
+ *       401:
+ *         description: No se proporcionó un token de acceso
+ *       403:
+ *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
+ */
+router.get('/pois', hasRoles('admin'), allPoisHandler)
 
 /**
  * @openapi
@@ -154,8 +183,12 @@ router.get('/centers/:centerId/pois/search', hasRoles('any'), poisByCenterAndFuz
  *       403:
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
-// TODO: Validar el body usando el middleware validation
-router.patch('/centers/:centerId/pois/:id', hasRoles(['admin', 'teacher']), updatePoiHandler)
+router.patch(
+	'/centers/:centerId/pois/:id',
+	hasRoles(['admin', 'teacher']),
+	validateBody(poiCreateSchema),
+	updatePoiHandler,
+)
 
 /**
  * @openapi
@@ -187,10 +220,10 @@ router.patch('/centers/:centerId/pois/:id', hasRoles(['admin', 'teacher']), upda
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
 router.delete(
-  '/centers/:centerId/pois/:poiId',
-  hasRoles(['admin', 'teacher']),
-  validateParams(poiDeleteSchema),
-  deletePoiHandler,
+	'/centers/:centerId/pois/:poiId',
+	hasRoles(['admin', 'teacher']),
+	validateParams(poiDeleteSchema),
+	deletePoiHandler,
 )
 
 export default router
