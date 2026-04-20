@@ -17,7 +17,7 @@ import logo1 from '@/assets/logo1.png';
 
 const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
     const [isExpanded, setIsExpanded] = useState(true);
-    const { isAdmin } = useAuth();
+    const { isAdmin, isTeacher } = useAuth();
 
     // Definimos todos los items y marcamos cuáles son solo para Admin
     const allMenuItems = [
@@ -25,13 +25,13 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
         { id: 'mensajes', name: 'Mensajes', icon: <Mail size={20} />, path: 'mensajes' },
         { id: 'seleccion-centro', name: 'Selección de Centro', icon: <Building2 size={22} />, path: '/centros'},
         // Gestión de POIs incluye también /crud
-        { 
+        (isAdmin || isTeacher) ? { 
             id: 'gestion-pois', 
             name: 'Gestión de POIs', 
             icon: <MapPin size={22} />, 
             path: 'listpois', 
             extraActivePaths: ['/crud'], // Para marcar activo también en /crud
-        },
+        } : null,
         // Items solo para ADMIN
         { id: 'dashboard', name: 'Dashboard', icon: <LayoutDashboard size={22} />, path: '/dashboard', adminOnly: true },
         { id: 'auditoria', name: 'Auditoría', icon: <ClipboardCheck size={22} />, path: '/historial', adminOnly: true },

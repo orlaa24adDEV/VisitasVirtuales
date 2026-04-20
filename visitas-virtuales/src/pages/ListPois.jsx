@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import CenterBanner from "@/components/CenterBanner.jsx";
 import { Link } from "react-router-dom";
 import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 
 export default function ListPois({ centerId }) {
     const [pois, setPois] = useState([]);
@@ -51,9 +52,11 @@ export default function ListPois({ centerId }) {
             });
 
             if (response.ok) {
+                toast.success('POI eliminado con éxito', { description: 'El punto de interés ha sido eliminado correctamente' });
                 getPois();
             }
         } catch (error) {
+            toast.error('Error al eliminar el POI', { description: 'No se ha podido eliminar el punto de interés, inténtalo de nuevo más tarde' });
             console.error('Error al eliminar:', error);
         }
     };
@@ -66,9 +69,14 @@ export default function ListPois({ centerId }) {
             const data = await response.json();
             if (response.ok && !!data) {
                 setPois(Array.isArray(data.pois) ? data.pois : []);
+            } else {
+                setPois([]);
+                toast.error('Error al cargar los POIs', { description: 'No se han podido cargar los puntos de interés, inténtalo de nuevo más tarde' });
+                console.error('Error al obtener POIs:', data);
             }
         } catch (error) {
             setPois([]);
+            toast.error('Error de red', { description: 'No se han podido cargar los puntos de interés, inténtalo de nuevo más tarde' });
             console.error('Error al obtener POIs:', error);
         }
     }
