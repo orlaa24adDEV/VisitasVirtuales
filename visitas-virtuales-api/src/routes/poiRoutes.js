@@ -183,10 +183,10 @@ router.get('/pois', hasRoles('admin'), allPoisHandler)
  *       403:
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
-// TODO: Validar el body usando el middleware validation
 router.patch(
 	'/centers/:centerId/pois/:id',
 	hasRoles(['admin', 'teacher']),
+	validateBody(poiCreateSchema),
 	updatePoiHandler,
 )
 

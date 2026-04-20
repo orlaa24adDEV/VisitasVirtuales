@@ -842,7 +842,7 @@
     "/api/v1/centers": {
       "get": {
         "summary": "Obtener listado de todos los centros disponibles",
-        "description": "Esta ruta permite a cualquier usuario autenticado obtener una lista de todos los centros disponibles en el sistema",
+        "description": "Esta ruta permite a los usuarios obtener una lista de todos los centros disponibles en el sistema",
         "tags": [
           "Centros"
         ],

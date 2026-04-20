@@ -6,7 +6,11 @@ import {
 	profileHandler,
 	logoutHandler,
 } from '../controllers/userController.js'
-import { userLoginSchema, userRegisterSchema, UserRoleEditSchema } from '../db/schema.ts'
+import {
+	userLoginSchema,
+	userRegisterSchema,
+	UserRoleEditSchema,
+} from '../db/schema.ts'
 import { validateBody } from '../middlewares/validation.ts'
 import hasRole from '../middlewares/hasRole.ts'
 const router = Router()
@@ -324,7 +328,11 @@ router.patch('/me', hasRole(['admin', 'teacher']), userUpdateHandler)
  *                 message:
  *                   type: string
  */
-router.post('/users/auth/refresh', hasRole(['admin', 'teacher']), refreshTokenHandler)
+router.post(
+	'/users/auth/refresh',
+	hasRole(['admin', 'teacher']),
+	refreshTokenHandler,
+)
 
 /**
  * @openapi
