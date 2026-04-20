@@ -9,8 +9,8 @@ import type {
 	UserProfileType,
 	TokenResponseType,
 } from '../db/schema.ts'
+import { env } from '../../env.ts'
 import ApiError from '../helpers/ApiError.js'
-import { userRoles } from '../db/schema.ts'
 
 const register = async (
 	userRegisterRequest: UserRegisterType,
@@ -31,7 +31,7 @@ const register = async (
 	const isFirstUser = (await db.select().from(users)).length === 0
 
 	// Aplicar hashing a la contraseña (bcrypt)
-	const hashedPassword = await bcrypt.hash(password, 10)
+	const hashedPassword = await bcrypt.hash(password, env.BCRYPT_ROUNDS)
 	const userToInsert = userInsertSchema.omit({ id: true }).parse({
 		email,
 		username,

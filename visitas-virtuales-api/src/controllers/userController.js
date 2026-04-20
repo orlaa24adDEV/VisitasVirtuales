@@ -9,13 +9,13 @@ import { clear } from 'node:console'
  *
  * @param request.body debe contener email, username, password y role (opcional, guest por defecto)
  * @throws manejados por middleware apiErrorHandler
- * 
+ *
  * No se devuelven tokens de autenticación al registrar un nuevo usuario, se obtendrán al iniciar sesión.
  */
 export const registerHandler = async (req, res) => {
 	await userService.register(req.body)
 	res.status(201).json({
-		message: 'Usuario registrado exitosamente'
+		message: 'Usuario registrado exitosamente',
 	})
 }
 
