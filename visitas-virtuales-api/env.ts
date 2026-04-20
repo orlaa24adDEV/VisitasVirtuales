@@ -2,7 +2,6 @@ import { existsSync } from 'node:fs'
 import { config as loadEnv } from 'dotenv'
 import { expand as expandEnv } from 'dotenv-expand'
 import { z } from 'zod'
-import { en } from 'zod/v4/locales'
 
 // Usar schema de zod para validar las variables de entorno de forma estricta, evitando
 // que la app se ejecute con configuraciones incorrectas o faltantes.
@@ -14,6 +13,7 @@ const envSchema = z.object({
 	POSTGRES_PASSWORD: z.string().min(32),
 	POSTGRES_DB: z.string().min(1),
 	DATABASE_URL: z.string().startsWith('postgres://'),
+	BCRYPT_ROUNDS: z.coerce.number().min(10).default(10),
 	JWT_SECRET: z.string().min(32),
 	JWT_ACCESS_TOKEN_TTL: z.string().default('15m'),
 	JWT_REFRESH_TOKEN_TTL: z.string().default('7d'),
