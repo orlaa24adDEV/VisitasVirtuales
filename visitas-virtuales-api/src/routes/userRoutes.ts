@@ -1,12 +1,17 @@
 import { Router } from 'express'
 import {
-	loginHandler,
-	userUpdateHandler,
-	refreshTokenHandler,
-	profileHandler,
-	logoutHandler,
+  loginHandler,
+  userUpdateHandler,
+  refreshTokenHandler,
+  profileHandler,
+  registerHandler,
+  logoutHandler,
 } from '../controllers/userController.js'
-import { userLoginSchema, userRegisterSchema, UserRoleEditSchema } from '../db/schema.ts'
+import {
+  userLoginSchema,
+  userRegisterSchema,
+  UserRoleEditSchema,
+} from '../db/schema.ts'
 import { validateBody } from '../middlewares/validation.ts'
 import hasRole from '../middlewares/hasRole.ts'
 const router = Router()
@@ -79,6 +84,81 @@ const router = Router()
  *                   type: string
  */
 router.get('/me', hasRole(['admin', 'teacher']), profileHandler)
+
+
+/**
+ * @openapi
+ * /api/v1/users:
+ *   post:
+ *     summary: Registrar nuevo usuario (solo para administradores)
+ *     description: Registra un nuevo usuario con email, nombre de usuario, contraseña y, opcionalmente, su rol. Por defecto el rol asignado es el de menor rango, "guest". No devuelve tokens, estos se proveeran cuando el usuario registrado inicie sesión.
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, username, password]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 maxLength: 120
+ *                 format: email
+ *                 example: 'alumno_mad_2@instituto.es'
+ *               username:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 24
+ *                 example: 'alumno_mad_2'
+ *               password:
+ *                 type: string
+ *                 minLength: 8
+ *                 maxLength: 32
+ *                 example: 'Alumno123!'
+ *               role:
+ *                 type: string
+ *                 enum: [admin, teacher, guest]
+ *                 description: Rol del usuario (opcional, por defecto "guest") 
+ *     responses:
+ *       201:
+ *         description: Usuario registrado con éxito
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Email, nombre de usuario o contraseña no proporcionados, o con formato no válido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       409:
+ *         description: Email o nombre de usuario ya en uso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Error del servidor al registrar el usuario
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+router.post('/users', validateBody(userRegisterSchema), hasRole('admin'), registerHandler)
 
 /**
  * @openapi
@@ -324,7 +404,11 @@ router.patch('/me', hasRole(['admin', 'teacher']), userUpdateHandler)
  *                 message:
  *                   type: string
  */
-router.post('/users/auth/refresh', hasRole(['admin', 'teacher']), refreshTokenHandler)
+router.post(
+  '/users/auth/refresh',
+  hasRole(['admin', 'teacher']),
+  refreshTokenHandler,
+)
 
 /**
  * @openapi
@@ -363,14 +447,14 @@ router.post('/users/auth/refresh', hasRole(['admin', 'teacher']), refreshTokenHa
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
 router.patch(
-	'/users/:id/role',
-	hasRole('admin'),
-	validateBody(UserRoleEditSchema),
-	(req, res) => {
-		res.json({
-			message: `Ruta para cambiar el rol del usuario con ID ${req.params.id} - solo accesible para administradores`,
-		})
-	},
+  '/users/:id/role',
+  hasRole('admin'),
+  validateBody(UserRoleEditSchema),
+  (req, res) => {
+    res.json({
+      message: `Ruta para cambiar el rol del usuario con ID ${req.params.id} - solo accesible para administradores`,
+    })
+  },
 )
 
 export default router

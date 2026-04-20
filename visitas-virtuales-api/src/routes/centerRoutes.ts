@@ -13,7 +13,7 @@ export const router = Router()
  * /api/v1/centers:
  *   get:
  *     summary: Obtener listado de todos los centros disponibles
- *     description: Esta ruta permite a cualquier usuario autenticado obtener una lista de todos los centros disponibles en el sistema
+ *     description: Esta ruta permite a los usuarios obtener una lista de todos los centros disponibles en el sistema
  *     tags: [Centros]
  *     security:
  *       - bearerAuth: []
@@ -50,6 +50,10 @@ export const router = Router()
  *       403:
  *         description: Token de acceso inválido o expirado
  */
-router.get('/centers', hasRole(['admin', 'teacher', 'guest']), getAllCentersHandler)
+router.get(
+	'/centers',
+	hasRole(['admin', 'teacher', 'guest']),
+	getAllCentersHandler,
+)
 
 export default router
