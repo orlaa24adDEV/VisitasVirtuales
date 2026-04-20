@@ -1,98 +1,22 @@
 import { Router } from 'express'
 import {
-	registerHandler,
 	loginHandler,
 	userUpdateHandler,
 	refreshTokenHandler,
 	profileHandler,
+	logoutHandler,
 } from '../controllers/userController.js'
-import { userLoginSchema, userRegisterSchema } from '../db/schema.ts'
+import { userLoginSchema, userRegisterSchema, UserRoleEditSchema } from '../db/schema.ts'
 import { validateBody } from '../middlewares/validation.ts'
 import hasRole from '../middlewares/hasRole.ts'
 const router = Router()
 
 /**
  * @openapi
- * /api/v1/users:
- *   post:
- *     summary: Registrar nuevo usuario
- *     description: Registra un nuevo usuario con email, nombre de usuario, contraseña e ID del centro. Al primer usuario registrado se le asignará automáticamente el rol de "admin", mientras que los siguientes usuarios registrados tendrán el rol de "student". Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.
- *     tags: [User]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [email, username, password, centerId]
- *             properties:
- *               email:
- *                 type: string
- *                 maxLength: 120
- *                 format: email
- *                 example: 'alumno_mad_2@instituto.es'
- *               username:
- *                 type: string
- *                 minLength: 6
- *                 maxLength: 24
- *                 example: 'alumno_mad_2'
- *               password:
- *                 type: string
- *                 minLength: 8
- *                 maxLength: 32
- *                 example: 'Alumno123!'
- *               centerId:
- *                 type: integer
- *                 minimum: 1
- *                 example: 1
- *     responses:
- *       201:
- *         description: Usuario registrado con éxito
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 accessToken:
- *                   type: string
- *       400:
- *         description: Email, nombre de usuario, contraseña o centro no proporcionados, o con formato no válido
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *       409:
- *         description: Email o nombre de usuario ya en uso
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *       500:
- *         description: Error del servidor al registrar el usuario
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- */
-router.post('/users', validateBody(userRegisterSchema), registerHandler)
-
-/**
- * @openapi
  * /api/v1/me:
  *   get:
- *     summary: Obtener perfil del usuario autenticado
- *     description: Devuelve el perfil del usuario autenticado. Requiere un token de acceso válido en el header Authorization.
+ *     summary: Obtener perfil del usuario autenticado (solo para administradores y profesores)
+ *     description: Devuelve el perfil del usuario autenticado. Requiere un token de acceso válido en el header Authorization. Los usuarios invitados no tienen un perfil, por lo que no podrán acceder a esta ruta.
  *     tags: [User]
  *     security:
  *       - bearerAuth: []
@@ -154,14 +78,14 @@ router.post('/users', validateBody(userRegisterSchema), registerHandler)
  *                 message:
  *                   type: string
  */
-router.get('/me', hasRole('any'), profileHandler)
+router.get('/me', hasRole(['admin', 'teacher']), profileHandler)
 
 /**
  * @openapi
  * /api/v1/users/auth:
  *   post:
  *     summary: Iniciar sesión de usuario
- *     description: Permite a un usuario iniciar sesión utilizando su email o su nombre de usuario junto con su contraseña. Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only.
+ *     description: Permite a un usuario iniciar sesión utilizando su email o su nombre de usuario junto con su contraseña. Devuelve un token de acceso para autenticación en futuras solicitudes. El token de actualización se envía al cliente en una cookie HTTP-only. El administrador se encargará de registrar a los usuarios y darles los credenciales que deben utilizar en esta ruta para iniciar sesión.
  *     tags: [User]
  *     requestBody:
  *       required: true
@@ -176,12 +100,12 @@ router.get('/me', hasRole('any'), profileHandler)
  *                     type: string
  *                     maxLength: 120
  *                     format: email
- *                     example: 'alumno_mad@instituto.es'
+ *                     example: 'admin_mad@instituto.es'
  *                   password:
  *                     type: string
  *                     minLength: 8
  *                     maxLength: 32
- *                     example: 'Alumno123!'
+ *                     example: 'Admin123!'
  *               - type: object
  *                 required: [username, password]
  *                 properties:
@@ -189,12 +113,12 @@ router.get('/me', hasRole('any'), profileHandler)
  *                     type: string
  *                     minLength: 6
  *                     maxLength: 24
- *                     example: 'alumno_mad_2'
+ *                     example: 'admin_mad'
  *                   password:
  *                     type: string
  *                     minLength: 8
  *                     maxLength: 32
- *                     example: 'Alumno123!'
+ *                     example: 'Admin123!'
  *     responses:
  *       200:
  *         description: Usuario autenticado con éxito
@@ -239,9 +163,58 @@ router.post('/users/auth', validateBody(userLoginSchema), loginHandler)
 
 /**
  * @openapi
+ * /api/v1/users/auth/logout:
+ *   post:
+ *     summary: Cerrar sesión de usuario
+ *     description: Permite a un usuario cerrar su sesión actual. Requiere un token de acceso válido en el header Authorization. El token de actualización asociado al usuario se invalidará y eliminará del cliente. Los usuarios invitados no pueden iniciar sesión, por lo que no necesitan cerrar sesión.
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Sesión cerrada con éxito
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       401:
+ *         description: Token de acceso no proporcionado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       403:
+ *         description: Token de acceso inválido o expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Error del servidor al cerrar la sesión del usuario
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+router.post('/users/auth/logout', hasRole(['admin', 'teacher']), logoutHandler)
+
+/**
+ * @openapi
  * /api/v1/me:
  *   patch:
- *     summary: Editar perfil del usuario autenticado - SIN IMPLEMENTAR
+ *     summary: Editar perfil del usuario autenticado (solo para administradores y profesores) - SIN IMPLEMENTAR
  *     description: Permite al usuario autenticado editar su propio perfil, incluyendo su email, nombre de usuario y contraseña. Requiere un token de acceso válido en el header Authorization.
  *     tags: [User]
  *     security:
@@ -309,14 +282,14 @@ router.post('/users/auth', validateBody(userLoginSchema), loginHandler)
  *                 message:
  *                   type: string
  */
-router.patch('/me', hasRole('any'), userUpdateHandler)
+router.patch('/me', hasRole(['admin', 'teacher']), userUpdateHandler)
 
 /**
  * @openapi
  * /api/v1/users/auth/refresh:
  *   post:
- *     summary: Renovar tokens
- *     description: Permite a un usuario renovar sus tokens utilizando un token de actualización válido. Devuelve un nuevo token de acceso en la respuesta y asigna un nuevo token de actualización en una cookie HTTP-only.
+ *     summary: Renovar tokens de autenticación utilizando token de actualización (solo para administradores y profesores)
+ *     description: Permite a un usuario renovar sus tokens utilizando un token de actualización válido. Devuelve un nuevo token de acceso en la respuesta y asigna un nuevo token de actualización en una cookie HTTP-only. Los invitados no necesitan renovar tokens, se les permite el acceso a las rutas públicas sin autenticación.
  *     tags: [User]
  *     security:
  *       - cookieAuth: []
@@ -351,6 +324,53 @@ router.patch('/me', hasRole('any'), userUpdateHandler)
  *                 message:
  *                   type: string
  */
-router.post('/users/auth/refresh', hasRole('any'), refreshTokenHandler)
+router.post('/users/auth/refresh', hasRole(['admin', 'teacher']), refreshTokenHandler)
+
+/**
+ * @openapi
+ * /api/v1/users/{id}/role:
+ *   patch:
+ *     summary: Cambiar el rol de un usuario (solo para administradores) - SIN IMPLEMENTAR
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del usuario al que se le cambiará el rol
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 enum: [admin, teacher, student]
+ *                 description: Nuevo rol para el usuario
+ *     responses:
+ *       200:
+ *         description: Rol del usuario actualizado con éxito
+ *       400:
+ *         description: Rol proporcionado no es válido
+ *       401:
+ *         description: No se proporcionó un token de acceso
+ *       403:
+ *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
+ */
+router.patch(
+	'/users/:id/role',
+	hasRole('admin'),
+	validateBody(UserRoleEditSchema),
+	(req, res) => {
+		res.json({
+			message: `Ruta para cambiar el rol del usuario con ID ${req.params.id} - solo accesible para administradores`,
+		})
+	},
+)
 
 export default router

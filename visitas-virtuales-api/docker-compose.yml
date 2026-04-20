@@ -17,11 +17,11 @@ services:
     networks:
       - vv-network
     volumes:
-      - pgdata:/var/lib/postgresql/
+      - pgdata-dev:/var/lib/postgresql/
 
 networks:
   vv-network:
     driver: bridge
 
 volumes:
-  pgdata:
+  pgdata-dev:

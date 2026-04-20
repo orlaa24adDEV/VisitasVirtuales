@@ -16,19 +16,26 @@ import './assets/App.css';
 
 
 function App() {
-    const { user, logout, selectedCenter } = useAuth();
+    // Extraemos isAdmin y isTeacher para usarlos en las rutas
+    const { user, logout, selectedCenter, isAdmin} = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
         <div className="w-full flex bg-white min-h-screen">
-            {/* Solo mostramos el Sidebar si hay usuario logueado */}
-            {user && <Sidebar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />}
+            {/* Sidebar solo si hay login */}
+            {user && (
+                <Sidebar 
+                    isMobileMenuOpen={isMobileMenuOpen} 
+                    setIsMobileMenuOpen={setIsMobileMenuOpen} 
+                />
+            )}
             
             <div className="flex-col flex w-full h-screen overflow-hidden">
-                <TopHeader onMenuClick={() => setIsMobileMenuOpen(true)}
+                <TopHeader 
+                    onMenuClick={() => setIsMobileMenuOpen(true)}
                     isLog={!!user}
                     onLogout={logout}
-                    userName={user?.name || ''}
+                    userName={user?.username || user?.name || ''}
                     userEmail={user?.email || ''}
                     userImg={"https://unavatar.io/x/unknow"}
                     role={user?.role || ''}
@@ -36,49 +43,50 @@ function App() {
 
                 <main className="flex-1 overflow-y-auto">
                     <Routes>
-                        {/* 1. MANEJO DE LA RUTA RAÍZ "/" */}
-                        {/* Ahora la prioridad es: ¿Hay usuario? Si no, al Login. */}
+                        {/* 1. MANEJO DE RUTAS PÚBLICAS */}
+                        <Route path="/login" element={!user ? <Login/> : <Navigate to="/" replace />} />
+                        <Route path="/register" element={<Register />} />
+
                         <Route path="/" element={
                             !user 
                                 ? <Navigate to="/login" replace /> 
                                 : (selectedCenter ? <Navigate to="/home" replace /> : <Navigate to="/centros" replace />)
                         } />
-                        <Route path="/register" element={<Register />} />
 
-                        {/* Ruta de Login siempre accesible */}
-                        <Route path="/login" element={!user ? <Login/> : <Navigate to="/" replace />} />
-
-                        {/* 2. RUTAS PROTEGIDAS POR LOGIN */}
+                        {/* 2. RUTAS PROTEGIDAS (Requieren estar logueado) */}
                         {user ? (
                             <>
-                                {/* Si está logueado pero no tiene centro, solo puede ver la selección de centros */}
+                                {/* Selección de centro (obligatorio antes de ver contenido) */}
                                 <Route path="/centros" element={<CenterSelectionPage />} />
 
                                 {selectedCenter ? (
                                     <>
+                                        {/* Contenido General */}
                                         <Route path="/home" element={<Home />} />
-                                        <Route path="/listpois" element={<ListPois />} />
+                                        <Route path="/listpois" element={<ListPois centerId={selectedCenter.id} />} />
                                         <Route path="/perfil" element={<div className="p-10 text-center text-black text-3xl font-bold">Perfil de {selectedCenter.name}</div>} />
                                         <Route path="/mensajes" element={<div className="p-10 text-center text-black text-3xl font-bold">Mensajes de {selectedCenter.name}</div>} />
 
-                                        {/* Ruta para Profesores */}
+                                        {/* ZONA DE GESTIÓN (Acceso: Admin y Profesores) */}
+                                        {/* Usamos AdminRoute que ya permite a ambos */}
                                         <Route path="/crud" element={<AdminRoute><Crud /></AdminRoute>} />
                                         <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
 
-                                        {/* Rutas de Admin */}
-                                        <Route path="/crud" element={<AdminRoute><Crud /></AdminRoute>} />
-                                        <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
-                                        <Route path="/historial" element={<AdminRoute><Historial /></AdminRoute>} />
+                                        {/* ZONA DE AUDITORÍA (Acceso: SOLO Admin) */}
+                                        <Route 
+                                            path="/historial" 
+                                            element={isAdmin ? <AdminRoute><Historial /></AdminRoute> : <Navigate to="/home" replace />} 
+                                        />
                                         
                                         <Route path="*" element={<Navigate to="/home" replace />} />
                                     </>
                                 ) : (
-                                    /* Si está logueado pero intenta navegar sin centro, al selector */
+                                    /* Si no ha seleccionado centro, cualquier ruta lo manda al selector */
                                     <Route path="*" element={<Navigate to="/centros" replace />} />
                                 )}
                             </>
                         ) : (
-                            /* 3. Si NO está logueado, cualquier ruta desconocida lo manda al Login */
+                            /* Si no hay login, cualquier ruta manda al login */
                             <Route path="*" element={<Navigate to="/login" replace />} />
                         )}
                     </Routes>

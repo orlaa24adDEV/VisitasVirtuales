@@ -1,10 +1,17 @@
 import { Search, Plus, Pencil, Trash, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import CenterBanner from "@/components/CenterBanner.jsx";
 import { Link } from "react-router-dom";
+import { useAuth } from '@/hooks/useAuth';
 
-export default function ListPois({ idCentro }) {
+export default function ListPois({ centerId }) {
     const [pois, setPois] = useState([]);
     const [search, setSearch] = useState("");
+    const { selectedCenter } = useAuth();
+
+    const API_URL = import.meta.env.VITE_API_URL;
+    const UPDATE_PATH = `api/v1/centers/${selectedCenter.id}/pois/${pois.id}`;
+    const GET_PATH = `api/v1/centers/${centerId}/pois`
 
     const filteredPois = pois.filter((poi) =>
         poi.name.toLowerCase().includes(search.toLowerCase())
@@ -18,12 +25,11 @@ export default function ListPois({ idCentro }) {
     const firstIndex = lastIndex - itemsPerPage;
     const currentPois = filteredPois.slice(firstIndex, lastIndex);
 
-    const API_URL = 'http://localhost:5000/api/pois';
-
     useEffect(() => {
         const maxPage = Math.max(1, totalPages);
 
         if (currentPage > maxPage) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setCurrentPage(maxPage);
         } else if (currentPage < 1) {
             setCurrentPage(1);
@@ -37,31 +43,45 @@ export default function ListPois({ idCentro }) {
 
     const deletePois = async (id) => {
         try {
-            const updatedPois = pois.filter(poi => poi.id !== id);
-            setPois(updatedPois);
+            const response = await fetch(API_URL + `api/v1/centers/${selectedCenter.id}/pois/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('accessToken')
+                },
+            });
+
+            if (response.ok) {
+                getPois();
+            }
         } catch (error) {
-            console.error('Error al eliminar POI:', error);
+            console.error('Error al eliminar:', error);
         }
     };
 
-    useEffect(() => {
-        async function getPois() {
-            try {
-                const response = await fetch(API_URL);
-                const data = await response.json();
-                setPois(data);
-            } catch (error) {
-                setPois([]);
-                console.error('Error al obtener POIs:', error);
+    async function getPois() {
+        try {
+            const response = await fetch(API_URL + GET_PATH, {
+                headers: { Authorization: 'Bearer ' + localStorage.getItem('accessToken') }
+            });
+            const data = await response.json();
+            if (response.ok && !!data) {
+                setPois(Array.isArray(data.pois) ? data.pois : []);
             }
+        } catch (error) {
+            setPois([]);
+            console.error('Error al obtener POIs:', error);
         }
+    }
+
+    useEffect(() => {
         getPois();
-    }, [idCentro]);
+    }, [centerId]);
 
     //He metido todo el section dentro de un div para centrarlo.
     return (
         <div className="flex flex-col items-center justify-center min-h-full w-full p-6">
             <section className="flex flex-col gap-2 w-full max-w-4xl p-5 shadow-sm rounded-2xl bg-white min-h-125">
+                <CenterBanner centerName={selectedCenter.name} />
                 <div className="flex flex-row gap-2 border-2 border-gray-200 rounded-lg items-center focus-within:border-2 hover:border-blue-600 focus-within:border-blue-600 focus-within:border-solid">
                     <Search size={24} className="text-gray-300 ml-2" />
                     <input
@@ -73,13 +93,14 @@ export default function ListPois({ idCentro }) {
                     />
                     <Link
                         to="/crud"
+                        state={{ centerId: selectedCenter.name, name: '', description: '', isEditing: false }}
                         className="flex items-center w-40  gap-1 px-3 py-1.5 text-white text-sm font-medium bg-blue-600 border border-transparent hover:bg-blue-800 rounded-r-md cursor-pointer transition-all"
                     >
                         <Plus size={18} strokeWidth={3} /> Nuevo POI
                     </Link>
                 </div>
 
-                <div className="overflow-hidden rounded-xl border border-gray-200 shadow-sm mt-5 ">
+                <div className="overflow-hidden rounded-xl border border-gray-200 shadow-sm mt-5">
                     <table className="w-full text-sm text-left">
                         <thead className="bg-gray-50 text-xs uppercase text-gray-600 font-semibold">
                             <tr>
@@ -99,12 +120,12 @@ export default function ListPois({ idCentro }) {
                                 currentPois.map((poi) => (
                                     <tr key={poi.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 font-medium text-gray-900">{poi.name}</td>
-                                        <td className="px-6 py-4 text-gray-600">{poi.description}</td>
+                                        <td className="px-6 py-4 text-gray-600">{poi.details.description}</td>
                                         <td className="px-6 py-4">
                                             <div className="flex justify-end gap-2">
                                                 <Link
                                                     to="/crud"
-                                                    state={{ id: poi.id, name: poi.name, description: poi.description }}
+                                                    state={{ id: poi.id, centerId: selectedCenter.name, name: poi.name, description: poi.details.description, isEditing: true }}
                                                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
                                                 >
                                                     <Pencil size={18} />
