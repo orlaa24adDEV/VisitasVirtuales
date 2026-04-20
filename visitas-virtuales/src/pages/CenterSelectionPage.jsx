@@ -5,43 +5,13 @@ import { useAuth } from '@/hooks/useAuth.js';
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 
 export default function CenterSelectionPage() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selected, setSelected] = useState(null);
-
   const navigate = useNavigate();
-  const { selectCenter, setCenters, centers } = useAuth();
-
-  const fetchCenters = async () => {
-      try {
-        const response = await fetchWithTimeout('/api/centers', {
-          headers: { Authorization: 'Bearer ' + localStorage.getItem('accessToken') }
-        }, 5000);
-        const data = await response.json();
-        if (!response.ok) throw new Error('Error al cargar los centros: ' + (data.message));
-        setCenters(data.centers);
-      } catch (err) {
-        setError(err.message || 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-  useEffect(() => {
-    fetchCenters();
-  }, []);
-
-
-  const handleSelect = (center) => {
-    setSelected(center.id);
-  };
+  const { selectCenter, allCenters, centersError, isCentersLoading, selectedCenter, setSelectedCenter } = useAuth();
 
   const handleConfirm = () => {
-    if (!selected) return;
-    const center = centers.find((c) => c.id === selected);
-    if (!center) return;
-    selectCenter(center);
-    navigate('/home?center=' + center.id);
+    if (selectedCenter) {
+      navigate('/home');
+    }
   };
 
   return (
@@ -62,29 +32,29 @@ export default function CenterSelectionPage() {
           </div>
 
           {/* Estado: cargando */}
-          {loading && (
+          {isCentersLoading && (
             <div className="flex justify-center items-center h-48">
               <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full" />
             </div>
           )}
 
           {/* Estado: error */}
-          {error && (
+          {centersError && (
             <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-center text-sm">
-              {error}
+              {centersError}
             </div>
           )}
 
           {/* Grid de tarjetas */}
-          {!loading && !error && (
+          {!isCentersLoading && !centersError && allCenters && allCenters.length > 0 && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {centers.map((center, index) => {
-                  const isActive = selected === center.id;
+                {allCenters.map((center, index) => {
+                  const isActive = selectedCenter?.id === center.id;
                   return (
                     <button
                       key={`${center.id}-${index}`}
-                      onClick={() => handleSelect(center)}
+                      onClick={() => setSelectedCenter(center)}
                       className={`
                         group text-left rounded-2xl overflow-hidden bg-white
                         border-2 transition-all duration-200 focus:outline-none
@@ -139,6 +109,11 @@ export default function CenterSelectionPage() {
                             Seleccionado
                           </div>
                         )}
+                        {/* Placeholder si no está seleccionado */}
+                        {!isActive && (
+                          <div className="h-6 mt-3"></div>
+                        )}
+                        
                       </div>
 
                       {/* Línea inferior: azul si activo, gris si no */}
@@ -156,9 +131,9 @@ export default function CenterSelectionPage() {
               <div className="mt-8 flex justify-center">
                 <button
                   onClick={handleConfirm}
-                  disabled={!selected}
+                  disabled={!selectedCenter}
                   className={`px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                    selected
+                    selectedCenter
                       ? 'bg-blue-700 text-white hover:bg-blue-800 shadow-md hover:shadow-lg'
                       : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                   }`}
@@ -167,6 +142,11 @@ export default function CenterSelectionPage() {
                 </button>
               </div>
             </>
+          )}
+
+          {/* Sin centros disponibles */}
+          {!isCentersLoading && !centersError && allCenters && allCenters.length === 0 && (
+            <div className="text-center text-slate-500 py-10">No hay centros disponibles.</div>
           )}
         </div>
       </main>

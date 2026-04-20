@@ -5,6 +5,7 @@ import {
 	userUpdateHandler,
 	refreshTokenHandler,
 	profileHandler,
+	logoutHandler,
 } from '../controllers/userController.js'
 import { userLoginSchema, userRegisterSchema } from '../db/schema.ts'
 import { validateBody } from '../middlewares/validation.ts'
@@ -236,6 +237,55 @@ router.get('/me', hasRole('any'), profileHandler)
  *                   type: string
  */
 router.post('/users/auth', validateBody(userLoginSchema), loginHandler)
+
+/**
+ * @openapi
+ * /api/v1/users/auth/logout:
+ *   post:
+ *     summary: Cerrar sesión de usuario
+ *     description: Permite a un usuario cerrar su sesión actual. Requiere un token de acceso válido en el header Authorization. El token de actualización asociado al usuario se invalidará y eliminará del cliente.
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Sesión cerrada con éxito
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       401:
+ *         description: Token de acceso no proporcionado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       403:
+ *         description: Token de acceso inválido o expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Error del servidor al cerrar la sesión del usuario
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+router.post('/users/auth/logout', hasRole('any'), logoutHandler)
 
 /**
  * @openapi

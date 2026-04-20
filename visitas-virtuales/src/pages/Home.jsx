@@ -57,7 +57,7 @@ const Home = () => {
                 </div>
                 
                 {/* Mensaje de ayuda dinámico */}
-                <div className={`flex flex-col items-center h-full mt-6 p-4 rounded-lg border-l-4 justify-center ${
+                <div className={`flex flex-col items-center h-full mt-6 p-4 rounded-lg border-l-4 ${
                     isAdmin ? 'bg-red-50 border-red-300' : isTeacher ? 'bg-blue-50 border-blue-300' : 'bg-green-50 border-green-300'
                 }`}>
                     {isAdmin && (

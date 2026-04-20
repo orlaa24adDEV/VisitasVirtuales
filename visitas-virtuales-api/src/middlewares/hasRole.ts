@@ -1,10 +1,16 @@
+import type { Request, Response, NextFunction } from 'express'
 import { verifyToken } from '../helpers/jwt.js'
 import { env } from '../../env.ts'
+import type { JWTPayload } from 'jose'
 
 const hasRole = (roles: string | string[]) => {
 	const allowedRoles = Array.isArray(roles) ? roles : [roles]
 
-	return async (req: any, res: any, next: any) => {
+	return async (
+		req: Request & { user: JWTPayload },
+		res: Response,
+		next: NextFunction,
+	) => {
 		// Comprobar que el usuario esté autenticado y tenga un rol válido
 		const authHeader = req.headers['authorization']
 		// Authorization: Bearer <token>
