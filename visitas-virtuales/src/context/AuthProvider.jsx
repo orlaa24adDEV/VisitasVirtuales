@@ -51,6 +51,7 @@ export const AuthProvider = ({ children }) => {
             const data = await response.json();
             if (!response.ok) throw new Error('Error al cargar los centros: ' + (data.message));
             setAllCenters(data.centers);
+            localStorage.setItem('allCenters', JSON.stringify(data.centers));
         } catch (err) {
             setCentersError(err.message || 'Error desconocido');
         } finally {

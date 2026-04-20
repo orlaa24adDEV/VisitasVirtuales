@@ -10,6 +10,7 @@ export default function CenterSelectionPage() {
 
   const handleConfirm = () => {
     if (selectedCenter) {
+      selectCenter(selectedCenter);
       navigate('/home');
     }
   };
