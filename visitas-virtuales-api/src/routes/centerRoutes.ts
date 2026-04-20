@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import hasRoles from '../middlewares/hasRole.ts'
+import hasRole from '../middlewares/hasRole.ts'
 import { getAllCentersHandler } from '../controllers/centerController.ts'
 
 export const router = Router()
@@ -50,6 +50,6 @@ export const router = Router()
  *       403:
  *         description: Token de acceso inválido o expirado
  */
-router.get('/centers', hasRoles('any'), getAllCentersHandler)
+router.get('/centers', hasRole(['admin', 'teacher', 'guest']), getAllCentersHandler)
 
 export default router
