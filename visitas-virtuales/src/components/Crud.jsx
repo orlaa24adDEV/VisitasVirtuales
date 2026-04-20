@@ -4,6 +4,7 @@ import CenterBanner from './CenterBanner';
 //import { useAuth } from '../context/AuthContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'sonner';
 
 function Crud() {
     const { selectedCenter } = useAuth();
@@ -37,11 +38,6 @@ function Crud() {
     }, [isEditing, state]);
 
     const createPois = async () => {
-        if (!selectedCenter) {
-            alert("No hay un centro seleccionado");
-            return;
-        }
-
         try {
             const response = await fetch(`${API_URL}${CREATE_PATH}`, {
                 method: 'POST',
@@ -56,16 +52,21 @@ function Crud() {
             });
 
             if (response.ok) {
+                toast.success('POI creado con éxito', { description: "Redirigiendo a la lista de POIs..." });
                 navigate("/listpois")
                 resetForm();
+            } else {
+                toast.error('Error al crear el POI', { description: "Inténtalo de nuevo más tarde" });
             }
         } catch (error) {
+            toast.error('Error de red', { description: "No se pudo conectar con el servidor, inténtalo de nuevo más tarde" });
             console.error('Error:', error);
         }
     };
 
     const updatePois = async () => {
-        const response = await fetch(`${API_URL}${UPDATE_PATH}`, {
+        try {
+             const response = await fetch(`${API_URL}${UPDATE_PATH}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -75,10 +76,17 @@ function Crud() {
                 name: formData.name,
                 details: { description: formData.description }
             })
-        });
-        if (response.ok) {
-            navigate("/listpois");
-            resetForm();
+            });
+            if (response.ok) {
+                toast.success('POI actualizado con éxito', { description: "Redirigiendo a la lista de POIs..." });
+                navigate("/listpois");
+                resetForm();
+            } else {
+                toast.error('Error al actualizar el POI', { description: "Inténtalo de nuevo más tarde" });
+            }
+        } catch (error) {
+            toast.error('Error de red, { description: "No se pudo conectar con el servidor" }');
+            console.error('Error:', error);
         }
     };
 

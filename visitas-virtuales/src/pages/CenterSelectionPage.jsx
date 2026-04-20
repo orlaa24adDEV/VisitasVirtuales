@@ -1,16 +1,43 @@
 // CenterSelectionPage — tarjetas con imagen superior, info centrada y línea azul inferior
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
+import { toast } from 'sonner';
 
 export default function CenterSelectionPage() {
   const navigate = useNavigate();
+  // Local selected center para evitar guardar en contexto hasta que el usuario confirme su selección
   const { selectCenter, allCenters, centersError, isCentersLoading, selectedCenter, setSelectedCenter } = useAuth();
+  const [localSelectedCenter, setLocalSelectedCenter] = useState(selectedCenter || null);
+  const [hasShownToast, setHasShownToast] = useState(false);
+  const hasMounted = useRef(false);
+
+  useEffect(() => {
+    if (isCentersLoading) {
+      return;
+    }
+
+    if (centersError || !allCenters || allCenters.length === 0) {
+      return;
+    }
+
+    // Evitar mostrar toast en primer render
+    if (hasMounted.current) {
+        // Si todos los centros han cargado sin error y ninguno ha sido seleccionado, mostramos un toast informativo
+        if (!selectedCenter && !hasShownToast) {
+          toast.info('Selecciona un centro para continuar', { description: 'Es necesario elegir un centro educativo para acceder al tour' });
+          setHasShownToast(true);
+        }
+    } else {
+      hasMounted.current = true;
+    }
+  }, [isCentersLoading, centersError, allCenters, selectedCenter, hasShownToast]);
 
   const handleConfirm = () => {
-    if (selectedCenter) {
-      selectCenter(selectedCenter);
+    if (localSelectedCenter) {
+      selectCenter(localSelectedCenter);
+      toast.success(`Seleccionado ${localSelectedCenter.name}`, { description: `Guardando tu preferencia de centro...` });
       navigate('/home');
     }
   };
@@ -28,7 +55,7 @@ export default function CenterSelectionPage() {
               Selecciona un centro educativo
             </h1>
             <p className="text-slate-500 mt-2 text-sm">
-              Elige el centro
+              Pulsa "Acceder al centro" para confirmar tu selección y mostrar el tour virtual
             </p>
           </div>
 
@@ -51,11 +78,11 @@ export default function CenterSelectionPage() {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {allCenters.map((center, index) => {
-                  const isActive = selectedCenter?.id === center.id;
+                  const isActive = localSelectedCenter?.id === center.id;
                   return (
                     <button
+                      onClick={() => setLocalSelectedCenter(center)}
                       key={`${center.id}-${index}`}
-                      onClick={() => setSelectedCenter(center)}
                       className={`
                         group text-left rounded-2xl overflow-hidden bg-white
                         border-2 transition-all duration-200 focus:outline-none
@@ -132,9 +159,9 @@ export default function CenterSelectionPage() {
               <div className="mt-8 flex justify-center">
                 <button
                   onClick={handleConfirm}
-                  disabled={!selectedCenter}
+                  disabled={!localSelectedCenter}
                   className={`px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                    selectedCenter
+                    localSelectedCenter || selectedCenter
                       ? 'bg-blue-700 text-white hover:bg-blue-800 shadow-md hover:shadow-lg'
                       : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                   }`}
