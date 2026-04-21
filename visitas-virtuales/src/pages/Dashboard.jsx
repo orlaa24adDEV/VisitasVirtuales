@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
@@ -9,7 +9,8 @@ const Dashboard = () => {
   const [pois, setPois] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { allCenters } = useAuth();
+  const { allCenters, selectCenter } = useAuth();
+  const navigate = useNavigate();
 
   // Cargar todos los POIs al montar el componente
   useEffect(() => {
@@ -62,6 +63,16 @@ const Dashboard = () => {
 
   // Ordenar por nombre para consistent visualization
   poisByCenter.sort((a, b) => a.name.localeCompare(b.name));
+
+  // Handler para click en las barras del gráfico
+  const handleBarClick = (data) => {
+    const centerName = data.name;
+    const center = allCenters.find((c) => c.name === centerName);
+    if (center) {
+      selectCenter(center);
+      navigate('/home');
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen gap-4 p-10 pb-16">
@@ -144,7 +155,14 @@ const Dashboard = () => {
                     formatter={(value) => [value, 'POIs']}
                   />
                   <Legend />
-                  <Bar dataKey="value" fill="#2563eb" name="POIs" radius={[8, 8, 0, 0]} />
+                  <Bar 
+                    dataKey="value" 
+                    fill="#2563eb" 
+                    name="POIs" 
+                    radius={[8, 8, 0, 0]}
+                    onClick={handleBarClick}
+                    cursor="pointer"
+                  />
                 </BarChart>
               </ResponsiveContainer>
             )}
