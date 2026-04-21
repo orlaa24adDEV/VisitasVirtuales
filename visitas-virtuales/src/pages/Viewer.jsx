@@ -36,16 +36,17 @@ export default function Viewer() {
                     
                     <div>
                         <h1 className="text-2xl font-bold text-gray-800">
-                            ¡Bienvenido de nuevo, {user?.username || 'Invitado'}!
+                            ¡Bienvenido{(isAdmin || isTeacher ? ' de nuevo, ' : ' ')}{user?.username || 'Invitado'}!
                         </h1>
-                        <p className="text-gray-500">
+                        {(isAdmin || isTeacher) ? (
+                            <p className="text-gray-500">
                             Has iniciado sesión como: 
                             <span className={`ml-2 px-3 py-1 rounded-full text-xs font-bold uppercase ${
                                 isAdmin ? 'bg-red-600 text-white' : isTeacher ? 'bg-blue-600 text-white' : 'bg-green-600 text-white'
                             }`}>
                                 {isAdmin ? 'Administrador' : isTeacher ? 'Profesor' : 'Invitado'}
                             </span>
-                        </p>
+                        </p> ) : null}
                     </div>
                 </div>
 

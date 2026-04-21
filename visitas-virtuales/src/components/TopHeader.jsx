@@ -73,7 +73,7 @@ export default function TopHeader({
                 )}
 
                 {isLog ? (
-                    <div className="relative flex items-center gap-4">
+                    <div className="relative flex items-center gap-6">
                         <div className="flex flex-col items-end leading-tight">
                             <h2 className="text-sm font-bold text-slate-800">{userName}</h2>
                             <span className="text-[10px] font-semibold uppercase tracking-wider text-black/50">
