@@ -10,17 +10,13 @@ import Button from '@/components/Button.jsx';
 
 export default function CenterSelectionPage() {
   const navigate = useNavigate();
-  const { centerState, saveSelectedCenter, fetchCenters } = useAuth();
+  const { centerState, saveSelectedCenter } = useAuth();
   const { selectedCenter, allCenters, isCentersLoading, centersError } = centerState;
   
   // Iniciamos el local con lo que haya en el contexto (por si vuelve para cambiar)
   const [localSelectedCenter, setLocalSelectedCenter] = useState(selectedCenter || null);
   const [hasShownToast, setHasShownToast] = useState(false);
   const hasMounted = useRef(false);
-
-  useEffect(() => {
-    fetchCenters();
-  }, []);
 
   useEffect(() => {
     if (isCentersLoading || centersError || !allCenters || allCenters.length === 0) return;
