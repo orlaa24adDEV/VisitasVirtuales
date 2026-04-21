@@ -31,7 +31,7 @@ function App() {
                 />
             )}
             
-            <div className="flex-col flex w-full h-screen overflow-hidden">
+            <div className="flex-col flex w-full h-screen relative">
                 <TopHeader 
                     onMenuClick={() => setIsMobileMenuOpen(true)}
                     isLog={!!user}
@@ -42,7 +42,7 @@ function App() {
                     role={user?.role || ''}
                 />
 
-                <main className="flex-1 overflow-y-auto">
+                <main className="absolute inset-0 pt-18 overflow-y-auto">
                     <Routes>
                         {/* 1. MANEJO DE RUTAS PÚBLICAS */}
                         <Route path="/login" element={!user ? <Login/> : <Navigate to="/" replace />} />

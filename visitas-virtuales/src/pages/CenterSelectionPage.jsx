@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 import { toast } from 'sonner';
+import Button from '../components/Button';
 
 export default function CenterSelectionPage() {
   const navigate = useNavigate();
@@ -157,17 +158,14 @@ export default function CenterSelectionPage() {
 
               {/* Botón confirmar */}
               <div className="mt-8 flex justify-center">
-                <button
+            <Button
                   onClick={handleConfirm}
                   disabled={!localSelectedCenter}
-                  className={`px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                    localSelectedCenter || selectedCenter
-                      ? 'bg-blue-700 text-white hover:bg-blue-800 shadow-md hover:shadow-lg'
-                      : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                  }`}
+                  variant={"primary"}
+                  size={"large"}
                 >
                   Acceder al centro
-                </button>
+                </Button>
               </div>
             </>
           )}
