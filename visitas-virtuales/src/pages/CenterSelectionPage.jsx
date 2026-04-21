@@ -113,7 +113,7 @@ export default function CenterSelectionPage() {
                         <div>
                           <h2 className="font-bold text-slate-800 text-base mb-1">{center.name}</h2>
                           <p className="text-slate-500 text-xs flex items-center gap-1">
-                             {center.address || 'Ubicación disponible'}
+                             {center.location || 'Ubicación disponible'}
                           </p>
                         </div>
 

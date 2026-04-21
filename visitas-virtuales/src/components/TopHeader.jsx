@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth} from '@/hooks/useAuth.js';
 import Button from './Button.jsx';
 import CenterSelectButton from './CenterSelectButton.jsx';
-
+import ClickOutsideWrapper from './ClickOutsideWrapper.jsx';
 
 TopHeader.propTypes = {
     onMenuClick: PropTypes.func.isRequired,
@@ -62,7 +62,7 @@ export default function TopHeader({
             <Button variant='ghost' size='normal' className="lg:hidden" onClick={onMenuClick}>
                 <Menu size={22} />
             </Button>
-            <div className="flex items-center gap-4 ml-auto">
+            <div className="flex items-center gap-6 ml-auto">
                 
                 {/* --- BOTÓN CAMBIAR CENTRO --- */}
                 {selectedCenter && (
@@ -73,36 +73,34 @@ export default function TopHeader({
                 )}
 
                 {isLog ? (
-                    <div className="relative flex items-center gap-6">
-                        <div className="flex flex-col items-end leading-tight">
-                            <h2 className="text-sm font-bold text-slate-800">{userName}</h2>
-                            <span className="text-[10px] font-semibold uppercase tracking-wider text-black/50">
-                                {role}
-                            </span>
-                        </div>
+                    /* FIX: Wrap the entire relative container so the button is considered "inside" */
+                    <ClickOutsideWrapper onClickOutside={() => setIsOpen(false)}>
+                        <div className="relative flex items-center gap-6">
+                            <button
+                                onClick={() => setIsOpen(!isOpen)}
+                                className="group flex items-center gap-4 focus:outline-none cursor-pointer"
+                            >
+                                <div className="flex flex-col items-end leading-tight">
+                                    <h2 className="text-sm font-bold text-slate-800">{userName}</h2>
+                                    <span className="text-[10px] font-semibold uppercase tracking-wider text-black/50">
+                                        {role}
+                                    </span>
+                                </div>
+                                <div className="flex justify-center items-center gap-2">
+                                    <div className="relative">
+                                        <img
+                                            src={userImg}
+                                            alt="User Avatar"
+                                            className="w-10 h-10 rounded-full object-cover border-2 border-slate-50 group-hover:border-blue-200 transition-all"
+                                        />
+                                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                                    </div>
+                                    <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                                </div>
+                            </button>
 
-                        <button
-                            onClick={() => setIsOpen(!isOpen)}
-                            className="group flex items-center gap-2 focus:outline-none"
-                        >
-                            <div className="relative">
-                                <img
-                                    src={userImg}
-                                    alt="User Avatar"
-                                    className="w-10 h-10 rounded-full object-cover border-2 border-slate-50 group-hover:border-blue-200 transition-all"
-                                />
-                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-                            </div>
-                            <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-                        </button>
-
-                        {/* Dropdown Menu */}
-                        {isOpen && (
-                            <>
-                                <button
-                                    className="fixed inset-0 z-10 cursor-default"
-                                    onClick={() => setIsOpen(false)}
-                                ></button>
+                            {/* Dropdown Menu */}
+                            {isOpen && (
                                 <div className="absolute py-1 right-0 top-full mt-2 w-56 bg-white border border-slate-100 rounded-xl shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in duration-200">
                                     <div className="px-4 pb-3 pt-3 border-b border-slate-50 bg-slate-50/50">
                                         <p className="text-xs text-slate-500 font-medium">Conectado</p>
@@ -125,9 +123,9 @@ export default function TopHeader({
                                         Cerrar sesión
                                     </button>
                                 </div>
-                            </>
-                        )}
-                    </div>
+                            )}
+                        </div>
+                    </ClickOutsideWrapper>
                 ) : (
                     <div className="flex items-center gap-2">
                         <Link
@@ -142,3 +140,4 @@ export default function TopHeader({
         </header>
     );
 }
+
