@@ -18,6 +18,7 @@ export const isTokenExpired = (token) => {
     const currentTime = Math.floor(Date.now() / 1000);
     
     return currentTime >= (payload.exp - 10);
+  // eslint-disable-next-line no-unused-vars
   } catch (error) {
     return true;
   }

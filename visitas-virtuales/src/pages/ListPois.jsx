@@ -2,18 +2,18 @@ import { Search, Plus, Pencil, Trash, ChevronLeft, ChevronRight } from "lucide-r
 import { useEffect, useState } from "react";
 import CenterBanner from "@/components/CenterBanner.jsx";
 import { Link } from "react-router-dom";
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth.js';
 import { toast } from 'sonner';
-import Button from '../components/Button';
+import  Button  from '@/components/Button.jsx';
 import Input from '../components/Input';
 
 export default function ListPois({ centerId }) {
     const [pois, setPois] = useState([]);
     const [search, setSearch] = useState("");
-    const { selectedCenter } = useAuth();
+    const { centerState } = useAuth();
+    const { selectedCenter } = centerState;
 
     const API_URL = import.meta.env.VITE_API_URL;
-    const UPDATE_PATH = `api/v1/centers/${selectedCenter.id}/pois/${pois.id}`;
     const GET_PATH = `api/v1/centers/${centerId}/pois`
 
     const filteredPois = pois.filter((poi) =>
@@ -32,7 +32,7 @@ export default function ListPois({ centerId }) {
         const maxPage = Math.max(1, totalPages);
 
         if (currentPage > maxPage) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+             
             setCurrentPage(maxPage);
         } else if (currentPage < 1) {
             setCurrentPage(1);
@@ -40,7 +40,7 @@ export default function ListPois({ centerId }) {
     }, [currentPage, totalPages]);
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+         
         setCurrentPage(1);
     }, [search]);
 
@@ -85,6 +85,7 @@ export default function ListPois({ centerId }) {
 
     useEffect(() => {
         getPois();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [centerId]);
 
     //He metido todo el section dentro de un div para centrarlo.
