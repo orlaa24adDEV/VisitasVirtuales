@@ -31,7 +31,7 @@ Usuarios registrados en el sistema.
 
 ## `pois`
 
-Puntos de interes (POIs) asociados a un centro educativo.
+Puntos de interés (POIs) asociados a un centro educativo.
 | Campo | Tipo | Restricciones |
 | :--------- | :------ | :----------------------------------------------- |
 | id | SERIAL | PRIMARY KEY |
