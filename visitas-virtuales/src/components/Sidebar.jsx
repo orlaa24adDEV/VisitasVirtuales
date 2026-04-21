@@ -62,7 +62,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 
             {/* SIDEBAR PRINCIPAL */}
             <aside
-                className={`fixed inset-y-0 min-w-[256px] left-0 z-50 flex h-screen flex-col bg-blue-600 text-white shadow-lg transition-all duration-300 lg:relative
+                className={`fixed inset-y-0 ${isExpanded ? 'min-w-[256px]' : ''} left-0 z-50 flex h-screen flex-col bg-blue-600 text-white shadow-lg transition-all duration-300 lg:relative
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                     ${isExpanded ? 'w-64' : 'lg:w-20'}`}>
                 
