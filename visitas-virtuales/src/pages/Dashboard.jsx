@@ -79,6 +79,7 @@ const Dashboard = () => {
   }));
 
   const mostActiveCenter = poisByCenterWithPercent[0] || null;
+  const topCenters = poisByCenterWithPercent.slice(0, 3);
 
   const [mostRecentCenterName, mostRecentCenterCount] = Object.entries(recentCountsByCenter)
     .sort(([, a], [, b]) => b - a)[0] || [null, 0];
@@ -86,6 +87,15 @@ const Dashboard = () => {
   const filteredPoisByCenter = searchQuery
     ? poisByCenterWithPercent.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
     : poisByCenterWithPercent;
+
+  const handleCenterCardClick = (centerName) => {
+    if (!centerName || !allCenters) return;
+    const center = allCenters.find((c) => c.name === centerName);
+    if (center) {
+      selectCenter(center);
+      navigate('/home');
+    }
+  };
 
   // Handler para click en las barras del gráfico
   const handleBarClick = (data) => {
@@ -136,16 +146,45 @@ const Dashboard = () => {
           </section>
 
           <section className="grid gap-4 sm:grid-cols-2">
-            <article className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <button
+              type="button"
+              onClick={() => handleCenterCardClick(mostActiveCenter?.name)}
+              disabled={!mostActiveCenter}
+              className="group w-full rounded-xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-blue-500 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70"
+            >
               <p className="text-sm text-slate-500">Centro con más POIs</p>
               <p className="text-2xl font-bold text-slate-800">{mostActiveCenter ? mostActiveCenter.name : '—'}</p>
               <p className="text-sm text-slate-500 mt-1">{mostActiveCenter ? `${mostActiveCenter.value} POIs` : 'Sin datos'}</p>
-            </article>
-            <article className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            </button>
+            <button
+              type="button"
+              onClick={() => handleCenterCardClick(mostRecentCenterName)}
+              disabled={!mostRecentCenterName}
+              className="group w-full rounded-xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-blue-500 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70"
+            >
               <p className="text-sm text-slate-500">Centro con más cambios recientes</p>
               <p className="text-2xl font-bold text-slate-800">{mostRecentCenterName || '—'}</p>
               <p className="text-sm text-slate-500 mt-1">{mostRecentCenterName ? `${mostRecentCenterCount} cambios` : 'Sin datos recientes'}</p>
-            </article>
+            </button>
+          </section>
+
+          <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <h2 className="text-lg font-semibold text-slate-800 mb-4">Top 3 centros más activos</h2>
+            {topCenters.length === 0 ? (
+              <p className="text-slate-500">No hay centros con POIs para mostrar.</p>
+            ) : (
+              <ol className="space-y-3">
+                {topCenters.map((center, index) => (
+                  <li key={center.name} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-slate-700">#{index + 1} {center.name}</span>
+                      <span className="text-sm text-slate-500">{center.percentage}%</span>
+                    </div>
+                    <p className="mt-2 text-sm text-slate-600">{center.value} POIs · {center.recentCount} cambios recientes</p>
+                  </li>
+                ))}
+              </ol>
+            )}
           </section>
 
           <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
