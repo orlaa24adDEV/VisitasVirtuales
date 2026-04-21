@@ -1,10 +1,10 @@
+/* global process */
 import { defineConfig, loadEnv } from 'vite'; // Importamos loadEnv
 import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
     // Cargamos las variables de entorno basadas en el modo (development, production, etc.)
     // El segundo argumento 'process.cwd()' le dice a Vite que busque en la raíz del proyecto
-    // eslint-disable-next-line no-undef
     const env = loadEnv(mode, process.cwd());
 
     return {

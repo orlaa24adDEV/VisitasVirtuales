@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-unused-vars
-import { use, useState } from 'react';
+import { useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'; // Añadimos Navigate
 import TopHeader from './components/TopHeader';
 import Sidebar from './components/Sidebar';
@@ -10,11 +9,10 @@ import Historial from './pages/Historial.jsx';
 import CenterSelectionPage from './pages/CenterSelectionPage.jsx';
 import ListPois from './pages/ListPois.jsx';
 import { useAuth } from '@/hooks/useAuth.js';
-import Home from './pages/Home.jsx';
+import Viewer from './pages/Viewer.jsx';
 import { AdminRoute } from './components/ProtectedRoute.jsx';
 import './assets/App.css';
-//eslint-disable-next-line no-unused-vars
-import { Toaster, toast } from 'sonner';
+import { Toaster } from 'sonner';
 import LandingPage from './pages/LandingPage.jsx';
 
 
@@ -49,22 +47,22 @@ function App() {
                     />
                 )}
 
-                <main className={`flex-1 ${isLanding ? '' : 'overflow-y-auto'}`}>
+                <main className={`flex-1 ${isLanding ? '' : 'overflow-y-auto absolute inset-0 pt-18'}`}>
                     <Routes>
                         {/* 1. LANDING: Punto de entrada total */}
                         <Route path="/" element={<LandingPage />} />
 
                         {/* 2. ACCESO ADMIN/PROFE */}
-                        <Route path="/login" element={!user ? <Login/> : <Navigate to="/home" replace />} />
+                        <Route path="/login" element={!user ? <Login/> : <Navigate to="/viewer" replace />} />
 
                         {/* 3. SELECCIÓN DE CENTROS: Pública para el invitado */}
                         <Route path="/centros" element={<CenterSelectionPage />} />
 
-                        {/* 4. EL HOME (ESCENA UNITY): 
+                        {/* 4. VIEWER (ESCENA UNITY): 
                                Accesible si hay un centro seleccionado (sea invitado o admin) */}
                         <Route 
-                            path="/home" 
-                            element={selectedCenter ? <Home /> : <Navigate to="/centros" replace />} 
+                            path="/viewer" 
+                            element={selectedCenter ? <Viewer /> : <Navigate to="/centros" replace />} 
                         />
 
                         {/* 5. RUTAS BLOQUEADAS PARA INVITADOS (Solo Admin/Profe) */}
@@ -76,7 +74,7 @@ function App() {
                         <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
                         <Route 
                             path="/historial" 
-                            element={isAdmin ? <AdminRoute><Historial /></AdminRoute> : <Navigate to="/home" replace />} 
+                            element={isAdmin ? <AdminRoute><Historial /></AdminRoute> : <Navigate to="/viewer" replace />} 
                         />
 
                         {/* 6. REDIRECCIÓN FINAL: Si se pierde, vuelve a la Landing */}
@@ -84,7 +82,11 @@ function App() {
                     </Routes>
                 </main>
             </div>
-            <Toaster richColors position='top-right' />
+            <Toaster richColors position='top-right' expand={true} visibleToasts={6} closeButton offset={
+                location.pathname.startsWith(['/home', '/listpois', '/crud', '/dashboard', '/historial'])
+                    ? {} 
+                    : { top: 80, right: 20 }
+            } />
         </div>
     );
 }

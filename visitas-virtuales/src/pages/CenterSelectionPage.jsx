@@ -35,7 +35,7 @@ export default function CenterSelectionPage() {
 
   const handleConfirm = () => {
     if (localSelectedCenter) {
-      // Actualizamos el contexto global (esto permitirá entrar a /home)
+      // Actualizamos el contexto global (esto permitirá entrar a /viewer)
       selectCenter(localSelectedCenter);
       
       toast.success(`Cargando ${localSelectedCenter.name}`, { 
@@ -43,7 +43,7 @@ export default function CenterSelectionPage() {
       });
       
       // Redirigimos a la escena de Unity
-      navigate('/home');
+      navigate('/viewer');
     }
   };
 
@@ -113,7 +113,7 @@ export default function CenterSelectionPage() {
                         <div>
                           <h2 className="font-bold text-slate-800 text-base mb-1">{center.name}</h2>
                           <p className="text-slate-500 text-xs flex items-center gap-1">
-                             {center.address || 'Ubicación disponible'}
+                             {center.location || 'Ubicación disponible'}
                           </p>
                         </div>
 

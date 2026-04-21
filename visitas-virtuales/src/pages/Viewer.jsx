@@ -4,9 +4,10 @@ import { UserCheck, ShieldCheck, GraduationCap } from 'lucide-react'; // Iconos 
 import UnityViewer from '../components/UnityViewer';
 import { useNavigate } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
+import Button from '../components/Button';
 
-const Home = () => {
-    const { user, isAdmin, isTeacher, selectedCenter, } = useAuth();
+export default function Viewer() {
+    const { user, isAdmin, isTeacher, selectedCenter } = useAuth();
     const navigate = useNavigate();
 
     // Si el context no contiene un centro, utilizar el query param "center" de la URL, 
@@ -19,39 +20,41 @@ const Home = () => {
             <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
                 <div className="flex items-center gap-4 mb-4">
                     {/* Icono dinámico según el rol */}
-                    <div className={`p-3 rounded-full ${isAdmin ? 'bg-gray-200 text-red-600' : isTeacher ? 'bg-gray-200 text-blue-600' : 'bg-gray-200 text-green-600'}`}>
+                    <div className={`p-3 rounded-full transition-colors ${
+                        isAdmin ? 'bg-rose-100 text-rose-600' : 
+                        isTeacher ? 'bg-sky-100 text-sky-600' : 
+                        'bg-gray-100 text-slate-400'
+                    }`}>
                         {/* 1. Si es Admin, SOLO esto */}
-                            {isAdmin ? (
-                                <ShieldCheck size={32} />
-                            ) : isTeacher ? (
-                            /* 2. Si no es Admin pero es Profe, SOLO esto */
-                                <GraduationCap size={32} />
-                            ) : (
-                            /* 3. Si no es ninguno de los anteriores, SOLO esto */
-                                <UserCheck size={32} />
-                            )}
-                
+                        {isAdmin ? (
+                            <ShieldCheck size={32} />
+                        ) : isTeacher ? (
+                        /* 2. Si no es Admin pero es Profe, SOLO esto */
+                            <GraduationCap size={32} />
+                        ) : (
+                        /* 3. Si no es ninguno de los anteriores, SOLO esto */
+                            <UserCheck size={32} />
+                        )}
                     </div>
                     
                     <div>
                         <h1 className="text-2xl font-bold text-gray-800">
-                            ¡Bienvenido de nuevo, {user?.username || 'Invitado'}!
+                            ¡Bienvenido{(isAdmin || isTeacher ? ' de nuevo, ' : ' ')}{user?.username || 'Invitado'}!
                         </h1>
-                        <p className="text-gray-500">
-                            Has iniciado sesión como: 
-                            <span className={`ml-2 px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                                isAdmin ? 'bg-red-600 text-white' : isTeacher ? 'bg-blue-600 text-white' : 'bg-green-600 text-white'
-                            }`}>
-                                {isAdmin ? 'Administrador' : isTeacher ? 'Profesor' : 'Invitado'}
-                            </span>
-                        </p>
+                        {(isAdmin || isTeacher) ? (
+                            <p className="text-gray-500">
+                                Has iniciado sesión como 
+                                <span className={`ml-2 px-3 py-1 rounded-full text-xs font-bold uppercase border ${
+                                    isAdmin ? 'bg-rose-50 text-rose-700 border-rose-200' : 
+                                    isTeacher ? 'bg-sky-50 text-sky-700 border-sky-200' : 
+                                    'bg-transparent text-zinc-400 border-zinc-200'
+                                }`}>
+                                    {isAdmin ? 'Administrador' : isTeacher ? 'Profesor' : 'Invitado'}
+                                </span>
+                            </p> 
+                        ) : null}
                     </div>
                 </div>
-                {/* Boton para cambiar de centro */}
-                <button onClick={() => navigate('/')} className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <MapPin size={16} />
-                    Inicio
-                </button>
 
                 <hr className="my-4 border-gray-100" />
 
@@ -65,21 +68,23 @@ const Home = () => {
                 </div>
                 
                 {/* Mensaje de ayuda dinámico */}
-                <div className={`flex flex-col items-center h-full mt-6 p-4 rounded-lg border-l-4 ${
-                    isAdmin ? 'bg-red-50 border-red-300' : isTeacher ? 'bg-blue-50 border-blue-300' : 'bg-green-50 border-green-300'
+                <div className={`flex flex-col items-center h-full mt-6 p-4 rounded-lg border-l-4 transition-colors ${
+                    isAdmin ? 'bg-rose-50 border-rose-300' : 
+                    isTeacher ? 'bg-sky-50 border-sky-300' : 
+                    'bg-gray-50 border-gray-300'
                 }`}>
                     {isAdmin && (
-                        <p className="text-sm text-black ">
+                        <p className="text-sm text-rose-900 mb-4 font-medium">
                             Tienes acceso total. Puedes gestionar puntos de interés (POIs), ver el historial de auditoría y configurar el sistema.
                         </p>
                     )}
                     {isTeacher && (
-                        <p className="text-sm text-black ">
+                        <p className="text-sm text-sky-900 mb-4 font-medium">
                             Como profesor, puedes gestionar tus clases y ver la información de los puntos de interés.
                         </p>
                     )}
                     {!isAdmin && !isTeacher && (
-                        <p className="text-sm text-black ">
+                        <p className="text-sm text-gray-600 mb-4 font-medium">
                             Puedes explorar el mapa y ver la información de los puntos de interés.
                         </p>
                     )}
@@ -89,5 +94,3 @@ const Home = () => {
         </div>
     );
 };
-
-export default Home;

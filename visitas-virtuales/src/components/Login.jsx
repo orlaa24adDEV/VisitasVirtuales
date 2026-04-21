@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import '@/assets/Login.css';
 import { useAuth } from '@/hooks/useAuth.js';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
 	const [errors, setErrors] = useState([]);
@@ -74,7 +74,7 @@ export default function Login() {
 
 			setIsLoading(false);
 			await login(accessToken);
-			navigate('/home');
+			navigate('/viewer');
 		} catch (error) {
 			console.error('Error al iniciar sesión:', error);
 			setErrors(['Error de red al iniciar sesión']);

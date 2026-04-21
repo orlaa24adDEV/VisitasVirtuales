@@ -167,7 +167,7 @@ export const AuthProvider = ({ children }) => {
 
 
     const isAdmin = user?.role === 'admin';
-    const isTeacher = isAdmin || user?.role === 'teacher';
+    const isTeacher = user?.role === 'teacher';
 
     return (
         <AuthContext.Provider
