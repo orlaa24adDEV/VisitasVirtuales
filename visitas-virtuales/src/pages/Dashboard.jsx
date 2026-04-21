@@ -9,6 +9,7 @@ const Dashboard = () => {
   const [pois, setPois] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const { allCenters, selectCenter } = useAuth();
   const navigate = useNavigate();
 
@@ -63,6 +64,10 @@ const Dashboard = () => {
 
   // Ordenar por nombre para consistent visualization
   poisByCenter.sort((a, b) => a.name.localeCompare(b.name));
+
+  const filteredPoisByCenter = searchQuery
+    ? poisByCenter.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    : poisByCenter;
 
   // Handler para click en las barras del gráfico
   const handleBarClick = (data) => {
@@ -133,13 +138,27 @@ const Dashboard = () => {
             )}
           </section>
 
+          <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <label htmlFor="search-centers" className="block text-sm font-semibold text-slate-700 mb-2">
+          Buscar centro
+        </label>
+        <input
+          id="search-centers"
+          type="text"
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+          placeholder="Escribe el nombre del centro..."
+          className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-700 focus:border-blue-500 focus:ring-blue-500"
+        />
+      </section>
+
           <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
             <h2 className="text-lg font-semibold text-slate-800 mb-3">Distribución de POIs por Centro</h2>
-            {poisByCenter.length === 0 ? (
+            {filteredPoisByCenter.length === 0 ? (
               <p className="text-slate-500">No hay datos disponibles para mostrar el gráfico.</p>
             ) : (
               <ResponsiveContainer width="100%" height={500}>
-                <BarChart data={poisByCenter} margin={{ top: 20, right: 40, left: 20, bottom: 20 }}>
+                <BarChart data={filteredPoisByCenter} margin={{ top: 20, right: 40, left: 20, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
                     dataKey="name" 
