@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
+import Button from '@/components/Button.jsx';
 
 const Dashboard = () => {
   const [pois, setPois] = useState([]);
@@ -69,11 +70,12 @@ const Dashboard = () => {
           <h1 className="text-3xl text-center font-bold text-slate-900">DASHBOARD</h1>
           <p className="text-center mt-1">Resumen rápido de POIs y última actividad</p>
         </div>
-        <Link
+          <Link
           to="/listpois"
-          className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition"
         >
-          Ir a POIs
+          <Button variant="primary" size="normal" className="w-full">
+            Ir a POIs
+          </Button>
         </Link>
       </header>
 

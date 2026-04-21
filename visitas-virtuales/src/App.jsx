@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom'; // Añadimos Navigate
+// eslint-disable-next-line no-unused-vars
+import { use, useState } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'; // Añadimos Navigate
 import TopHeader from './components/TopHeader';
 import Sidebar from './components/Sidebar';
 import Login from './components/Login';
@@ -20,9 +21,10 @@ import LandingPage from './pages/LandingPage.jsx';
 function App() {
     const { user, logout, selectedCenter, isAdmin } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const location = useLocation();
 
     // Detectamos si es la Landing para limpiar el diseño
-    const isLanding = window.location.pathname === '/';
+    const isLanding = location.pathname === '/' || location.pathname === '/login' || location.pathname === '/centros';
 
     return (
         <div className="w-full flex bg-white min-h-screen">
@@ -34,7 +36,7 @@ function App() {
                 />
             )}
             
-            <div className="flex-col flex w-full h-screen overflow-hidden">
+            <div className="flex-col flex w-full h-screen relative">
                 {/* Header: Se oculta en Landing. Muestra 'Invitado' si no hay user */}
                 {!isLanding && (
                     <TopHeader 

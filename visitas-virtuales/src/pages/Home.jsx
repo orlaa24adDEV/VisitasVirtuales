@@ -48,9 +48,9 @@ const Home = () => {
                     </div>
                 </div>
                 {/* Boton para cambiar de centro */}
-                <button onClick={() => navigate('/centros')} className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <button onClick={() => navigate('/')} className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                     <MapPin size={16} />
-                    Cambiar de centro
+                    Inicio
                 </button>
 
                 <hr className="my-4 border-gray-100" />

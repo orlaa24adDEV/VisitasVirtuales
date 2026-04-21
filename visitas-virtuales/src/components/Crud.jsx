@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import CenterBanner from './CenterBanner';
+import Button from './Button.jsx';
 
 //import { useAuth } from '../context/AuthContext';
 import { useAuth } from '@/hooks/useAuth';
@@ -16,6 +17,7 @@ function Crud() {
     });
 
     const location = useLocation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const state = location.state || {};
     const isEditing = !!state.isEditing;
 
@@ -117,11 +119,12 @@ function Crud() {
     }
 
     return (
-        <main className="p-6 flex-col flex gap-2">
-            <h2 className="text-2xl font-bold mb-6">Gestionar Puntos de Interés</h2>
+        <div className="flex flex-col items-center justify-center min-h-full w-full p-6">
+            <section className="flex flex-col gap-2 w-full max-w-4xl p-5 shadow-sm rounded-2xl bg-white min-h-125">
             <CenterBanner centerName={selectedCenter.name} />
+            <h2 className="text-2xl font-bold mb-6">Gestionar Puntos de Interés</h2>
             {/* Formulario */}
-            <form action={handleSubmit} onSubmit={handleSubmit} className="mb-8 p-4 border rounded-lg bg-gray-50">
+            <form action={handleSubmit} onSubmit={handleSubmit} className="mb-8 p-4 outline outline-slate-200 rounded-lg bg-white shadow-sm/8">
                 <h3 className="text-lg font-semibold mb-4">
                     {isEditing ? 'Editar POI' : 'Crear Nuevo POI'}
                 </h3>
@@ -133,7 +136,7 @@ function Crud() {
                             name="name"
                             value={formData.name || ''}
                             onChange={handleInputChange}
-                            className="w-full p-2 border rounded"
+                            className="w-full p-2 outline outline-slate-200 rounded-lg"
                             placeholder="Nombre del POI"
                             required
                         />
@@ -144,34 +147,30 @@ function Crud() {
                             name="description"
                             value={formData.description || ''}
                             onChange={handleInputChange}
-                            className="w-full p-2 border rounded h-24"
+                            className="w-full p-2 outline outline-slate-200 rounded-lg h-24"
                             placeholder="Descripción del punto de interés"
                             required
                         />
                     </div>
                 </div>
-                <div className="mt-4 flex gap-2">
-                    <button
-                        type="submit"
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                <div className="mt-4 flex w-full justify-end gap-2">
+                    <Button type="submit" variant="primary" onClick={handleSubmit}>
+                        {isEditing ? 'Actualizar POI' : 'Crear POI'}
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            navigate("/listpois");
+                        }}
                     >
-                        {isEditing ? 'Actualizar' : 'Crear'}
-                    </button>
-                    {isEditing && (
-                        <button
-                            type="button"
-                            onClick={() => {
-                                resetForm()
-                                navigate('/listpois');
-                            }}
-                            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                        >
-                            Cancelar
-                        </button>
-                    )}
+                        Cancelar
+                    </Button>
                 </div>
             </form>
-        </main>
+        </section>
+        </div>
     )
 }
 

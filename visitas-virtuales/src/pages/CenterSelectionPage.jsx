@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth.js';
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
+import Button from '@/components/Button.jsx';
 
 export default function CenterSelectionPage() {
   const navigate = useNavigate();
@@ -130,19 +131,15 @@ export default function CenterSelectionPage() {
 
               {/* Botón confirmar mejorado */}
               <div className="mt-12 flex justify-center">
-                <button
+                <Button
                   onClick={handleConfirm}
                   disabled={!localSelectedCenter}
-                  className={`group relative px-12 py-4 rounded-2xl font-bold text-base transition-all duration-300 shadow-lg ${
-                    localSelectedCenter
-                      ? 'bg-blue-600 text-white hover:bg-blue-700 hover:-translate-y-1 active:translate-y-0'
-                      : 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
-                  }`}
+                  variant={"primary"}
+                  size={"large"}
                 >
-                  <span className="flex items-center gap-2">
-                    Comenzar Visita Virtual
-                  </span>
-                </button>
+                  Acceder al Centro
+                </Button>
+                
               </div>
             </>
           )}
