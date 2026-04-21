@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import '@/assets/Login.css';
 import { useAuth } from '@/hooks/useAuth.js';
@@ -8,14 +8,28 @@ export default function Login() {
 	const [errors, setErrors] = useState([]);
 	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [email, setEmail] = useState('');
+	const [rememberMe, setRememberMe] = useState(false);
 	// eslint-disable-next-line no-unused-vars
 	const { login, fetchProfile } = useAuth();
 	const navigate = useNavigate();
 
-	const handleSubmit = async (formData) => {
+	useEffect(() => {
+		const rememberedEmail = localStorage.getItem('rememberedEmail');
+		if (rememberedEmail) {
+			setEmail(rememberedEmail);
+			setRememberMe(true);
+		}
+	}, []);
+
+	const handleSubmit = async (event) => {
+		event.preventDefault();
 		setIsLoading(true);
 		setErrors([]);
-		const payload = JSON.stringify(Object.fromEntries(formData));
+		const formData = new FormData(event.currentTarget);
+		const emailValue = formData.get('email')?.toString().trim() ?? '';
+		const passwordValue = formData.get('password')?.toString() ?? '';
+		const payload = JSON.stringify({ email: emailValue, password: passwordValue });
 
 		try {
 			// Autenticar usuario y obtener token de acceso
@@ -52,6 +66,12 @@ export default function Login() {
 				return;
 			}
 
+			if (rememberMe) {
+				localStorage.setItem('rememberedEmail', emailValue);
+			} else {
+				localStorage.removeItem('rememberedEmail');
+			}
+
 			setIsLoading(false);
 			await login(accessToken);
 			navigate('/home');
@@ -65,7 +85,7 @@ export default function Login() {
 		<main className="main-content">
 			<section className="login-section">
 				<h2>Iniciar Sesión</h2>
-				<form action={handleSubmit}>
+				<form onSubmit={handleSubmit}>
 						{errors && errors.length > 0 && (
 							<div className="error-message">
 								{errors.length === 1 ? (
@@ -83,6 +103,9 @@ export default function Login() {
 							name="email"
 							id="email"
 							placeholder="Correo electrónico"
+						value={email}
+						onChange={(event) => setEmail(event.target.value)}
+						autoComplete="username"
 							disabled={isLoading}
 							required
 						/>
@@ -104,7 +127,18 @@ export default function Login() {
 							</span>
 						</div>
 					</div>
-					<button type='submit' disabled={isLoading} className="submit-button">
+					<div className="form-group remember-group">
+				<label className="remember-label">
+					<input
+						type="checkbox"
+						checked={rememberMe}
+						onChange={(event) => setRememberMe(event.target.checked)}
+						disabled={isLoading}
+					/>
+					<span>Recordar correo</span>
+				</label>
+			</div>
+			<button type='submit' disabled={isLoading} className="submit-button">
 						{isLoading ? 'Cargando...' : 'Iniciar Sesión'}
 					</button>
 					{/* <p>
