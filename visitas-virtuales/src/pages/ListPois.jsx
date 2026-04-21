@@ -11,6 +11,8 @@ import CenterBanner from "@/components/CenterBanner.jsx";
 import { Link } from "react-router-dom";
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import Button from '../components/Button';
+import Input from '../components/Input';
 
 export default function ListPois({ centerId }) {
   const [pois, setPois] = useState([]);

@@ -4,6 +4,7 @@ import { ChevronDown, LogOut, Menu, User, User2 } from 'lucide-react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
+import Button from './Button';
 
 TopHeader.propTypes = {
     onMenuClick: PropTypes.func.isRequired,
@@ -34,7 +35,7 @@ TopHeader.propTypes = {
 export default function TopHeader({
     onMenuClick,
     isLog = true,
-    onLogout = () => { },
+    onLogout = () => {},
     userName = "Estudiante",
     userEmail = "estudiante@medac.es",
     userImg = "https://unavatar.io/x/unknow",
@@ -50,10 +51,12 @@ export default function TopHeader({
     };
 
     return (
-        <header className="h-16 w-full bg-blue-100 border-b border-slate-100 flex items-center justify-between px-4 lg:justify-end lg:px-8 shadow-sm">
-            <button onClick={onMenuClick} className="p-2 text-slate-600 hover:bg-slate-200 rounded-lg lg:hidden">
-                <Menu size={24} />
-            </button>
+        <header className="sticky top-0 z-40 h-16 w-full flex items-center justify-between px-4 lg:justify-end lg:px-8 bg-slate-50/80 backdrop-blur-2xl border-b border-blue-100/50
+    shadow-[0_4px_12px_-2px_rgba(0,0,0,0.03)] 
+    transition-all">
+            <Button variant='ghost' size='normal' className="lg:hidden" onClick={onMenuClick}>
+                <Menu size={22} />
+            </Button>
 
             <div className="flex items-center gap-4">
                 {isLog ? (

@@ -1,34 +1,31 @@
 import { useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
-import { setAccessToken, removeAccessToken, getAccessToken } from '../helpers/auth.js';
+import { setAccessToken, removeAccessToken, isTokenExpired, getAccessToken } from '../helpers/auth.js';
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [allCenters, setAllCenters] = useState(() => {
-        const stored = localStorage.getItem('allCenters');
-        return stored ? JSON.parse(stored) : [];
-    });
-    const [selectedCenter, setSelectedCenter] = useState(() => {
-        const stored = localStorage.getItem('selectedCenter');
-        return stored ? JSON.parse(stored) : null;
-    });
-    const [isInitialLoading, setIsInitialLoading] = useState(true);
-    const [isCentersLoading, setIsCentersLoading] = useState(true);
-    const [centersError, setCentersError] = useState(null);
 
-    const fetchProfile = async () => {
+    // Estado de carga inicial
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+    /* ============================= */
+    /* ==== Gestión de usuarios ==== */
+    /* ============================= */
+
+    const [user, setUser] = useState(null);
+    const fetchProfile = async (providedToken = null) => {
         setIsInitialLoading(true);
-        const token = getAccessToken();
+        let token = providedToken || await getValidAccessToken();
+        
         if (!token) {
             setUser(null);
             setIsInitialLoading(false);
             return;
         }
         try {
-            const res = await fetch('/api/me', {
+            const res = await fetchWithTimeout('/api/me', {
                 headers: { Authorization: `Bearer ${token}` }
-            });
+            }, 5000);
             if (!res.ok) throw new Error('Session invalid');
             const data = await res.json();
             setUser(data.profile);
@@ -41,12 +38,42 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const fetchCenters = async () => {
+    /* ============================ */
+    /* ==== Gestión de centros ==== */
+    /* ============================ */
+
+    const [allCenters, setAllCenters] = useState(() => {
+        const stored = localStorage.getItem('allCenters');
+        return stored ? JSON.parse(stored) : [];
+    });
+    const [selectedCenter, setSelectedCenter] = useState(() => {
+        const stored = localStorage.getItem('selectedCenter');
+        return stored ? JSON.parse(stored) : null;
+    });
+    const selectCenter = (center) => {
+        setSelectedCenter(center);
+        localStorage.setItem('selectedCenter', JSON.stringify(center));
+    };
+
+    const loadCenters = (allCenters) => {
+        setAllCenters(allCenters);
+        localStorage.setItem('allCenters', JSON.stringify(allCenters));
+    };
+
+    // Llamada a la API para cargar centros, con manejo de token válido
+    const fetchCenters = async (providedToken = null) => {
         setIsCentersLoading(true);
         setCentersError(null);
+        let token = providedToken || await getValidAccessToken();
+
+        if (!token) {
+            setIsCentersLoading(false);
+            return;
+        }
+            
         try {
             const response = await fetchWithTimeout('/api/centers', {
-                headers: { Authorization: 'Bearer ' + localStorage.getItem('accessToken') }
+                headers: { Authorization: `Bearer ${token}` }
             }, 5000);
             const data = await response.json();
             if (!response.ok) throw new Error('Error al cargar los centros: ' + (data.message));
@@ -59,47 +86,84 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Cargar perfil y centros al montar el componente
-    useEffect(() => {
-        fetchProfile();
-        fetchCenters();
-    }, []);
+    const [isCentersLoading, setIsCentersLoading] = useState(true);
+    const [centersError, setCentersError] = useState(null);
 
-    // Al iniciar sesión, guardar el token y cargar el perfil del usuario
-    const login = async (accessToken) => {
-        setAccessToken(accessToken);
-        fetchProfile();
+    /* =========================================== */
+    /* ==== Autenticación y gestión de tokens ==== */
+    /* =========================================== */
+
+    const refreshTokens = async () => {
+        try {
+            const response = await fetch('/api/users/auth/refresh', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include', // Enviar refreshToken (desde cookie HttpOnly)
+            });
+
+            if (!response.ok) throw new Error('No se pudieron renovar los tokens');
+            const data = await response.json();
+            setAccessToken(data.accessToken);
+            return data.accessToken;
+        } catch (err) {
+            console.error('Error al renovar tokens:', err);
+            setUser(null);
+            return null;
+        }
     };
 
-    // Al cerrar sesión, limpiar usuario, centro, y tokens de acceso y refresco
+    // Helper para obtener un token válido, renovándolo si es necesario
+    const getValidAccessToken = async () => {
+        const token = getAccessToken();
+        if (!token) return null;
+
+        if (isTokenExpired(token)) {
+            const newToken = await refreshTokens();
+            if (!newToken) {
+                removeAccessToken();
+                return null;
+            }
+            return newToken;
+        }
+
+        return token;
+    };
+
+    // Cargar perfil y centros al montar el componente
+    useEffect(() => {
+        const load = async () => {
+            await fetchProfile();
+            await fetchCenters();
+        };
+        load();
+    }, []);
+
+    const login = async (accessToken) => {
+        setAccessToken(accessToken);
+        await fetchProfile(accessToken);
+        await fetchCenters(accessToken);
+    };
+
     const logout = async () => {
+        const token = getAccessToken();
         setUser(null);
         setSelectedCenter(null);
-        // Pedir al backend que envie instrucciones al navegador para eliminar
-        // el refresh token (cookie httpOnly)
+        removeAccessToken();
+
         try {
             await fetch('/api/users/auth/logout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${getAccessToken()}`
+                    Authorization: `Bearer ${token}`
                 }
             });
         } catch (err) {
             console.error('Logout failed:', err);
         }
-        removeAccessToken();
     };
 
-    const selectCenter = (center) => {
-        setSelectedCenter(center);
-        localStorage.setItem('selectedCenter', JSON.stringify(center));
-    };
 
-    const loadCenters = (allCenters) => {
-        setAllCenters(allCenters);
-        localStorage.setItem('allCenters', JSON.stringify(allCenters));
-    };
 
     const isAdmin = user?.role === 'admin';
     const isTeacher = isAdmin || user?.role === 'teacher';
