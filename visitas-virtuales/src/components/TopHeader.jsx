@@ -59,14 +59,19 @@ export default function TopHeader({
         <header className="sticky top-0 z-40 h-16 w-full flex items-center justify-between px-4 lg:justify-end lg:px-8 bg-slate-50/80 backdrop-blur-xl border-b border-blue-100/50
                     shadow-[0_4px_12px_-2px_rgba(0,0,0,0.03)] 
                     transition-all">
-            <Button variant='ghost' size='normal' className="lg:hidden" onClick={onMenuClick}>
+            {user ? (
+                <Button variant='ghost' size='normal' className="lg:hidden" onClick={onMenuClick}>
                 <Menu size={22} />
             </Button>
+            ) : null}
             {!user ? (
-                <h1 className="hidden lg:flex gap-2 text-lg font-semibold text-slate-800 justify-center items-center">
-                <Compass size={22} strokeWidth={2} className='text-slate-800'/>
-                Visita 360º
-            </h1>) : null
+                <Link to="/">
+                    <h1 className="hidden lg:flex gap-2 text-lg font-semibold text-slate-800 justify-center items-center">
+                    <Compass size={22} strokeWidth={2} className='text-slate-800'/>
+                    Visita 360º
+                    </h1>
+                </Link>
+            ) : null
             }
             <div className={`flex items-center ml-auto ${user ? 'gap-6' : 'gap-4'}`}>
                 

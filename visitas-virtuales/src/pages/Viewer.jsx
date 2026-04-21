@@ -16,8 +16,8 @@ export default function Viewer() {
     useCenterQuery();
 
     return (
-        <div className="p-8">
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+        <div className={`p-8 mx-auto ${!user ? 'max-w-380' : ''}`}>
+            <div className="bg-white rounded-xl shadow-xl/6 p-6 border border-slate-100">
                 <div className="flex items-center gap-4 mb-4">
                     {/* Icono dinámico según el rol */}
                     <div className={`p-3 rounded-full transition-colors ${
