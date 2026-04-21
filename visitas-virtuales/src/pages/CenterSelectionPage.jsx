@@ -10,12 +10,17 @@ import Button from '@/components/Button.jsx';
 
 export default function CenterSelectionPage() {
   const navigate = useNavigate();
-  const { selectCenter, allCenters, centersError, isCentersLoading, selectedCenter } = useAuth();
+  const { centerState, saveSelectedCenter, fetchCenters } = useAuth();
+  const { selectedCenter, allCenters, isCentersLoading, centersError } = centerState;
   
   // Iniciamos el local con lo que haya en el contexto (por si vuelve para cambiar)
   const [localSelectedCenter, setLocalSelectedCenter] = useState(selectedCenter || null);
   const [hasShownToast, setHasShownToast] = useState(false);
   const hasMounted = useRef(false);
+
+  useEffect(() => {
+    fetchCenters();
+  }, []);
 
   useEffect(() => {
     if (isCentersLoading || centersError || !allCenters || allCenters.length === 0) return;
@@ -25,7 +30,6 @@ export default function CenterSelectionPage() {
         toast.info('Selecciona un centro para continuar', { 
           description: 'Es necesario elegir un centro educativo para acceder al tour' 
         });
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setHasShownToast(true);
       }
     } else {
@@ -36,7 +40,7 @@ export default function CenterSelectionPage() {
   const handleConfirm = () => {
     if (localSelectedCenter) {
       // Actualizamos el contexto global (esto permitirá entrar a /viewer)
-      selectCenter(localSelectedCenter);
+      saveSelectedCenter(localSelectedCenter);
       
       toast.success(`Cargando ${localSelectedCenter.name}`, { 
         description: `Preparando tour virtual...` 

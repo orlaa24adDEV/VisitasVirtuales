@@ -5,7 +5,7 @@ import { ChevronDown, LogOut, Menu, User, Home, MapPin, Compass } from 'lucide-r
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate, useNavigation } from 'react-router-dom';
-import { useAuth} from '@/hooks/useAuth.js';
+import { useAuth } from '@/hooks/useAuth.js';
 import Button from './Button.jsx';
 import CenterSelectButton from './CenterSelectButton.jsx';
 import ClickOutsideWrapper from './ClickOutsideWrapper.jsx';
@@ -47,7 +47,9 @@ export default function TopHeader({
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
-    const { selectedCenter, user } = useAuth(); // Obtenemos el centro del contexto
+    const { centerState, authState } = useAuth(); // Obtenemos el centro del contexto
+    const { selectedCenter } = centerState;
+    const { user } = authState;
 
     const handleLogoutClick = () => {
         onLogout();

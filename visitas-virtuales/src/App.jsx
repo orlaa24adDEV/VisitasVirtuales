@@ -17,8 +17,10 @@ import LandingPage from './pages/LandingPage.jsx';
 
 
 function App() {
-    const { user, logout, selectedCenter, isAdmin } = useAuth();
+    const { authState, centerState, logout, isAdmin } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { user } = authState;
+    const { selectedCenter } = centerState;
     const location = useLocation();
 
     // Detectamos si es la Landing para limpiar el diseño
@@ -44,6 +46,7 @@ function App() {
                         userName={user?.username || 'Invitado'}
                         userEmail={user?.email || ''}
                         role={user?.role || 'guest'}
+                        userImg={`https://api.dicebear.com/9.x/identicon/svg?seed=${user?.email || 'invitado'}`}
                     />
                 )}
 
@@ -82,11 +85,18 @@ function App() {
                     </Routes>
                 </main>
             </div>
-            <Toaster richColors position='top-right' expand={true} visibleToasts={6} closeButton offset={
-                location.pathname.startsWith(['/home', '/listpois', '/crud', '/dashboard', '/historial'])
-                    ? {} 
-                    : { top: 80, right: 20 }
-            } />
+            <Toaster 
+                richColors 
+                position='top-right' 
+                expand={true} 
+                visibleToasts={6} 
+                closeButton 
+                offset={
+                    isLanding 
+                        ? 16
+                        : { top: 80, right: 20 }
+                } 
+            />
         </div>
     );
 }

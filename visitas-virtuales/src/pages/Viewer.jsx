@@ -7,7 +7,9 @@ import { MapPin } from 'lucide-react';
 import Button from '../components/Button';
 
 export default function Viewer() {
-    const { user, isAdmin, isTeacher, selectedCenter } = useAuth();
+    const { authState, isAdmin, isTeacher, centerState } = useAuth();
+    const { user } = authState;
+    const { selectedCenter } = centerState;
     const navigate = useNavigate();
 
     // Si el context no contiene un centro, utilizar el query param "center" de la URL, 

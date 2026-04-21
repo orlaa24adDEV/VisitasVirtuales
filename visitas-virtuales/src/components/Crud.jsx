@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react'
 import CenterBanner from './CenterBanner';
 import Button from './Button.jsx';
 
-//import { useAuth } from '../context/AuthContext';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth.js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 
 function Crud() {
-    const { selectedCenter } = useAuth();
+    const { centerState } = useAuth();
+    const { selectedCenter } = centerState;
     const [formData, setFormData] = useState({
         id: '',
         centerId: '',
