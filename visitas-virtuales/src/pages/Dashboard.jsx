@@ -10,7 +10,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const { allCenters, selectCenter } = useAuth();
+  const { centerState } = useAuth();
+  const { allCenters, selectCenter } = centerState;
   const navigate = useNavigate();
 
   // Cargar todos los POIs al montar el componente

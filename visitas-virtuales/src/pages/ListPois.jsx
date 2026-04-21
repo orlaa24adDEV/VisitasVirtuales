@@ -2,7 +2,7 @@ import { Search, Plus, Pencil, Trash, ChevronLeft, ChevronRight } from "lucide-r
 import { useEffect, useState } from "react";
 import CenterBanner from "@/components/CenterBanner.jsx";
 import { Link } from "react-router-dom";
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth.js';
 import { toast } from 'sonner';
 import  Button  from '@/components/Button.jsx';
 import Input from '../components/Input';
@@ -10,7 +10,8 @@ import Input from '../components/Input';
 export default function ListPois({ centerId }) {
     const [pois, setPois] = useState([]);
     const [search, setSearch] = useState("");
-    const { selectedCenter } = useAuth();
+    const { centerState } = useAuth();
+    const { selectedCenter } = centerState;
 
     const API_URL = import.meta.env.VITE_API_URL;
     const GET_PATH = `api/v1/centers/${centerId}/pois`

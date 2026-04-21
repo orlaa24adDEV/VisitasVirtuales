@@ -1,4 +1,9 @@
-const fetchWithTimeout = (url, options, timeout = 10000) => {
+export default function fetchWithTimeout(url, options, timeout = 10000) {
+  if (typeof options === 'number') {
+    timeout = options;
+    options = {};
+  }
+
   return Promise.race([
     fetch(url, options),
     new Promise((_, reject) =>
@@ -6,5 +11,3 @@ const fetchWithTimeout = (url, options, timeout = 10000) => {
     ),
   ]);
 };
-
-export default fetchWithTimeout;
