@@ -9,7 +9,8 @@ import {
 import { useEffect, useState } from "react";
 import CenterBanner from "@/components/CenterBanner.jsx";
 import { Link } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 
 export default function ListPois({ centerId }) {
   const [pois, setPois] = useState([]);
@@ -34,13 +35,13 @@ export default function ListPois({ centerId }) {
   useEffect(() => {
     const maxPage = Math.max(1, totalPages);
 
-    if (currentPage > maxPage) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCurrentPage(maxPage);
-    } else if (currentPage < 1) {
-      setCurrentPage(1);
-    }
-  }, [currentPage, totalPages]);
+        if (currentPage > maxPage) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setCurrentPage(maxPage);
+        } else if (currentPage < 1) {
+            setCurrentPage(1);
+        }
+    }, [currentPage, totalPages]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
