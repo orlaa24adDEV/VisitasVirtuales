@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 import Button from '@/components/Button.jsx';
 
@@ -62,12 +62,30 @@ const Dashboard = () => {
       }, [])
     : [];
 
-  // Ordenar por nombre para consistent visualization
-  poisByCenter.sort((a, b) => a.name.localeCompare(b.name));
+  // Ordenar por mayor cantidad para resaltar los centros más activos
+  poisByCenter.sort((a, b) => b.value - a.value);
+
+  const recentCountsByCenter = lastChanges.reduce((acc, poi) => {
+    const centerName = getCenterName(poi.centerId);
+    if (!centerName) return acc;
+    acc[centerName] = (acc[centerName] || 0) + 1;
+    return acc;
+  }, {});
+
+  const poisByCenterWithPercent = poisByCenter.map((item) => ({
+    ...item,
+    percentage: totalPois > 0 ? Number(((item.value / totalPois) * 100).toFixed(1)) : 0,
+    recentCount: recentCountsByCenter[item.name] || 0,
+  }));
+
+  const mostActiveCenter = poisByCenterWithPercent[0] || null;
+
+  const [mostRecentCenterName, mostRecentCenterCount] = Object.entries(recentCountsByCenter)
+    .sort(([, a], [, b]) => b - a)[0] || [null, 0];
 
   const filteredPoisByCenter = searchQuery
-    ? poisByCenter.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
-    : poisByCenter;
+    ? poisByCenterWithPercent.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    : poisByCenterWithPercent;
 
   // Handler para click en las barras del gráfico
   const handleBarClick = (data) => {
@@ -117,6 +135,19 @@ const Dashboard = () => {
             </article>
           </section>
 
+          <section className="grid gap-4 sm:grid-cols-2">
+            <article className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+              <p className="text-sm text-slate-500">Centro con más POIs</p>
+              <p className="text-2xl font-bold text-slate-800">{mostActiveCenter ? mostActiveCenter.name : '—'}</p>
+              <p className="text-sm text-slate-500 mt-1">{mostActiveCenter ? `${mostActiveCenter.value} POIs` : 'Sin datos'}</p>
+            </article>
+            <article className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+              <p className="text-sm text-slate-500">Centro con más cambios recientes</p>
+              <p className="text-2xl font-bold text-slate-800">{mostRecentCenterName || '—'}</p>
+              <p className="text-sm text-slate-500 mt-1">{mostRecentCenterName ? `${mostRecentCenterCount} cambios` : 'Sin datos recientes'}</p>
+            </article>
+          </section>
+
           <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
             <h2 className="text-lg font-semibold text-slate-800 mb-3">Últimos cambios en POIs</h2>
             {lastChanges.length === 0 ? (
@@ -153,37 +184,56 @@ const Dashboard = () => {
       </section>
 
           <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h2 className="text-lg font-semibold text-slate-800 mb-3">Distribución de POIs por Centro</h2>
+            <h2 className="text-lg font-semibold text-slate-800 mb-3">POIs totales y últimos cambios por Centro</h2>
             {filteredPoisByCenter.length === 0 ? (
               <p className="text-slate-500">No hay datos disponibles para mostrar el gráfico.</p>
             ) : (
-              <ResponsiveContainer width="100%" height={500}>
-                <BarChart data={filteredPoisByCenter} margin={{ top: 20, right: 40, left: 20, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="name" 
-                    label={{ value: 'Centro', position: 'insideBottomRight'}}
-                    textAnchor="middle"
-                    height={80}
-                  />
-                  <YAxis 
-                    label={{ value: 'Cantidad de POIs', angle: -90, position: 'insideLeft', offset: 0, textAnchor: 'middle' }}
-                  />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6x' }}
-                    formatter={(value) => [value, 'POIs']}
-                  />
-                  <Legend />
-                  <Bar 
-                    dataKey="value" 
-                    fill="#2563eb" 
-                    name="POIs" 
-                    radius={[8, 8, 0, 0]}
-                    onClick={handleBarClick}
-                    cursor="pointer"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+              <>
+                <ResponsiveContainer width="100%" height={520}>
+                  <BarChart data={filteredPoisByCenter} margin={{ top: 20, right: 40, left: 20, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="name" 
+                      label={{ value: 'Centro', position: 'insideBottomRight'}}
+                      textAnchor="middle"
+                      height={80}
+                    />
+                    <YAxis 
+                      label={{ value: 'Cantidad', angle: -90, position: 'insideLeft', offset: 0, textAnchor: 'middle' }}
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px' }}
+                      formatter={(value, name) => {
+                        if (name === 'recentCount') return [`${value} recientes`, 'Últimos cambios'];
+                        if (name === 'value') return [`${value} POIs`, 'Total'];
+                        return [value, name];
+                      }}
+                      labelFormatter={(label) => `Centro: ${label}`}
+                    />
+                    <Legend formatter={(value) => (value === 'recentCount' ? 'Últimos cambios' : 'Total POIs')} />
+                    <Bar 
+                      dataKey="recentCount" 
+                      fill="#10b981" 
+                      name="recentCount" 
+                      radius={[8, 8, 0, 0]}
+                      cursor="pointer"
+                    />
+                    <Bar 
+                      dataKey="value" 
+                      fill="#2563eb" 
+                      name="value" 
+                      radius={[8, 8, 0, 0]}
+                      onClick={handleBarClick}
+                      cursor="pointer"
+                    >
+                      <LabelList dataKey="percentage" position="top" formatter={(value) => `${value}%`} />
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+                <p className="mt-3 text-sm text-slate-500">
+                  La barra verde muestra cuántos POIs de los últimos cambios recientes pertenecen al centro.
+                </p>
+              </>
             )}
           </section>
         </>
