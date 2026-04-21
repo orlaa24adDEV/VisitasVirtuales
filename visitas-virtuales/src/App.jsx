@@ -13,6 +13,7 @@ import Home from './pages/Home.jsx';
 import { AdminRoute } from './components/ProtectedRoute.jsx';
 import Register from './components/Register.jsx';
 import './assets/App.css';
+import { Toaster, toast } from 'sonner';
 
 
 function App() {
@@ -30,7 +31,7 @@ function App() {
                 />
             )}
             
-            <div className="flex-col flex w-full h-screen overflow-hidden">
+            <div className="flex-col flex w-full h-screen relative">
                 <TopHeader 
                     onMenuClick={() => setIsMobileMenuOpen(true)}
                     isLog={!!user}
@@ -41,7 +42,7 @@ function App() {
                     role={user?.role || ''}
                 />
 
-                <main className="flex-1 overflow-y-auto">
+                <main className="absolute inset-0 pt-18 overflow-y-auto">
                     <Routes>
                         {/* 1. MANEJO DE RUTAS PÚBLICAS */}
                         <Route path="/login" element={!user ? <Login/> : <Navigate to="/" replace />} />
@@ -92,6 +93,7 @@ function App() {
                     </Routes>
                 </main>
             </div>
+            <Toaster richColors position='top-right' expand={true} visibleToasts={6} closeButton offset={{ top: 80, right: 20 }} />
         </div>
     );
 }

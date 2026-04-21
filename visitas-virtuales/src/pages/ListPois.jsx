@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import CenterBanner from "@/components/CenterBanner.jsx";
 import { Link } from "react-router-dom";
 import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
+import Button from '../components/Button';
+import Input from '../components/Input';
 
 export default function ListPois({ centerId }) {
     const [pois, setPois] = useState([]);
@@ -51,9 +54,11 @@ export default function ListPois({ centerId }) {
             });
 
             if (response.ok) {
+                toast.success('POI eliminado con éxito', { description: 'El punto de interés ha sido eliminado correctamente' });
                 getPois();
             }
         } catch (error) {
+            toast.error('Error al eliminar el POI', { description: 'No se ha podido eliminar el punto de interés, inténtalo de nuevo más tarde' });
             console.error('Error al eliminar:', error);
         }
     };
@@ -66,9 +71,14 @@ export default function ListPois({ centerId }) {
             const data = await response.json();
             if (response.ok && !!data) {
                 setPois(Array.isArray(data.pois) ? data.pois : []);
+            } else {
+                setPois([]);
+                toast.error('Error al cargar los POIs', { description: 'No se han podido cargar los puntos de interés, inténtalo de nuevo más tarde' });
+                console.error('Error al obtener POIs:', data);
             }
         } catch (error) {
             setPois([]);
+            toast.error('Error de red', { description: 'No se han podido cargar los puntos de interés, inténtalo de nuevo más tarde' });
             console.error('Error al obtener POIs:', error);
         }
     }
@@ -82,45 +92,39 @@ export default function ListPois({ centerId }) {
         <div className="flex flex-col items-center justify-center min-h-full w-full p-6">
             <section className="flex flex-col gap-2 w-full max-w-4xl p-5 shadow-sm rounded-2xl bg-white min-h-125">
                 <CenterBanner centerName={selectedCenter.name} />
-                <div className="flex flex-row gap-2 border-2 border-gray-200 rounded-lg items-center focus-within:border-2 hover:border-blue-600 focus-within:border-blue-600 focus-within:border-solid">
-                    <Search size={24} className="text-gray-300 ml-2" />
-                    <input
-                        type="text"
-                        placeholder="Buscador de POI"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="w-full p-1 focus:outline-hidden"
-                    />
-                    <Link
+                    <Input name="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscador de POI">
+                        <Search size={20} className="text-slate-400 ml-3 transition-colors" />
+                        <Link
                         to="/crud"
                         state={{ centerId: selectedCenter.name, name: '', description: '', isEditing: false }}
-                        className="flex items-center w-40  gap-1 px-3 py-1.5 text-white text-sm font-medium bg-blue-600 border border-transparent hover:bg-blue-800 rounded-r-md cursor-pointer transition-all"
-                    >
-                        <Plus size={18} strokeWidth={3} /> Nuevo POI
-                    </Link>
-                </div>
-
-                <div className="overflow-hidden rounded-xl border border-gray-200 shadow-sm mt-5">
+                        >
+                            <Button variant="primary" size="normal" className="flex items-center gap-1 rounded-l-none">
+                                <Plus size={18} strokeWidth={3} />
+                                Nuevo POI
+                            </Button>
+                        </Link>
+                    </Input>
+                <div className="overflow-hidden rounded-lg outline outline-slate-200 shadow-sm/8 mt-5">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-gray-50 text-xs uppercase text-gray-600 font-semibold">
+                        <thead className="bg-slate-50 text-xs uppercase text-slate-600 font-semibold border-b border-slate-200">
                             <tr>
                                 <th className="px-6 py-4">Punto de interés</th>
                                 <th className="px-6 py-4">Descripción</th>
                                 <th className="px-6 py-4 text-right">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200 bg-white">
+                        <tbody className="divide-y divide-slate-200 bg-white">
                             {currentPois.length === 0 ? (
                                 <tr>
-                                    <td colSpan="3" className="px-6 py-10 text-center text-gray-500 italic">
+                                    <td colSpan="3" className="px-6 py-10 text-center text-slate-500 italic">
                                         No se encontraron puntos de interés
                                     </td>
                                 </tr>
                             ) : (
                                 currentPois.map((poi) => (
-                                    <tr key={poi.id} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-6 py-4 font-medium text-gray-900">{poi.name}</td>
-                                        <td className="px-6 py-4 text-gray-600">{poi.details.description}</td>
+                                    <tr key={poi.id} className="hover:bg-slate-50 transition-colors">
+                                        <td className="px-6 py-4 font-medium text-slate-900">{poi.name}</td>
+                                        <td className="px-6 py-4 text-slate-600">{poi.details.description}</td>
                                         <td className="px-6 py-4">
                                             <div className="flex justify-end gap-2">
                                                 <Link
@@ -145,28 +149,20 @@ export default function ListPois({ centerId }) {
                     </table>
 
                     {filteredPois.length > 0 && (
-                        <div className="bg-gray-50 px-6 py-3 border-t border-gray-200 flex items-center justify-between">
-                            <p className="text-gray-500 text-xs">
+                        <div className="bg-slate-50 px-6 py-3 border-t border-slate-200 flex items-center justify-between">
+                            <p className="text-slate-500 text-xs">
                                 Mostrando <span className="font-semibold">{firstIndex + 1}</span> - <span className="font-semibold">{Math.min(lastIndex, filteredPois.length)}</span> de {filteredPois.length}
                             </p>
                             <div className="flex items-center gap-2">
-                                <button
-                                    onClick={() => setCurrentPage(p => p - 1)}
-                                    disabled={currentPage === 1}
-                                    className="p-1.5 rounded-md border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-                                >
+                                <Button size='small' variant='outline' onClick={() => setCurrentPage(p => p - 1)} disabled={currentPage === 1}>
                                     <ChevronLeft size={18} />
-                                </button>
-                                <span className="text-xs font-medium text-gray-700">
+                                </Button>
+                                <span className="text-xs font-medium text-slate-700">
                                     Página {currentPage} de {totalPages}
                                 </span>
-                                <button
-                                    onClick={() => setCurrentPage(p => p + 1)}
-                                    disabled={currentPage === totalPages}
-                                    className="p-1.5 rounded-md border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-                                >
+                                <Button size='small' variant='outline' onClick={() => setCurrentPage(p => p + 1)} disabled={currentPage === totalPages}>
                                     <ChevronRight size={18} />
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     )}

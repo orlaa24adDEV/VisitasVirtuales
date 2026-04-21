@@ -1,9 +1,10 @@
 import '../assets/App.css';
 
-import { ChevronDown, LogOut, Menu } from 'lucide-react';
+import { ChevronDown, LogOut, Menu, User, User2 } from 'lucide-react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
+import Button from './Button';
 
 TopHeader.propTypes = {
     onMenuClick: PropTypes.func.isRequired,
@@ -34,7 +35,7 @@ TopHeader.propTypes = {
 export default function TopHeader({
     onMenuClick,
     isLog = true,
-    onLogout = () => { },
+    onLogout = () => {},
     userName = "Estudiante",
     userEmail = "estudiante@medac.es",
     userImg = "https://unavatar.io/x/unknow",
@@ -50,10 +51,12 @@ export default function TopHeader({
     };
 
     return (
-        <header className="h-16 w-full bg-blue-100 border-b border-slate-100 flex items-center justify-between px-4 lg:justify-end lg:px-8 shadow-sm">
-            <button onClick={onMenuClick} className="p-2 text-slate-600 hover:bg-slate-200 rounded-lg lg:hidden">
-                <Menu size={24} />
-            </button>
+        <header className="sticky top-0 z-40 h-16 w-full flex items-center justify-between px-4 lg:justify-end lg:px-8 bg-slate-50/80 backdrop-blur-2xl border-b border-blue-100/50
+    shadow-[0_4px_12px_-2px_rgba(0,0,0,0.03)] 
+    transition-all">
+            <Button variant='ghost' size='normal' className="lg:hidden" onClick={onMenuClick}>
+                <Menu size={22} />
+            </Button>
 
             <div className="flex items-center gap-4">
                 {isLog ? (
@@ -86,12 +89,21 @@ export default function TopHeader({
                                     className="fixed inset-0 z-10 cursor-default"
                                     onClick={() => setIsOpen(false)}
                                 ></button>
-                                <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in duration-200">
-                                    <div className="px-4 py-3 border-b border-slate-50 bg-slate-50/50">
+                                <div className="absolute py-1 right-0 top-full mt-2 w-56 bg-white border border-slate-100 rounded-xl shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in duration-200">
+                                    <div className="px-4 pb-3 pt-3 border-b border-slate-50 bg-slate-50/50">
                                         <p className="text-xs text-slate-500 font-medium">Conectado</p>
                                         <p className="text-sm font-bold text-slate-700 truncate">{userEmail}</p>
                                     </div>
-
+                                    <hr className="my-1 border-slate-200" />
+                                    {/* TODO: Cambiar a Link de React Router */}
+                                    <button
+                                        onClick={() => {}}
+                                        className="w-full text-left px-4 py-2.5 text-sm text-neutral-700 hover:bg-red-50 font-semibold flex items-center gap-2 transition-colors"
+                                    >
+                                        <User className="w-4 h-4 text-neutral-800" />
+                                        Mi Perfil
+                                    </button>
+                                    <hr className="my-1 border-slate-200" />
                                     <button
                                         onClick={handleLogoutClick}
                                         className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 font-semibold flex items-center gap-2 transition-colors"

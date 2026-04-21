@@ -4,14 +4,14 @@ WORKDIR /app
 # Instalar netcat y psql
 RUN apt-get update && apt-get install -y netcat-openbsd postgresql-client && rm -rf /var/lib/apt/lists/*
 
-# Instalar P<2 y Drizzle Kit
+# Instalar PM2 y Drizzle Kit
 RUN npm install -g pm2 drizzle-kit tsx
 
 # Cachear dependencias para evitar reinstalarlas en cada build
 COPY package*.json ./
 
 # Instalar solo las dependencias de producción
-RUN npm install --omit=dev
+RUN npm ci --omit=dev
 
 # Copiar el resto del código de la aplicación
 COPY . .
