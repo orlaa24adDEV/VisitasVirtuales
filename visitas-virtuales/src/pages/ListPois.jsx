@@ -13,7 +13,6 @@ export default function ListPois({ centerId }) {
     const { selectedCenter } = useAuth();
 
     const API_URL = import.meta.env.VITE_API_URL;
-    const UPDATE_PATH = `api/v1/centers/${selectedCenter.id}/pois/${pois.id}`;
     const GET_PATH = `api/v1/centers/${centerId}/pois`
 
     const filteredPois = pois.filter((poi) =>

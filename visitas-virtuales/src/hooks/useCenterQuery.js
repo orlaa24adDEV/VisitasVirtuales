@@ -44,5 +44,5 @@ export const useCenterQuery = () => {
             //ir actualizando la URL con centro y la escena
             setSearchParams({ center: selectedCenter.id, scene: sceneId });
         }
-    }, [selectedCenter, searchParams, centers]);
+    }, [selectedCenter, searchParams, centers, setSearchParams, navigate, setSelectedCenter]);
 }

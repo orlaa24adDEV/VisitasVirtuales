@@ -1,14 +1,13 @@
  
 import '../assets/App.css';
 
-import { ChevronDown, LogOut, Menu, User, User2 } from 'lucide-react';
+import { ChevronDown, LogOut, Menu, User, Home, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth} from '@/hooks/useAuth.js';
-import { MapPin } from 'lucide-react';
-import { ArrowLeft } from 'lucide-react';
 import Button from './Button.jsx';
+import CenterSelectButton from './CenterSelectButton.jsx';
 
 
 TopHeader.propTypes = {
@@ -57,35 +56,27 @@ export default function TopHeader({
     };
 
     return (
-        <header className="sticky top-0 z-40 h-16 w-full flex items-center justify-between px-4 lg:justify-end lg:px-8 bg-slate-50/80 backdrop-blur-2xl border-b border-blue-100/50
+        <header className="sticky top-0 z-40 h-16 w-full flex items-center justify-between px-4 lg:justify-end lg:px-8 bg-slate-50/80 backdrop-blur-xl border-b border-blue-100/50
                     shadow-[0_4px_12px_-2px_rgba(0,0,0,0.03)] 
                     transition-all">
             <Button variant='ghost' size='normal' className="lg:hidden" onClick={onMenuClick}>
                 <Menu size={22} />
             </Button>
-
             <div className="flex items-center gap-4 ml-auto">
                 
                 {/* --- BOTÓN CAMBIAR CENTRO --- */}
                 {selectedCenter && (
-                    <button 
+                    <CenterSelectButton
+                        centerName={selectedCenter.name}
                         onClick={() => navigate('/centros')}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-white/50 hover:bg-white border border-blue-200 rounded-full transition-all group shadow-sm"
-                        title="Cambiar de centro"
-                    >
-                        <MapPin size={16} className="text-blue-600 group-hover:scale-110 transition-transform" />
-                        <div className="flex flex-col items-center leading-none width-full">
-                            <span className="text-[10px] text-blue-500 font-bold uppercase tracking-tighter">Cambiar centro</span>
-                            <span className="text-sm font-semibold text-slate-700 ">{selectedCenter.name}</span>
-                        </div>
-                    </button>
+                    />
                 )}
 
                 {isLog ? (
                     <div className="relative flex items-center gap-4">
                         <div className="flex flex-col items-end leading-tight">
                             <h2 className="text-sm font-bold text-slate-800">{userName}</h2>
-                            <span className="text-[11px] font-semibold uppercase tracking-wider text-black/50">
+                            <span className="text-[10px] font-semibold uppercase tracking-wider text-black/50">
                                 {role}
                             </span>
                         </div>

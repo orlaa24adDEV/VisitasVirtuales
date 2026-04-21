@@ -35,7 +35,7 @@ export default function CenterSelectionPage() {
 
   const handleConfirm = () => {
     if (localSelectedCenter) {
-      // Actualizamos el contexto global (esto permitirá entrar a /home)
+      // Actualizamos el contexto global (esto permitirá entrar a /viewer)
       selectCenter(localSelectedCenter);
       
       toast.success(`Cargando ${localSelectedCenter.name}`, { 
@@ -43,7 +43,7 @@ export default function CenterSelectionPage() {
       });
       
       // Redirigimos a la escena de Unity
-      navigate('/home');
+      navigate('/viewer');
     }
   };
 

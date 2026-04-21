@@ -4,8 +4,9 @@ import { UserCheck, ShieldCheck, GraduationCap } from 'lucide-react'; // Iconos 
 import UnityViewer from '../components/UnityViewer';
 import { useNavigate } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
+import Button from '../components/Button';
 
-const Home = () => {
+export default function Viewer() {
     const { user, isAdmin, isTeacher, selectedCenter, } = useAuth();
     const navigate = useNavigate();
 
@@ -47,11 +48,7 @@ const Home = () => {
                         </p>
                     </div>
                 </div>
-                {/* Boton para cambiar de centro */}
-                <button onClick={() => navigate('/')} className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <MapPin size={16} />
-                    Inicio
-                </button>
+
 
                 <hr className="my-4 border-gray-100" />
 
@@ -89,5 +86,3 @@ const Home = () => {
         </div>
     );
 };
-
-export default Home;
