@@ -77,9 +77,9 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col min-h-screen gap-4 p-10 pb-16">
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl text-center font-bold text-slate-900">DASHBOARD</h1>
-          <p className="text-center mt-1">Resumen rápido de POIs y última actividad</p>
+        <div className="flex-1">
+          <h1 className="text-4xl font-black bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">DASHBOARD</h1>
+          <p className="text-slate-600 mt-2 text-sm font-medium">Resumen completo de puntos de interés y actividad reciente</p>
         </div>
           <Link
           to="/listpois"
