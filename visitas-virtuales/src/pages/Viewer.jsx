@@ -37,7 +37,7 @@ export default function Viewer() {
                         )}
                     </div>
                     
-                    <div>
+                    <div className='space-y-1'>
                         <h1 className="text-2xl font-bold text-gray-800">
                             ¡Bienvenido{(isAdmin || isTeacher ? ' de nuevo, ' : ' ')}{user?.username || 'Invitado'}!
                         </h1>
