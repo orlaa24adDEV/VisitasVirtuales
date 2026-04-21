@@ -64,7 +64,7 @@ const Dashboard = () => {
   poisByCenter.sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div className="flex flex-col h-full gap-4 p-10">
+    <div className="flex flex-col min-h-screen gap-4 p-10 pb-16">
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl text-center font-bold text-slate-900">DASHBOARD</h1>
