@@ -17,7 +17,7 @@ const ESCENAS_POR_CENTRO = {
 /** Hook encargado de sincronizar el centro seleccionado en el context con el query param "center" de la URL. */
 export const useCenterQuery = () => {
     const { centerState } = useAuth();
-    const { selectedCenter, allCenters, setSelectedCenter } = centerState;
+    const { selectedCenter, allCenters, saveSelectedCenter } = centerState;
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
 
@@ -28,7 +28,7 @@ export const useCenterQuery = () => {
             if (centerIdFromUrl) {
                 const match = allCenters.find((c) => c.id.toString() === centerIdFromUrl);
                 if (match) {
-                    setSelectedCenter(match);
+                    saveSelectedCenter(match);
                 } else {
                     // Si el ID del centro en la URL no es válido, limpiar el query param y redirigir a selección de centro
                     setSearchParams({});
@@ -45,5 +45,5 @@ export const useCenterQuery = () => {
             //ir actualizando la URL con centro y la escena
             setSearchParams({ center: selectedCenter.id, scene: sceneId });
         }
-    }, [selectedCenter, searchParams, allCenters, setSearchParams, navigate, setSelectedCenter]);
+    }, [selectedCenter, searchParams, allCenters, setSearchParams, navigate, saveSelectedCenter]);
 }

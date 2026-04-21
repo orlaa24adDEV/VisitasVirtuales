@@ -38,14 +38,14 @@ export const AuthProvider = ({ children }) => {
 	/* ==== Gestión de usuarios ==== */
 	/* ============================= */
 
-  // Al hacer login, se guarda el token y se cargan perfil y centros
+	// Al hacer login, se guarda el token y se cargan perfil y centros solo si no están cargados
 	const login = async (accessToken) => {
 		setAccessToken(accessToken);
-		// Ejecutar en paralelo para evitar recargas secuenciales innecesarias
-		await Promise.all([
-			fetchProfile(accessToken),
-			fetchCenters(accessToken)
-		]);
+		// Solo cargar perfil y centros si no están ya cargados
+		await fetchProfile(accessToken);
+		if (centerState.allCenters.length === 0) {
+			await fetchCenters(accessToken);
+		}
 	}
 
   // Carga el perfil del usuario autenticado, renovando tokens si es necesario
@@ -163,15 +163,21 @@ export const AuthProvider = ({ children }) => {
 		return token
 	}
 
-	// Cargar perfil al montar el componente
+
+	// Cargar perfil y centros al montar solo si no están ya cargados
 	useEffect(() => {
-			fetchProfile(authState.accessToken)
-	}, [])
+		if (!authState.user) {
+			fetchProfile(authState.accessToken);
+		}
+		if (centerState.allCenters.length === 0) {
+			fetchCenters(authState.accessToken);
+		}
+	}, []);
 
 	const logout = async () => {
 		const token = getAccessToken()
-		setUser(null)
-		setSelectedCenter(null)
+		setAuthState({ user: null, accessToken: null })
+		setCenterState({ allCenters: [], isCentersLoading: false, centersError: null, selectedCenter: null })
 		removeAccessToken()
 
 		try {
@@ -205,18 +211,18 @@ export const AuthProvider = ({ children }) => {
 				isTeacher,
 			}}
 		>
-      {isInitialLoading && <LoadingPage isExiting={isExiting} />}
+			{isInitialLoading && <LoadingPage isExiting={isExiting} />}
 
-      <div 
-        className={`
-          w-full min-h-screen
-          transition-opacity duration-1200 ease-in-out
-          ${isExiting ? 'opacity-100' : 'opacity-0'}
-        `}
-      >
-        {children}
-      </div>
-    </AuthContext.Provider>
+			<div 
+				className={`
+					w-full min-h-screen
+					transition-opacity duration-1200 ease-in-out
+					${isExiting ? 'opacity-100' : 'opacity-0'}
+				`}
+			>
+				{children}
+			</div>
+		</AuthContext.Provider>
 	)
 }
 
