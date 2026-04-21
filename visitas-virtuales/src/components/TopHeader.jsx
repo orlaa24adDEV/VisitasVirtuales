@@ -112,12 +112,6 @@ export default function TopHeader({
                         >
                             Iniciar Sesión
                         </Link>
-                        <Link
-                            to="/register" // O a tu ruta de registro si la tienes
-                            className="text-sm font-bold bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                        >
-                            Registrarte
-                        </Link>
                     </div>
                 )}
             </div>

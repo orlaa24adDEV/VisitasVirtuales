@@ -107,12 +107,12 @@ export default function Login() {
 					<button type='submit' disabled={isLoading} className="submit-button">
 						{isLoading ? 'Cargando...' : 'Iniciar Sesión'}
 					</button>
-					<p>
+					{/* <p>
 						¿Aún no tienes cuenta?
 						<Link to="/register" className="create-account-link">
 							Regístrate aquí
 						</Link>
-					</p>
+					</p> */}
 				</form>
 			</section>
 		</main>

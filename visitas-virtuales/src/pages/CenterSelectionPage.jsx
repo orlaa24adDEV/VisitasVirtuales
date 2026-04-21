@@ -1,7 +1,9 @@
 // CenterSelectionPage — tarjetas con imagen superior, info centrada y línea azul inferior
+// eslint-disable-next-line no-unused-vars
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
+// eslint-disable-next-line no-unused-vars
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 
 export default function CenterSelectionPage() {
@@ -10,6 +12,7 @@ export default function CenterSelectionPage() {
 
   const handleConfirm = () => {
     if (selectedCenter) {
+      selectCenter(selectedCenter);
       navigate('/home');
     }
   };

@@ -29,7 +29,7 @@ export default function ListPois({ centerId }) {
         const maxPage = Math.max(1, totalPages);
 
         if (currentPage > maxPage) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+             
             setCurrentPage(maxPage);
         } else if (currentPage < 1) {
             setCurrentPage(1);
@@ -37,7 +37,7 @@ export default function ListPois({ centerId }) {
     }, [currentPage, totalPages]);
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+         
         setCurrentPage(1);
     }, [search]);
 
@@ -75,6 +75,7 @@ export default function ListPois({ centerId }) {
 
     useEffect(() => {
         getPois();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [centerId]);
 
     //He metido todo el section dentro de un div para centrarlo.
