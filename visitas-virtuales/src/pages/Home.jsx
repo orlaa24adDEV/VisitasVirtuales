@@ -2,9 +2,12 @@ import { useAuth } from '@/hooks/useAuth.js';
 import { useCenterQuery } from '@/hooks/useCenterQuery.js';
 import { UserCheck, ShieldCheck, GraduationCap } from 'lucide-react'; // Iconos para darle estilo
 import UnityViewer from '../components/UnityViewer';
+import { useNavigate } from 'react-router-dom';
+import { MapPin } from 'lucide-react';
 
 const Home = () => {
     const { user, isAdmin, isTeacher, selectedCenter, } = useAuth();
+    const navigate = useNavigate();
 
     // Si el context no contiene un centro, utilizar el query param "center" de la URL, 
     // proporcionado por la página de selección de centro. Esto es un fallback y además
@@ -32,18 +35,23 @@ const Home = () => {
                     
                     <div>
                         <h1 className="text-2xl font-bold text-gray-800">
-                            ¡Bienvenido de nuevo, {user?.username}!
+                            ¡Bienvenido de nuevo, {user?.username || 'Invitado'}!
                         </h1>
                         <p className="text-gray-500">
                             Has iniciado sesión como: 
                             <span className={`ml-2 px-3 py-1 rounded-full text-xs font-bold uppercase ${
                                 isAdmin ? 'bg-red-600 text-white' : isTeacher ? 'bg-blue-600 text-white' : 'bg-green-600 text-white'
                             }`}>
-                                {isAdmin ? 'Administrador' : isTeacher ? 'Profesor' : 'Estudiante'}
+                                {isAdmin ? 'Administrador' : isTeacher ? 'Profesor' : 'Invitado'}
                             </span>
                         </p>
                     </div>
                 </div>
+                {/* Boton para cambiar de centro */}
+                <button onClick={() => navigate('/centros')} className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <MapPin size={16} />
+                    Cambiar de centro
+                </button>
 
                 <hr className="my-4 border-gray-100" />
 

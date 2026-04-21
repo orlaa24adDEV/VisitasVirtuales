@@ -12,6 +12,8 @@ import { useAuth } from '@/hooks/useAuth.js';
 import Home from './pages/Home.jsx';
 import { AdminRoute } from './components/ProtectedRoute.jsx';
 import './assets/App.css';
+//eslint-disable-next-line no-unused-vars
+import { Toaster, toast } from 'sonner';
 import LandingPage from './pages/LandingPage.jsx';
 
 
@@ -19,12 +21,12 @@ function App() {
     const { user, logout, selectedCenter, isAdmin } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    // Verificamos si estamos en la landing para limpiar la interfaz
+    // Detectamos si es la Landing para limpiar el diseño
     const isLanding = window.location.pathname === '/';
 
     return (
         <div className="w-full flex bg-white min-h-screen">
-            {/* Sidebar: Solo si hay login y NO estamos en la landing */}
+            {/* Sidebar: SOLO para usuarios logueados y fuera de la Landing */}
             {user && !isLanding && (
                 <Sidebar 
                     isMobileMenuOpen={isMobileMenuOpen} 
@@ -33,64 +35,55 @@ function App() {
             )}
             
             <div className="flex-col flex w-full h-screen overflow-hidden">
-                {/* Header: Solo si NO estamos en la landing (la landing suele tener su propio header) */}
+                {/* Header: Se oculta en Landing. Muestra 'Invitado' si no hay user */}
                 {!isLanding && (
                     <TopHeader 
                         onMenuClick={() => setIsMobileMenuOpen(true)}
                         isLog={!!user}
                         onLogout={logout}
-                        userName={user?.username || user?.name || ''}
+                        userName={user?.username || 'Invitado'}
                         userEmail={user?.email || ''}
-                        userImg={"https://unavatar.io/x/unknow"}
-                        role={user?.role || ''}
+                        role={user?.role || 'guest'}
                     />
                 )}
 
                 <main className={`flex-1 ${isLanding ? '' : 'overflow-y-auto'}`}>
                     <Routes>
-                        {/* --- RUTAS PÚBLICAS ABIERTAS --- */}
+                        {/* 1. LANDING: Punto de entrada total */}
                         <Route path="/" element={<LandingPage />} />
-                        <Route path="/centros" element={<CenterSelectionPage />} />
-                        
-                        {/* Login: ya está logueado, redirige al home */}
+
+                        {/* 2. ACCESO ADMIN/PROFE */}
                         <Route path="/login" element={!user ? <Login/> : <Navigate to="/home" replace />} />
 
-                        {/* --- RUTAS PROTEGIDAS (Requieren Login) --- */}
-                        {user ? (
-                            <>
-                                {selectedCenter ? (
-                                    <>
-                                        <Route path="/home" element={<Home />} />
-                                        <Route path="/listpois" element={<ListPois centerId={selectedCenter.id} />} />
-                                        <Route path="/perfil" element={<div className="p-10 text-center text-black text-3xl font-bold">Perfil de {selectedCenter.name}</div>} />
-                                        
-                                        {/* ZONA GESTIÓN */}
-                                        <Route path="/crud" element={<AdminRoute><Crud /></AdminRoute>} />
-                                        <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
+                        {/* 3. SELECCIÓN DE CENTROS: Pública para el invitado */}
+                        <Route path="/centros" element={<CenterSelectionPage />} />
 
-                                        {/* ZONA AUDITORÍA */}
-                                        <Route 
-                                            path="/historial" 
-                                            element={isAdmin ? <AdminRoute><Historial /></AdminRoute> : <Navigate to="/home" replace />} 
-                                        />
-                                        
-                                        {/* Redirección por defecto si está logueado y tiene centro */}
-                                        <Route path="*" element={<Navigate to="/home" replace />} />
-                                    </>
-                                ) : (
-                                    /* Si está logueado pero no eligió centro */
-                                    <Route path="*" element={<Navigate to="/centros" replace />} />
-                                )}
-                            </>
-                        ) : (
-                            /* Si no hay login y no es una ruta pública, al login */
-                            <Route path="*" element={<Navigate to="/" replace />} />
-                        )}
+                        {/* 4. EL HOME (ESCENA UNITY): 
+                               Accesible si hay un centro seleccionado (sea invitado o admin) */}
+                        <Route 
+                            path="/home" 
+                            element={selectedCenter ? <Home /> : <Navigate to="/centros" replace />} 
+                        />
+
+                        {/* 5. RUTAS BLOQUEADAS PARA INVITADOS (Solo Admin/Profe) */}
+                        <Route 
+                            path="/listpois" 
+                            element={user ? <ListPois centerId={selectedCenter?.id} /> : <Navigate to="/login" replace />} 
+                        />
+                        <Route path="/crud" element={<AdminRoute><Crud /></AdminRoute>} />
+                        <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
+                        <Route 
+                            path="/historial" 
+                            element={isAdmin ? <AdminRoute><Historial /></AdminRoute> : <Navigate to="/home" replace />} 
+                        />
+
+                        {/* 6. REDIRECCIÓN FINAL: Si se pierde, vuelve a la Landing */}
+                        <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </main>
             </div>
+            <Toaster richColors position='top-right' />
         </div>
     );
 }
-
 export default App;
