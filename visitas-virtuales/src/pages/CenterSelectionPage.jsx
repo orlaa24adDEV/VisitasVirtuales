@@ -1,6 +1,6 @@
 // CenterSelectionPage — tarjetas con imagen superior, info centrada y línea azul inferior
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 // eslint-disable-next-line no-unused-vars
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
@@ -50,14 +50,13 @@ export default function CenterSelectionPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Botón flotante para volver a la Landing (útil para invitados) */}
-      <div className="absolute top-6 left-6">
-        <button 
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-medium transition-colors"
-        >
-          <ArrowLeft size={20} />
-          <span>Volver al inicio</span>
-        </button>
+      <div className="absolute top-4 left-2">
+        <Link to="/">
+          <Button variant="ghost" size="normal" className="text-slate-500!">
+            <ArrowLeft size={20} />
+            <span>Volver a inicio</span>
+          </Button>
+        </Link>
       </div>
 
       <main className="flex-1 flex flex-col items-center justify-center p-6">
