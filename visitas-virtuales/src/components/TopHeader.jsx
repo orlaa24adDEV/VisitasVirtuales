@@ -1,7 +1,7 @@
  
 import '../assets/App.css';
 
-import { ChevronDown, LogOut, Menu, User, Home, MapPin } from 'lucide-react';
+import { ChevronDown, LogOut, Menu, User, Home, MapPin, Compass } from 'lucide-react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate, useNavigation } from 'react-router-dom';
@@ -62,6 +62,12 @@ export default function TopHeader({
             <Button variant='ghost' size='normal' className="lg:hidden" onClick={onMenuClick}>
                 <Menu size={22} />
             </Button>
+            {!user ? (
+                <h1 className="hidden lg:flex gap-2 text-lg font-semibold text-slate-800 justify-center items-center">
+                <Compass size={22} strokeWidth={2} className='text-slate-800'/>
+                Visita 360º
+            </h1>) : null
+            }
             <div className={`flex items-center ml-auto ${user ? 'gap-6' : 'gap-4'}`}>
                 
                 {/* --- BOTÓN CAMBIAR CENTRO --- */}
