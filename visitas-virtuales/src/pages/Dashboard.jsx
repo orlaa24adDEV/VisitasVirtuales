@@ -39,6 +39,56 @@ const Dashboard = () => {
     .sort((a, b) => Number(b.id) - Number(a.id))
     .slice(0, 5);
 
+  const getPoiTimestamp = (poi) => {
+    const rawTimestamp = poi.timestamp ?? poi.updatedAt ?? poi.createdAt ?? poi.date;
+    const date = rawTimestamp ? new Date(rawTimestamp) : null;
+    return date instanceof Date && !Number.isNaN(date.getTime()) ? date : null;
+  };
+
+  const hasPoiDates = pois.some((poi) => getPoiTimestamp(poi));
+  const now = new Date();
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const startOfLast7Days = new Date(startOfToday);
+  startOfLast7Days.setDate(startOfLast7Days.getDate() - 6);
+
+  const startOfPrevious7Days = new Date(startOfLast7Days);
+  startOfPrevious7Days.setDate(startOfPrevious7Days.getDate() - 7);
+
+  const poisToday = hasPoiDates
+    ? pois.reduce((sum, poi) => {
+        const date = getPoiTimestamp(poi);
+        return date && date >= startOfToday ? sum + 1 : sum;
+      }, 0)
+    : lastChanges.length;
+
+  const poisLast7Days = hasPoiDates
+    ? pois.reduce((sum, poi) => {
+        const date = getPoiTimestamp(poi);
+        return date && date >= startOfLast7Days ? sum + 1 : sum;
+      }, 0)
+    : lastChanges.length;
+
+  const poisPrevious7Days = hasPoiDates
+    ? pois.reduce((sum, poi) => {
+        const date = getPoiTimestamp(poi);
+        return date && date >= startOfPrevious7Days && date < startOfLast7Days ? sum + 1 : sum;
+      }, 0)
+    : 0;
+
+  const weeklyChange = poisPrevious7Days === 0
+    ? poisLast7Days === 0 ? 0 : 100
+    : Number((((poisLast7Days - poisPrevious7Days) / poisPrevious7Days) * 100).toFixed(0));
+
+  const weeklyChangeTrend = weeklyChange > 0 ? 'up' : weeklyChange < 0 ? 'down' : 'neutral';
+  const weeklyChangeLabel = hasPoiDates
+    ? `${weeklyChange > 0 ? '+' : ''}${weeklyChange}%`
+    : 'Últimos 5 cambios';
+
+  const weeklyChangeCaption = hasPoiDates
+    ? 'vs semana anterior'
+    : 'Sin fechas exactas';
 
   // Helper para obtener el nombre del centro por ID
   const getCenterName = (centerId) => {
@@ -129,19 +179,54 @@ const Dashboard = () => {
         <div className="p-6 bg-red-50 rounded-xl border border-red-200 text-red-700">{error}</div>
       ) : (
         <>
-          <section className="grid gap-4 sm:grid-cols-3">
-            <article className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-              <p className="text-sm text-slate-500">POIs totales</p>
-              <p className="text-3xl font-bold text-blue-700">{totalPois}</p>
+          <section className="grid gap-4 lg:grid-cols-4">
+            <article className="group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold text-slate-500">Total de POIs</p>
+                  <p className="mt-4 text-4xl font-black text-slate-900">{totalPois}</p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-blue-100 text-blue-700 text-xl">📍</div>
+              </div>
+              <p className="mt-4 text-sm text-slate-500">Todo el inventario de puntos de interés.</p>
             </article>
-            <article className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-              <p className="text-sm text-slate-500">Centros con POIs</p>
-              <p className="text-3xl font-bold text-blue-700">{uniqueCenters}</p>
+
+            <article className="group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold text-slate-500">Centros activos</p>
+                  <p className="mt-4 text-4xl font-black text-slate-900">{uniqueCenters}</p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-emerald-100 text-emerald-700 text-xl">🏢</div>
+              </div>
+              <p className="mt-4 text-sm text-slate-500">Centros con al menos un POI asignado.</p>
             </article>
-            <article className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-              <p className="text-sm text-slate-500">Actualización reciente</p>
-              <p className="text-3xl font-bold text-blue-700">{lastChanges.length}</p>
-              <p className="text-xs text-slate-500">Últimos 5 POIs</p>
+
+            <article className="group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold text-slate-500">POIs hoy</p>
+                  <p className="mt-4 text-4xl font-black text-slate-900">{poisToday}</p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-indigo-100 text-indigo-700 text-xl">☀️</div>
+              </div>
+              <p className="mt-4 text-sm text-slate-500">{hasPoiDates ? 'Registros con fecha de hoy' : 'Basado en últimos cambios'}</p>
+            </article>
+
+            <article className="group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold text-slate-500">Actividad 7 días</p>
+                  <p className="mt-4 text-4xl font-black text-slate-900">{poisLast7Days}</p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-slate-100 text-slate-700 text-xl">📈</div>
+              </div>
+              <div className="mt-4 flex items-center gap-2">
+                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${weeklyChangeTrend === 'up' ? 'bg-emerald-100 text-emerald-700' : weeklyChangeTrend === 'down' ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-700'}`}>
+                  {weeklyChangeTrend === 'up' ? '▲' : weeklyChangeTrend === 'down' ? '▼' : '•'} {weeklyChangeLabel}
+                </span>
+              </div>
+              <p className="mt-3 text-sm text-slate-500">{weeklyChangeCaption}</p>
             </article>
           </section>
 
