@@ -31,7 +31,7 @@ export default function UnityViewer() {
 
         // Crear el script del loader de Unity dinámicamente
         const script = document.createElement('script');
-        script.src = '/Built_Unity/Build/Built_Unity.loader.js';
+        script.src = '/Build_Unity/Build/Build_Unity.loader.js';
 
         // Cuando el script termina de cargar, arrancamos Unity
         script.onload = () => {
@@ -40,9 +40,9 @@ export default function UnityViewer() {
             // Recibe: el canvas, los paths a los archivos del build, y un callback de progreso
             // eslint-disable-next-line no-undef
             createUnityInstance(canvasRef.current, {
-                dataUrl:      '/Built_Unity/Build/Built_Unity.data',
-                frameworkUrl: '/Built_Unity/Build/Built_Unity.framework.js',
-                codeUrl:      '/Built_Unity/Build/Built_Unity.wasm',
+                dataUrl:      '/Build_Unity/Build/Build_Unity.data',
+                frameworkUrl: '/Build_Unity/Build/Build_Unity.framework.js',
+                codeUrl:      '/Build_Unity/Build/Build_Unity.wasm',
             }, (progress) => {
                 console.log('Cargando Unity... ' + Math.round(progress * 100) + '%');
             })
