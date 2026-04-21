@@ -40,9 +40,12 @@ export const AuthProvider = ({ children }) => {
 
   // Al hacer login, se guarda el token y se cargan perfil y centros
 	const login = async (accessToken) => {
-		setAccessToken(accessToken)
-		await fetchProfile(accessToken)
-		await fetchCenters(accessToken)
+		setAccessToken(accessToken);
+		// Ejecutar en paralelo para evitar recargas secuenciales innecesarias
+		await Promise.all([
+			fetchProfile(accessToken),
+			fetchCenters(accessToken)
+		]);
 	}
 
   // Carga el perfil del usuario autenticado, renovando tokens si es necesario
