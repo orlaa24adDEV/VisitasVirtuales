@@ -136,6 +136,7 @@ export const AuthProvider = ({ children }) => {
             await fetchCenters();
         };
         load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const login = async (accessToken) => {

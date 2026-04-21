@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
-import Button from '../components/Button';
+import Button from '@/components/Button.jsx';
 
 const Dashboard = () => {
   const [pois, setPois] = useState([]);

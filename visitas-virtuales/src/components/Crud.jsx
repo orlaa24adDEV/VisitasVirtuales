@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import CenterBanner from './CenterBanner';
-import Button from './Button';
+import Button from './Button.jsx';
 
 //import { useAuth } from '../context/AuthContext';
 import { useAuth } from '@/hooks/useAuth';
@@ -17,6 +17,7 @@ function Crud() {
     });
 
     const location = useLocation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const state = location.state || {};
     const isEditing = !!state.isEditing;
 

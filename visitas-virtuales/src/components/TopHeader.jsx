@@ -1,10 +1,15 @@
+ 
 import '../assets/App.css';
 
 import { ChevronDown, LogOut, Menu, User, User2 } from 'lucide-react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
-import Button from './Button';
+import { useAuth} from '@/hooks/useAuth.js';
+import { MapPin } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import Button from './Button.jsx';
+
 
 TopHeader.propTypes = {
     onMenuClick: PropTypes.func.isRequired,
@@ -42,23 +47,40 @@ export default function TopHeader({
     role = "Estudiante",
 }) {
     const [isOpen, setIsOpen] = useState(false);
-    const navigate = useNavigate(); // Hook para redireccionar
+    const navigate = useNavigate();
+    const { selectedCenter } = useAuth(); // Obtenemos el centro del contexto
 
     const handleLogoutClick = () => {
-        onLogout(); // Limpia Context y LocalStorage
+        onLogout();
         setIsOpen(false);
-        navigate('/login'); // Redirige al login
+        navigate('/login');
     };
 
     return (
         <header className="sticky top-0 z-40 h-16 w-full flex items-center justify-between px-4 lg:justify-end lg:px-8 bg-slate-50/80 backdrop-blur-2xl border-b border-blue-100/50
-    shadow-[0_4px_12px_-2px_rgba(0,0,0,0.03)] 
-    transition-all">
+                    shadow-[0_4px_12px_-2px_rgba(0,0,0,0.03)] 
+                    transition-all">
             <Button variant='ghost' size='normal' className="lg:hidden" onClick={onMenuClick}>
                 <Menu size={22} />
             </Button>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 ml-auto">
+                
+                {/* --- BOTÓN CAMBIAR CENTRO --- */}
+                {selectedCenter && (
+                    <button 
+                        onClick={() => navigate('/centros')}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-white/50 hover:bg-white border border-blue-200 rounded-full transition-all group shadow-sm"
+                        title="Cambiar de centro"
+                    >
+                        <MapPin size={16} className="text-blue-600 group-hover:scale-110 transition-transform" />
+                        <div className="flex flex-col items-center leading-none width-full">
+                            <span className="text-[10px] text-blue-500 font-bold uppercase tracking-tighter">Cambiar centro</span>
+                            <span className="text-sm font-semibold text-slate-700 ">{selectedCenter.name}</span>
+                        </div>
+                    </button>
+                )}
+
                 {isLog ? (
                     <div className="relative flex items-center gap-4">
                         <div className="flex flex-col items-end leading-tight">
@@ -83,6 +105,7 @@ export default function TopHeader({
                             <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                         </button>
 
+                        {/* Dropdown Menu */}
                         {isOpen && (
                             <>
                                 <button
@@ -95,10 +118,9 @@ export default function TopHeader({
                                         <p className="text-sm font-bold text-slate-700 truncate">{userEmail}</p>
                                     </div>
                                     <hr className="my-1 border-slate-200" />
-                                    {/* TODO: Cambiar a Link de React Router */}
                                     <button
-                                        onClick={() => {}}
-                                        className="w-full text-left px-4 py-2.5 text-sm text-neutral-700 hover:bg-red-50 font-semibold flex items-center gap-2 transition-colors"
+                                        onClick={() => { navigate('/perfil'); setIsOpen(false); }}
+                                        className="w-full text-left px-4 py-2.5 text-sm text-neutral-700 hover:bg-slate-50 font-semibold flex items-center gap-2 transition-colors"
                                     >
                                         <User className="w-4 h-4 text-neutral-800" />
                                         Mi Perfil
@@ -117,22 +139,15 @@ export default function TopHeader({
                     </div>
                 ) : (
                     <div className="flex items-center gap-2">
-                        {/* ✅ Corregido: Usamos Link de react-router-dom */}
                         <Link
                             to="/login"
-                            className="text-sm font-medium text-slate-600  px-4 py-2 rounded-lg hover:text-white hover:bg-blue-600  transition-colors"
+                            className="text-sm font-medium text-slate-600 px-4 py-2 rounded-lg hover:text-white hover:bg-blue-600 transition-colors bg-white/50 border border-slate-200"
                         >
-                            Iniciar Sesión
-                        </Link>
-                        <Link
-                            to="/register" // O a tu ruta de registro si la tienes
-                            className="text-sm font-bold bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                        >
-                            Registrarte
+                            Iniciar sesion
                         </Link>
                     </div>
                 )}
             </div>
         </header>
     );
-};
+}

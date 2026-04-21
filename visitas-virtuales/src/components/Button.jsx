@@ -1,5 +1,6 @@
 
-export default function Button({onClick, disabled = false, type = 'submit', variant = 'primary', size = 'normal', children, className = '', iconPosition = 'left'}) {
+// eslint-disable-next-line no-unused-vars
+const Button = ({onClick, disabled = false, type = 'submit', variant = 'primary', size = 'normal', children, className = '', iconPosition = 'left'}) => {
     const baseStyles = "rounded-md transition-all min-w-fit flex items-center justify-center whitespace-nowrap disabled:cursor-not-allowed cursor-pointer shadow-sm duration-200";
     const variants = {
         primary: "bg-blue-600 text-white hover:bg-blue-700",
@@ -28,3 +29,4 @@ export default function Button({onClick, disabled = false, type = 'submit', vari
       </button>
     );
 }
+export default Button;

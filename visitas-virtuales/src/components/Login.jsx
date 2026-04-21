@@ -8,7 +8,8 @@ export default function Login() {
 	const [errors, setErrors] = useState([]);
 	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
-	const { login } = useAuth();
+	// eslint-disable-next-line no-unused-vars
+	const { login, fetchProfile } = useAuth();
 	const navigate = useNavigate();
 
 	const handleSubmit = async (formData) => {
@@ -106,12 +107,12 @@ export default function Login() {
 					<button type='submit' disabled={isLoading} className="submit-button">
 						{isLoading ? 'Cargando...' : 'Iniciar Sesión'}
 					</button>
-					<p>
+					{/* <p>
 						¿Aún no tienes cuenta?
 						<Link to="/register" className="create-account-link">
 							Regístrate aquí
 						</Link>
-					</p>
+					</p> */}
 				</form>
 			</section>
 		</main>
