@@ -13,6 +13,7 @@ import Home from './pages/Home.jsx';
 import { AdminRoute } from './components/ProtectedRoute.jsx';
 import Register from './components/Register.jsx';
 import './assets/App.css';
+import { Toaster, toast } from 'sonner';
 
 
 function App() {
@@ -92,6 +93,7 @@ function App() {
                     </Routes>
                 </main>
             </div>
+            <Toaster richColors position='top-right' expand={true} visibleToasts={6} closeButton offset={{ top: 80, right: 20 }} />
         </div>
     );
 }
