@@ -22,7 +22,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
     // Definimos todos los items y marcamos cuáles son solo para Admin
     const allMenuItems = [
         { id: 'inicio', name: 'Inicio', icon: <Home size={20} />, path: 'home' },
-        { id: 'mensajes', name: 'Mensajes', icon: <Mail size={20} />, path: 'mensajes' },
+        //{ id: 'mensajes', name: 'Mensajes', icon: <Mail size={20} />, path: 'mensajes' },
         { id: 'seleccion-centro', name: 'Selección de Centro', icon: <Building2 size={22} />, path: '/centros'},
         // Gestión de POIs incluye también /crud
         (isAdmin || isTeacher) ? { 
