@@ -1,8 +1,8 @@
 import { db } from '../db/db.js'
 import ApiError from '../helpers/ApiError.js'
-import { eq, and, ilike } from 'drizzle-orm'
+import { eq, and, ilike, gt, asc } from 'drizzle-orm'
 import { pois, centers, poiHistory } from '../db/schema.ts'
-import type { Poi, PoiCreateType } from '../db/schema.ts'
+import type { Poi, PoiCreateType, PoiByCenterType } from '../db/schema.ts'
 
 const createPoi: (
 	centerId: string,
@@ -41,9 +41,12 @@ const createPoi: (
 	})
 }
 
-const getPoisByCenter: (centerId: string) => Promise<Poi[]> = async (
-	centerId,
-) => {
+const getPoisByCenter = async ( 
+  data: PoiByCenterType
+): Promise<Poi[]> => {
+	const { centerId } = data.params;
+  const { limit, lastId } = data.query;
+
 	const [center] = await db
 		.select({
 			id: centers.id,
@@ -65,7 +68,10 @@ const getPoisByCenter: (centerId: string) => Promise<Poi[]> = async (
 			centerId: pois.centerId,
 		})
 		.from(pois)
-		.where(eq(pois.centerId, Number(centerId)))
+		// Keyset pagination con cursor (lastId). Carga la siguiente página de resultados después del último ID recibido
+		.where(and(eq(pois.centerId, Number(centerId)), lastId ? gt(pois.id, lastId) : undefined))
+		.orderBy(asc(pois.id))
+		.limit(limit ?? 10) // Si no se proporciona un límite, usar 10 por defecto
 
 	return poiArr
 }

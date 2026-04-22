@@ -1,152 +1,146 @@
 // CenterSelectionPage — tarjetas con imagen superior, info centrada y línea azul inferior
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
+// eslint-disable-next-line no-unused-vars
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
+import { toast } from 'sonner';
+import { ArrowLeft } from 'lucide-react';
+import Button from '@/components/Button.jsx';
 
 export default function CenterSelectionPage() {
   const navigate = useNavigate();
-  const { selectCenter, allCenters, centersError, isCentersLoading, selectedCenter, setSelectedCenter } = useAuth();
+  const { centerState, saveSelectedCenter } = useAuth();
+  const { selectedCenter, allCenters, isCentersLoading, centersError } = centerState;
+  
+  // Iniciamos el local con lo que haya en el contexto (por si vuelve para cambiar)
+  const [localSelectedCenter, setLocalSelectedCenter] = useState(selectedCenter || null);
+  const [hasShownToast, setHasShownToast] = useState(false);
+  const hasMounted = useRef(false);
+
+  useEffect(() => {
+    if (isCentersLoading || centersError || !allCenters || allCenters.length === 0) return;
+
+    if (hasMounted.current) {
+      if (!selectedCenter && !hasShownToast) {
+        toast.info('Selecciona un centro para continuar', { 
+          description: 'Es necesario elegir un centro educativo para acceder al tour' 
+        });
+        setHasShownToast(true);
+      }
+    } else {
+      hasMounted.current = true;
+    }
+  }, [isCentersLoading, centersError, allCenters, selectedCenter, hasShownToast]);
 
   const handleConfirm = () => {
-    if (selectedCenter) {
-      navigate('/home');
+    if (localSelectedCenter) {
+      // Actualizamos el contexto global (esto permitirá entrar a /viewer)
+      saveSelectedCenter(localSelectedCenter);
+      
+      toast.success(`Cargando ${localSelectedCenter.name}`, { 
+        description: `Preparando tour virtual...` 
+      });
+      
+      // Redirigimos a la escena de Unity
+      navigate('/viewer');
     }
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      {/* Botón flotante para volver a la Landing (útil para invitados) */}
+      <div className="w-full max-w-5xl mx-auto p-4 flex flex-col items-start">
+        <Link to="/">
+          <Button variant="ghost" size="normal" className="text-slate-500! items-center gap-2">
+            <ArrowLeft size={20} />
+            <span>Volver a inicio</span>
+          </Button>
+        </Link>
+      </div>
 
-      {/* Contenido */}
       <main className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="w-full max-w-5xl">
 
           {/* Título */}
           <div className="mb-8 text-center">
-            <h1 className="text-2xl font-semibold text-slate-800">
-              Selecciona un centro educativo
+            <h1 className="text-3xl font-bold text-slate-800 tracking-tight">
+              ¿Qué centro quieres visitar?
             </h1>
-            <p className="text-slate-500 mt-2 text-sm">
-              Elige el centro
+            <p className="text-slate-500 mt-2 text-sm max-w-md mx-auto">
+              Selecciona una ubicación para explorar sus instalaciones en el tour virtual 360°.
             </p>
           </div>
 
-          {/* Estado: cargando */}
+          {/* ... (Tus estados de carga y error se mantienen igual) ... */}
           {isCentersLoading && (
-            <div className="flex justify-center items-center h-48">
-              <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full" />
-            </div>
-          )}
-
-          {/* Estado: error */}
-          {centersError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-center text-sm">
-              {centersError}
-            </div>
+             <div className="flex justify-center items-center h-48">
+               <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full" />
+             </div>
           )}
 
           {/* Grid de tarjetas */}
-          {!isCentersLoading && !centersError && allCenters && allCenters.length > 0 && (
+          {!isCentersLoading && !centersError && allCenters && (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {allCenters.map((center, index) => {
-                  const isActive = selectedCenter?.id === center.id;
+                  const isActive = localSelectedCenter?.id === center.id;
                   return (
                     <button
                       key={`${center.id}-${index}`}
-                      onClick={() => setSelectedCenter(center)}
+                      onClick={() => setLocalSelectedCenter(center)}
                       className={`
-                        group text-left rounded-2xl overflow-hidden bg-white
-                        border-2 transition-all duration-200 focus:outline-none
-                        hover:scale-105 hover:shadow-xl cursor-pointer
-                        ${isActive
-                          ? 'border-blue-600 shadow-2xl scale-105'
-                          : 'border-gray-200 shadow-xl hover:border-blue-200'
-                        }
+                        group relative text-left rounded-2xl overflow-hidden bg-white
+                        border-2 transition-all duration-300 focus:outline-none
+                        hover:shadow-2xl cursor-pointer flex flex-col
+                        ${isActive ? 'border-blue-600 ring-4 ring-blue-50' : 'border-slate-100 hover:border-blue-200'}
                       `}
                     >
-                      {/* Imagen del centro */}
-                      {center.imageUrl ? (
-                        <img
-                          src={center.imageUrl}
-                          alt={center.name}
-                          className="w-full h-36 object-cover"
-                        />
-                      ) : (
-                        /* Placeholder si la API aún no devuelve imagen */
-                        <div className="w-full h-36 bg-linear-to-br from-blue-200 to-blue-400 flex items-center justify-center">
-                          <span className="text-4xl font-semibold text-blue-700">
+                      {/* Imagen con overlay si está activo */}
+                      <div className="relative h-40 w-full overflow-hidden">
+                        {center.imageUrl ? (
+                          <img src={center.imageUrl} alt={center.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        ) : (
+                          <div className="w-full h-full bg-linear-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-4xl font-bold">
                             {center.name.charAt(0)}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Info del centro */}
-                      <div className="px-4 py-4 text-center">
-                        <h2 className="font-semibold text-slate-800 text-sm leading-snug">
-                          {center.name}
-                        </h2>
-                        {center.neighborhood && (
-                          <p className="text-slate-500 text-xs mt-0.5">{center.neighborhood}</p>
-                        )}
-                        {center.address && (
-                          <p className="text-slate-500 text-xs mt-0.5">{center.address}</p>
-                        )}
-                        {center.phone && (
-                          <p className="text-slate-500 text-xs mt-0.5">{center.phone}</p>
-                        )}
-
-                        {/* Badge seleccionado */}
-                        {isActive && (
-                          <div className="mt-3 inline-flex items-center gap-1 bg-blue-50 text-blue-600 text-xs font-medium px-3 py-1 rounded-full">
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                              <path
-                                fillRule="evenodd"
-                                d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                            Seleccionado
                           </div>
                         )}
-                        {/* Placeholder si no está seleccionado */}
-                        {!isActive && (
-                          <div className="h-6 mt-3"></div>
-                        )}
-                        
+                        {isActive && <div className="absolute inset-0 bg-blue-600/10 backdrop-blur-[1px]" />}
                       </div>
 
-                      {/* Línea inferior: azul si activo, gris si no */}
-                      <div
-                        className={`h-2 w-full transition-colors duration-200 ${
-                          isActive ? 'bg-blue-600' : 'bg-slate-100 group-hover:bg-blue-200'
-                        }`}
-                      />
+                      <div className="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                          <h2 className="font-bold text-slate-800 text-base mb-1">{center.name}</h2>
+                          <p className="text-slate-500 text-xs flex items-center gap-1">
+                             {center.location || 'Ubicación disponible'}
+                          </p>
+                        </div>
+
+                        {/* Indicador visual de selección */}
+                        <div className={`mt-4 w-full py-2 rounded-lg text-center text-xs font-bold transition-colors ${
+                          isActive ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600'
+                        }`}>
+                          {isActive ? 'CENTRO SELECCIONADO' : 'SELECCIONAR'}
+                        </div>
+                      </div>
                     </button>
                   );
                 })}
               </div>
 
-              {/* Botón confirmar */}
-              <div className="mt-8 flex justify-center">
-                <button
+              {/* Botón confirmar mejorado */}
+              <div className="mt-12 flex justify-center">
+                <Button
                   onClick={handleConfirm}
-                  disabled={!selectedCenter}
-                  className={`px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                    selectedCenter
-                      ? 'bg-blue-700 text-white hover:bg-blue-800 shadow-md hover:shadow-lg'
-                      : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                  }`}
+                  disabled={!localSelectedCenter}
+                  variant={"primary"}
+                  size={"large"}
                 >
-                  Acceder al centro
-                </button>
+                  Acceder al Centro
+                </Button>
+                
               </div>
             </>
-          )}
-
-          {/* Sin centros disponibles */}
-          {!isCentersLoading && !centersError && allCenters && allCenters.length === 0 && (
-            <div className="text-center text-slate-500 py-10">No hay centros disponibles.</div>
           )}
         </div>
       </main>

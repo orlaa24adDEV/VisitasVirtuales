@@ -17,13 +17,13 @@
 
 #### Documentación
 
-- Generar documentación Swagger / OpenAPI: `npm run openapi:generate`
+- Generar documentación OpenAPI (Swagger): `npm run openapi:generate`
 
 ---
 
 ### Staging
 
-- Desplegar y e iniciar todo: `npm run deploy:stage:up`
+- Desplegar e iniciar todo: `npm run deploy:stage:up`
 - Detener: `npm run deploy:stage:down`
 - Reiniciar: `npm run deploy:stage:restart`
 - Ver logs: `npm run deploy:stage:logs`

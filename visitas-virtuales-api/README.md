@@ -6,13 +6,15 @@ Arquitectura **multi-inquilino**: una sola instancia de Express y PostgreSQL da 
 
 Permite registrar y autenticar usuarios de tres tipos:
 
-- **Administradores (_admin_)**: pueden gestionar todos los centros y Puntos de Interés (POIs), administrar roles, ver estadísticas y logs.
+- **Administradores (_admin_)**: pueden gestionar todos los centros y Puntos de Interés (POIs), registrar usuarios, administrar roles, ver estadísticas y logs.
 - **Profesores (_teacher_)**: pueden crear, leer, actualizar y eliminar POIs de su propio centro.
-- **Estudiantes (_student_)** y cualquier usuario autenticado: pueden consultar POIs de cualquier centro.
+- **Invitados (_guest_)**: acceso de lectura a POIs, sin necesidad de autenticación. No se almacenan en la base de datos, pero se les asigna este rol por defecto. Este rol también se asigna a los usuarios creados por el administrador si no se especifica un rol.
 
 Desplegado mediante Docker y PM2. Consulta [docker-compose.prod.yml](./docker-compose.prod.yml), [Dockerfile](./Dockerfile) y [docker-entrypoint.sh](./docker-entrypoint.sh).
 
 Entorno de staging disponible para pruebas antes de producción ([docker-compose.stage.yml](./docker-compose.stage.yml)).
+
+GitHub Actions configurado para deploy automático a staging. Consulta [.github/workflows/deploy-stage.yml](./.github/workflows/deploy-stage.yml) en la raíz del repositorio.
 
 ### Guía rápida para desarrollo
 
