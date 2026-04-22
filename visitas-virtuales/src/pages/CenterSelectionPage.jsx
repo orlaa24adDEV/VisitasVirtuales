@@ -50,9 +50,9 @@ export default function CenterSelectionPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Botón flotante para volver a la Landing (útil para invitados) */}
-      <div className="absolute top-4 left-2">
+      <div className="w-full max-w-5xl mx-auto p-4 flex flex-col items-start">
         <Link to="/">
-          <Button variant="ghost" size="normal" className="text-slate-500!">
+          <Button variant="ghost" size="normal" className="text-slate-500! items-center gap-2">
             <ArrowLeft size={20} />
             <span>Volver a inicio</span>
           </Button>

@@ -68,7 +68,7 @@ export default function TopHeader({
             ) : null}
             {!user ? (
                 <Link to="/">
-                    <h1 className="hidden lg:flex gap-2 text-lg font-semibold text-slate-800 justify-center items-center">
+                    <h1 className=" lg:flex gap-2 text-lg font-semibold text-slate-800 justify-center items-center">
                     <Compass size={22} strokeWidth={2} className='text-slate-800'/>
                     Visita 360º
                     </h1>

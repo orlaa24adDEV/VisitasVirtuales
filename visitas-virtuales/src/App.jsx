@@ -50,7 +50,7 @@ function App() {
                     />
                 )}
 
-                <main className={`flex-1 ${isLanding ? '' : 'overflow-y-auto absolute inset-0 pt-18'}`}>
+                <main className={`flex-1 ${isLanding ? '' : 'overflow-x-hidden absolute inset-0 pt-18'}`}>
                     <Routes>
                         {/* 1. LANDING: Punto de entrada total */}
                         <Route path="/" element={<LandingPage />} />
