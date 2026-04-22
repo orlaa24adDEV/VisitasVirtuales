@@ -29,12 +29,21 @@ app.use(express.json())
 app.use(cookieParser())
 
 // Permitir CORS desde la app de React (Vite)
+const allowedOrigins = [env.FRONTEND_URL, 'http://localhost:5173']
+
 app.use(
-	cors({
-		origin: env.FRONTEND_URL,
-		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-		credentials: true, // Compartir cookies entre frontend y backend
-	}),
+    cors({
+        // 2. Uso una función para comprobar si el origen de la petición está en la lista
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true)
+            } else {
+                callback(new Error('Not allowed by CORS'))
+            }
+        },
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+        credentials: true,
+    }),
 )
 
 // Montar rutas de usuarios
