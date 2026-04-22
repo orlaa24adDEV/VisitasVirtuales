@@ -5,22 +5,18 @@ import type { JWTPayload } from 'jose'
 import type { UserRoleType } from '../db/schema.ts'
 
 type GuestJWTPayload = JWTPayload & {
-  role: UserRoleType;
-  sub: string;
-};
+	role: UserRoleType
+	sub: string
+}
 
 export type AuthenticatedRequest = Request & {
-  user?: JWTPayload | GuestJWTPayload;
-};
+	user?: JWTPayload | GuestJWTPayload
+}
 
 const hasRole = (roles: UserRoleType | UserRoleType[]) => {
 	const allowedRoles = Array.isArray(roles) ? roles : [roles]
 
-	return async (
-		req: Request,
-		res: Response,
-		next: NextFunction,
-	) => {
+	return async (req: Request, res: Response, next: NextFunction) => {
 		const authReq = req as AuthenticatedRequest
 		// Comprobar que el usuario esté autenticado y tenga un rol válido
 		const authHeader = authReq.headers['authorization']
@@ -41,8 +37,8 @@ const hasRole = (roles: UserRoleType | UserRoleType[]) => {
 		// Si se proporciona un token, verificarlo y extraer el rol del usuario
 		if (token) {
 			try {
-			const { payload } = await verifyToken(token)
-			authReq.user = payload
+				const { payload } = await verifyToken(token)
+				authReq.user = payload
 			} catch (err) {
 				env.APP_STAGE === 'dev' &&
 					console.warn(
@@ -55,11 +51,11 @@ const hasRole = (roles: UserRoleType | UserRoleType[]) => {
 					message: 'Token de acceso inválido o expirado',
 				})
 			}
-		// Si no se proporciona un token pero se permiten invitados, asignar un rol de invitado al usuario
+			// Si no se proporciona un token pero se permiten invitados, asignar un rol de invitado al usuario
 		} else {
 			authReq.user = getGuestUser() as GuestJWTPayload
 		}
-		
+
 		const userRole = authReq.user?.role
 
 		// Si el token no contiene un rol, denegar el acceso

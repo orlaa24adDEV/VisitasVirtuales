@@ -8,7 +8,8 @@ const UNITY_BUILD_LISTO = true;
 
 export default function UnityViewer() {
   // Obtenemos el centro seleccionado del contexto global
-    const { selectedCenter } = useAuth();
+    const { centerState } = useAuth();
+    const { selectedCenter } = centerState;
 
     // Leemos el parámetro scene de la URL (ej: ?center=2&scene=1)
     // Si no hay parámetro scene en la URL, sceneId será null

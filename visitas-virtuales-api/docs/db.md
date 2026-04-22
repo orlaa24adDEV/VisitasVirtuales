@@ -25,14 +25,13 @@ Usuarios registrados en el sistema.
 | password | TEXT       | NOT NULL                    |
 | role     | user_roles | NOT NULL, DEFAULT 'student' |
 
-> Por defecto, los usuarios tendrán el rol de _student_, a excepción del primer usuario insertado en la base de datos que recibirá el rol de _admin_.
-> Estos usuarios no están asociados a ningún centro en particular.
+> El administrador se encargará de crear los usuarios y asignarles sus roles. Si el rol no se especifica, se asignará automáticamente el rol de `guest` (invitado). Los invitados, aunque no se almacenen en la base de datos, tendrán este rol en cada solicitud.
 
-> Los administradores se encargarán de entregar a los profesores sus correspondientes roles.
+> Estos usuarios no están asociados a ningún centro en particular.
 
 ## `pois`
 
-Puntos de interes (POIs) asociados a un centro educativo.
+Puntos de interés (POIs) asociados a un centro educativo.
 | Campo | Tipo | Restricciones |
 | :--------- | :------ | :----------------------------------------------- |
 | id | SERIAL | PRIMARY KEY |
@@ -43,7 +42,7 @@ Puntos de interes (POIs) asociados a un centro educativo.
 
 > Restricción de unicidad compuesta: `UNIQUE(name, center_id)`. No pueden existir dos POIs con el mismo nombre dentro de un mismo centro.
 
-> Los POIs son accesibles para todos los usuarios registrados.
+> Los POIs son accesibles para todos los usuarios, registrados o invitados, pero solo profesores y administradores pueden crear o editar POIs.
 
 ## `stats` (Historial/Logs)
 
@@ -101,11 +100,11 @@ Trazabilidad detallada de cambios en los POIs para auditoría.
 | :-------- | :------------------------------------------------------------------------------------ |
 | `admin`   | Control total sobre el sistema, todos los centros, todos los POIs y gestión de roles. |
 | `teacher` | Gestión de POIs y consulta de estadísticas de su propio centro.                       |
-| `student` | Rol por defecto. Acceso de lectura a POIs                                             |
+| `guest`   | Rol por defecto para usuarios creados por el administrador.                           |
 
 ## Datos de prueba
 
-Para insertart datos de prueba.
+Para insertar datos de prueba.
 
 1. Genera y aplica migraciones (`npm run db:generate` y `npm run db:migrate`).
 2. Ejecuta `npm run db:seed` para añadir usuarios de prueba, centros y POIs asociados.
@@ -130,6 +129,3 @@ Puedes explorar la base de datos con Drizzle Kit Studio:
 | **profesor_mad@instituto.es** | prof_mad   | Profe123!  | **teacher** |
 | **profesor_bar@instituto.es** | prof_bar   | Profe123!  | **teacher** |
 | **profesor_sev@instituto.es** | prof_sev   | Profe123!  | **teacher** |
-| **alumno_mad@instituto.es**   | alumno_mad | Alumno123! | **student** |
-| **alumno_bar@instituto.es**   | alumno_bar | Alumno123! | **student** |
-| **alumno_sev@instituto.es**   | alumno_sev | Alumno123! | **student** |
