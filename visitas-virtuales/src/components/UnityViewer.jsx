@@ -19,6 +19,7 @@ export default function UnityViewer() {
     // Referencia directa al canvas del DOM
     // Es como un "puntero" para que Unity sepa dónde pintarse
     const canvasRef = useRef(null);
+    const unityInstanceRef = useRef(null);
 
     // Se ejecuta una sola vez cuando el componente aparece en pantalla
     useEffect(() => {
@@ -49,7 +50,7 @@ export default function UnityViewer() {
 
             //Cuando Unity termino de cargar correctamente
             .then((unityInstance) => {
-                console.log('Unity cargado correctamente');
+                unityInstanceRef.current = unityInstance;
 
                 // EL PUENTE: enviamos el ID del centro a Unity
                 unityInstance.SendMessage(
@@ -83,12 +84,20 @@ export default function UnityViewer() {
 
         // Limpieza cuando el usuario salga de esta página, y que no quede unity en segundo plano
         return () => {
-            if (unityInstance) {
-                unityInstance.Quit().then(() => {
-                    document.body.removeChild(script);
+            if (unityInstanceRef.current) {
+                unityInstanceRef.current.Quit().then(() => {
+                    if (document.body.contains(script)) {
+                        document.body.removeChild(script);
+                    }
+                }).catch(() => {
+                    if (document.body.contains(script)) {
+                        document.body.removeChild(script);
+                    }
                 });
             } else {
-                document.body.removeChild(script);
+                if (document.body.contains(script)) {
+                    document.body.removeChild(script);
+                }
             }
         };
 
