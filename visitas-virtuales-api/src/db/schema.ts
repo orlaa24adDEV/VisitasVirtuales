@@ -225,6 +225,16 @@ export type UserRoleEditType = z.infer<typeof UserRoleEditSchema>
 
 export const poiSelectSchema = createSelectSchema(pois)
 export type PoiSelectType = z.infer<typeof poiSelectSchema>
+export const poiByCenterSchema = z.object({
+	params: z.object({
+		centerId: z.coerce.number().int().positive(),
+	}),
+	query: z.object({
+		limit: z.coerce.number().int().positive().max(100).default(20),
+		lastId: z.coerce.number().int().positive().optional(),
+	}),
+})
+export type PoiByCenterType = z.infer<typeof poiByCenterSchema>
 
 export const poiInsertSchema = createInsertSchema(pois)
 export type PoiInsertType = z.infer<typeof poiInsertSchema>
