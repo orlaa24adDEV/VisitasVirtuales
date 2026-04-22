@@ -81,9 +81,15 @@ export default function UnityViewer() {
         // Agregar el script al documento para que empiece a descargarse
         document.body.appendChild(script);
 
-        // Limpieza cuando el usuario salga de esta página, quitamos el script
+        // Limpieza cuando el usuario salga de esta página, y que no quede unity en segundo plano
         return () => {
-            document.body.removeChild(script);
+            if (unityInstance) {
+                unityInstance.Quit().then(() => {
+                    document.body.removeChild(script);
+                });
+            } else {
+                document.body.removeChild(script);
+            }
         };
 
     }, [selectedCenter.id, sceneId]); // <-- [] ejecutar solo una vez al montar el componente
