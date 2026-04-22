@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import CenterBanner from './CenterBanner';
-import Button from './Button';
+import Button from './Button.jsx';
 
-//import { useAuth } from '../context/AuthContext';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth.js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 
 function Crud() {
-    const { selectedCenter } = useAuth();
+    const { centerState } = useAuth();
+    const { selectedCenter } = centerState;
     const [formData, setFormData] = useState({
         id: '',
         centerId: '',
@@ -17,6 +17,7 @@ function Crud() {
     });
 
     const location = useLocation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const state = location.state || {};
     const isEditing = !!state.isEditing;
 

@@ -9,18 +9,19 @@ import {
 import { useEffect, useState } from "react";
 import CenterBanner from "@/components/CenterBanner.jsx";
 import { Link } from "react-router-dom";
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth.js';
 import { toast } from 'sonner';
-import Button from '../components/Button';
+import  Button  from '@/components/Button.jsx';
 import Input from '../components/Input';
 
 export default function ListPois({ centerId }) {
-  const [pois, setPois] = useState([]);
-  const [search, setSearch] = useState("");
-  const { selectedCenter } = useAuth();
+    const [pois, setPois] = useState([]);
+    const [search, setSearch] = useState("");
+    const { centerState } = useAuth();
+    const { selectedCenter } = centerState;
 
-  const API_URL = import.meta.env.VITE_API_URL;
-  const GET_PATH = `api/v1/centers/${centerId}/pois`;
+    const API_URL = import.meta.env.VITE_API_URL;
+    const GET_PATH = `api/v1/centers/${centerId}/pois`
 
   const filteredPois = pois.filter((poi) =>
     poi.name.toLowerCase().includes(search.toLowerCase()),
@@ -38,17 +39,17 @@ export default function ListPois({ centerId }) {
     const maxPage = Math.max(1, totalPages);
 
         if (currentPage > maxPage) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+             
             setCurrentPage(maxPage);
         } else if (currentPage < 1) {
             setCurrentPage(1);
         }
     }, [currentPage, totalPages]);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCurrentPage(1);
-  }, [search]);
+    useEffect(() => {
+         
+        setCurrentPage(1);
+    }, [search]);
 
   const deletePois = async (id) => {
     try {
