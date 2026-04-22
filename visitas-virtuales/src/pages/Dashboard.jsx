@@ -209,7 +209,7 @@ const Dashboard = () => {
                   <p className="text-sm font-semibold text-slate-500">POIs hoy</p>
                   <p className="mt-4 text-4xl font-black text-slate-900">{poisToday}</p>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-indigo-100 text-indigo-700 text-xl">☀️</div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-indigo-100 text-indigo-700 text-xl">🕐</div>
               </div>
               <p className="mt-4 text-sm text-slate-500">{hasPoiDates ? 'Registros con fecha de hoy' : 'Basado en últimos cambios'}</p>
             </article>
