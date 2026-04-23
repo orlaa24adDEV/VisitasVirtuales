@@ -42,15 +42,21 @@ export const newPoiHandler = async (req, res) => {
 }
 
 export const poisByCenterHandler = async (req, res) => {
-	const centerId = req.params.centerId
-	const pois = await poiService.getPoisByCenter(centerId)
+	const pois = await poiService.getPoisByCenter(req.validData);
 	if (pois.length === 0) {
-		return res.status(200).json({
-			message: 'No se encontraron POIs para el centro con ID ' + centerId,
-			pois: [],
-		})
-	}
-	return res.json({ message: 'POIs obtenidos exitosamente', pois: pois })
+    return res.status(200).json({
+      message: lastId 
+        ? 'No hay más POIs para mostrar' 
+        : 'No se encontraron POIs para el centro con ID ' + centerId,
+      pois: [],
+    })
+  }
+	const nextCursor = pois.length > 0 ? pois[pois.length - 1].id : null
+	return res.json({ 
+    message: 'POIs obtenidos exitosamente', 
+    pois: pois,
+    nextCursor: nextCursor // El frontend usará esto para la siguiente petición
+  })
 }
 
 export const poisByUserAndCenterHandler = async (req, res) => {

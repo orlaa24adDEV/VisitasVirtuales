@@ -1,35 +1,223 @@
 import { Link } from "react-router-dom";
-
+import tourImg from "../assets/tour360.jpg";
+import proyectoImg from "../assets/proyecto360.jpg";
+import informationImg from "../assets/information.jpg";
+import accessImg from "../assets/access.jpg";
 
 const LandingPage = () => {
-    return (   
-            <div className="flex flex-col h-full bg-white items-center justify-center">
-                <h1>LANDING PAGE</h1>
-                    <header className="text-center mb-6">
-                        <h1 className="text-4xl font-bold text-slate-800">Bienvenido a Visitas Virtuales</h1>
-                        <p className="text-slate-500 mt-2 text-lg">Explora centros educativos de forma virtual</p>
-                    </header>
-                    <button className=" items-right px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                        <Link to="/login">Iniciar Sesión</Link>
-                    </button>
-                    <button className="items-right px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                        <Link to="/centros">Explorar Centros</Link>
-                    </button>
-                    <button className="items-right px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                        <a href="#information" className="scroll-smooth">Saber mas</a>
-                    </button>
-                <section id="information" className="mt-20 w-full max-w-4xl px-6 py-10 bg-gray-50 rounded-lg shadow-md">   
-                        <h2 className="text-2xl font-bold text-slate-800 mb-4">Sobre Nosotros</h2>
-                        <p className="text-slate-600">
-                            Nosotros :)
-                        </p>
-                </section>
+  return (
+    // Navbar
+    <div className="flex flex-col">
+      <nav className="flex flex-row w-full h-25 p-5 justify-between items-center border border-gray-300 shadow-xl">
+        <h1 className="font-bold uppercase text-2xl ">PROYECTO 360</h1>
+
+        <div className="flex flex-row gap-4">
+          <Link
+            to="/login"
+            className="w-35 p-2 text-center bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Iniciar Sesión
+          </Link>
+        </div>
+      </nav>
+
+      {/* Header */}
+      <header className="relative w-full h-150 text-center overflow-hidden ">
+        <div
+          className="absolute w-full h-150 bg-cover bg-center blur-sm"
+          style={{ backgroundImage: `url(${proyectoImg})` }}
+        ></div>
+        <div className="relative flex flex-col items-center justify-center w-full h-full bg-black/30  ">
+          <div className="flex flex-col gap-5 items-center  w-200 ">
+            <h1 className="text-4xl font-bold uppercase text-white">
+              Bienvenido a Visitas Virtuales
+            </h1>
+            <p className="w-140 text-white text-lg font-medium">
+              Explora las instalaciones, aulas y espacios comunes de los mejores
+              centros educativos a través de recorridos virtuales de alta
+              definición.
+            </p>
+            <Link
+              to="/centros"
+              className="w-60 p-2 uppercase font-semibold  text-center bg-blue-600 text-white rounded-3xl hover:bg-blue-700 shadow-xl transition-colors"
+            >
+              Explorar Centros
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <section className="flex w-full justify-center mt-10 mb-10 p-10 ">
+        <div className="flex flex-row flex-wrap gap-10 w-full justify-center ">
+          <div className="flex flex-col w-80 border border-gray-300 rounded-2xl shadow-md overflow-hidden">
+            <img src={tourImg} alt="Imagen tour 360" />
+            <div className="flex flex-col gap-4 p-4 ">
+              <h2 className="uppercase font-bold">Recorrido 360 Realistas</h2>
+              <p className="">
+                Camina por pasillos, laboratorios y áreas deportivas como si
+                estuvieras allí.Nuestra tecnología de alta definición captura
+                cada detalle para una experiencia total inmersiva.
+              </p>
             </div>
-    );
-}
+          </div>
+          <div className="flex flex-col w-80 border border-gray-300 rounded-2xl shadow-md overflow-hidden">
+            <img src={informationImg} alt="Imagen información" />
+            <div className="flex flex-col gap-4 p-4 ">
+              <h2 className="uppercase font-bold">
+                Puntos de interés interativos
+              </h2>
+              <p className="">
+                Haz clic en elementos clave durante tu visita para ver vídeos ,
+                mallas curriculares o fotos de proyectos destacados de cada
+                aula.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col w-80 border border-gray-300 rounded-2xl shadow-md overflow-hidden">
+            <img src={accessImg} alt="Imagen access" />
+            <div className="flex flex-col gap-4 p-4 ">
+              <h2 className="uppercase font-bold">Sin horarios</h2>
+              <p className="">
+                Explora las instalaciones de nuestro centro en cualquier momento
+                y desde cualquier dispositivo, ya sea tablet, móvil u ordenador.
+                Sin importar dónde te encuentres ni el horario.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full p-25 bg-gray-300/30 ">
+        <div className="px-4 text-center">
+          <h2 className="text-3xl font-bold mb-10 text-gray-800 ">
+            Equipo de desarrollo
+          </h2>
+
+          <div className="flex flex-wrap w-full justify-center gap-10">
+            <Link to="https://github.com/Alexis10050">
+              <div className="flex flex-col items-center">
+                <div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
+                  <img
+                    src="https://unavatar.io/github/Alexis10050"
+                    className="rounded-full object-cover w-full h-full"
+                    alt="Dev"
+                  />
+                </div>
+                <h3 className="font-bold text-lg">Alexis</h3>
+                <p className="text-indigo-600 text-sm">Fullstack Developer</p>
+              </div>
+            </Link>
+
+            <Link to="https://github.com/xdlimadev">
+              <div className="flex flex-col items-center">
+                <div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
+                  <img
+                    src="https://unavatar.io/github/xdlimadev"
+                    className="rounded-full object-cover w-full h-full"
+                    alt="Dev"
+                  />
+                </div>
+                <h3 className="font-bold text-lg">Bruno</h3>
+                <p className="text-indigo-600 text-sm">Fullstack Developer</p>
+              </div>
+            </Link>
+
+            <Link to="https://github.com/FlorBauducco">
+              <div className="flex flex-col items-center">
+                <div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
+                  <img
+                    src="https://unavatar.io/github/FlorBauducco"
+                    className="rounded-full object-cover w-full h-full"
+                    alt="Dev"
+                  />
+                </div>
+                <h3 className="font-bold text-lg">Flor</h3>
+                <p className="text-indigo-600 text-sm">Unity Developer</p>
+              </div>
+            </Link>
+
+            <Link to="https://github.com/Jfranciglez">
+              <div className="flex flex-col items-center">
+                <div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
+                  <img
+                    src="https://unavatar.io/github/JFranciglez"
+                    className="rounded-full object-cover w-full h-full"
+                    alt="Dev"
+                  />
+                </div>
+                <h3 className="font-bold text-lg">Jennifer</h3>
+                <p className="text-indigo-600 text-sm">Fullstack Developer</p>
+              </div>
+            </Link>
+            <Link to="https://github.com/orlaa24adDEV">
+              <div className="flex flex-col items-center">
+                <div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
+                  <img
+                    src="https://unavatar.io/github/orlaa24adDEV"
+                    className="rounded-full object-cover w-full h-full"
+                    alt="Dev"
+                  />
+                </div>
+                <h3 className="font-bold text-lg">Orlando</h3>
+                <p className="text-indigo-600 text-sm">Fullstack Developer</p>
+              </div>
+            </Link>
+            <Link to="https://github.com/pablodegalvez">
+              <div className="flex flex-col items-center">
+                <div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
+                  <img
+                    src="https://unavatar.io/github/pablodegalvez"
+                    className="rounded-full object-cover w-full h-full"
+                    alt="Dev"
+                  />
+                </div>
+                <h3 className="font-bold text-lg">Pablo De Galvez</h3>
+                <p className="text-indigo-600 text-sm">Fullstack Developer</p>
+              </div>
+            </Link>
+            <Link to="https://github.com/pva0011">
+              <div className="flex flex-col items-center">
+                <div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
+                  <img
+                    src="https://unavatar.io/github/pva0011"
+                    className="rounded-full object-cover w-full h-full"
+                    alt="Dev"
+                  />
+                </div>
+                <h3 className="font-bold text-lg">Pablo Villena</h3>
+                <p className="text-indigo-600 text-sm">Fullstack Developer</p>
+              </div>
+            </Link>
+            <Link to="https://github.com/jga0037-cell">
+              <div className="flex flex-col items-center">
+                <div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
+                  <img
+                    src="https://unavatar.io/github/jga0037-cell"
+                    className="rounded-full object-cover w-full h-full"
+                    alt="Dev"
+                  />
+                </div>
+                <h3 className="font-bold text-lg">Jose Luis</h3>
+                <p className="text-indigo-600 text-sm">Fullstack Developer</p>
+              </div>
+            </Link>
+            <Link to="https://github.com/fermiinbp03">
+              <div className="flex flex-col items-center">
+                <div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
+                  <img
+                    src="https://unavatar.io/github/fermiinbp03"
+                    className="rounded-full object-cover w-full h-full"
+                    alt="Dev"
+                  />
+                </div>
+                <h3 className="font-bold text-lg">Fermin</h3>
+                <p className="text-indigo-600 text-sm">Unity Developer</p>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
 export default LandingPage;
-
-
-
-
- 
