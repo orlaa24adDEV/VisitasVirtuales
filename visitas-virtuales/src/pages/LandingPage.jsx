@@ -28,11 +28,11 @@ const LandingPage = () => {
           style={{ backgroundImage: `url(${proyectoImg})` }}
         ></div>
         <div className="relative flex flex-col items-center justify-center w-full h-full bg-black/30  ">
-          <div className="flex flex-col gap-5 items-center  w-200 ">
+          <div className="flex flex-col gap-5 items-center md:w-200 p-5">
             <h1 className="text-4xl font-bold uppercase text-white">
               Bienvenido a Visitas Virtuales
             </h1>
-            <p className="w-140 text-white text-lg font-medium">
+            <p className="text-white text-lg font-medium">
               Explora las instalaciones, aulas y espacios comunes de los mejores
               centros educativos a través de recorridos virtuales de alta
               definición.
