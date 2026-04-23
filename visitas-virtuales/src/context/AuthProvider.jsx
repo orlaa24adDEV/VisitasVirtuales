@@ -162,11 +162,9 @@ export const AuthProvider = ({ children }) => {
     await Promise.all([
       fetchProfile(accessToken),
       fetchCenters(accessToken),
-      sleep(1500)
     ]);
 
     setIsExiting(true);
-    await sleep(1000); 
     setIsInitialLoading(false);
   }, [fetchProfile, fetchCenters]);
 
@@ -234,9 +232,10 @@ export const AuthProvider = ({ children }) => {
     fetchCenters,
     saveAllCenters,
     saveSelectedCenter,
+    isInitialLoading,
     isAdmin,
     isTeacher,
-  }), [authState, centerState, login, logout, fetchProfile, fetchCenters, saveAllCenters, saveSelectedCenter, isAdmin, isTeacher]);
+  }), [authState, centerState, login, logout, fetchProfile, fetchCenters, saveAllCenters, saveSelectedCenter, isInitialLoading, isAdmin, isTeacher]);
 
   return (
     <AuthContext.Provider value={value}>

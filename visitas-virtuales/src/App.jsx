@@ -10,14 +10,15 @@ import CenterSelectionPage from './pages/CenterSelectionPage.jsx';
 import ListPois from './pages/ListPois.jsx';
 import { useAuth } from '@/hooks/useAuth.js';
 import Viewer from './pages/Viewer.jsx';
-import { AdminRoute } from './components/ProtectedRoute.jsx';
+import { ProtectedRoute } from './components/ProtectedRoute.jsx';
 import './assets/App.css';
 import { Toaster } from 'sonner';
 import LandingPage from './pages/LandingPage.jsx';
+import LoadingPage from './components/LoadingPage.jsx';
 
 
 function App() {
-    const { authState, centerState, logout, isAdmin } = useAuth();
+    const { authState, centerState, logout, isInitialLoading } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { user } = authState;
     const { selectedCenter } = centerState;
@@ -56,7 +57,7 @@ function App() {
                         <Route path="/" element={<LandingPage />} />
 
                         {/* 2. ACCESO ADMIN/PROFE */}
-                        <Route path="/login" element={!user ? <Login/> : <Navigate to="/viewer" replace />} />
+                        <Route path="/login" element={<Login />} />
 
                         {/* 3. SELECCIÓN DE CENTROS: Pública para el invitado */}
                         <Route path="/centros" element={<CenterSelectionPage />} />
@@ -71,13 +72,13 @@ function App() {
                         {/* 5. RUTAS BLOQUEADAS PARA INVITADOS (Solo Admin/Profe) */}
                         <Route 
                             path="/listpois" 
-                            element={user ? <ListPois centerId={selectedCenter?.id} /> : <Navigate to="/login" replace />} 
+                            element={selectedCenter ? <ProtectedRoute requiredRoles={['admin', 'teacher']}><ListPois centerId={centerState.selectedCenter.id} /></ProtectedRoute> : <Navigate to="/centros" replace />}
                         />
-                        <Route path="/crud" element={<AdminRoute><Crud /></AdminRoute>} />
-                        <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
+                        <Route path="/crud" element={selectedCenter ? <ProtectedRoute requiredRoles={['admin', 'teacher']}><Crud /></ProtectedRoute> : <Navigate to="/centros" replace />} />
+                        <Route path="/dashboard" element={<ProtectedRoute requiredRoles={['admin']}><Dashboard /></ProtectedRoute>} />
                         <Route 
                             path="/historial" 
-                            element={isAdmin ? <AdminRoute><Historial /></AdminRoute> : <Navigate to="/viewer" replace />} 
+                            element={<ProtectedRoute requiredRoles={["admin"]}><Historial /></ProtectedRoute>}
                         />
 
                         {/* 6. REDIRECCIÓN FINAL: Si se pierde, vuelve a la Landing */}
