@@ -1,9 +1,18 @@
-import { generateAccessToken, generateRefreshToken } from '../helpers/jwt.js'
-import { verifyToken } from '../helpers/jwt.js'
-import { getHttpOnlyCookieOptions } from '../helpers/cookies.js'
+import type { CookieOptions, Request, Response } from 'express'
+import {
+	generateAccessToken,
+	generateRefreshToken,
+	verifyToken,
+} from '../helpers/jwt.ts'
+import { getHttpOnlyCookieOptions } from '../helpers/cookies.ts'
 import userService from '../services/userService.ts'
-import { env } from '../../env.ts'
-import { clear } from 'node:console'
+import type { ValidAuthenticatedRequest } from '../middlewares/validation.ts'
+import { env } from '../env.ts'
+import {
+	updateCurrUserProfileSchema,
+	userLoginSchema,
+	userRegisterSchema,
+} from '../db/schema.ts'
 
 /**
  *
@@ -12,21 +21,25 @@ import { clear } from 'node:console'
  *
  * No se devuelven tokens de autenticación al registrar un nuevo usuario, se obtendrán al iniciar sesión.
  */
-export const registerHandler = async (req, res) => {
-	await userService.register(req.body)
+export const registerHandler = async (req: Request, res: Response) => {
+	const { body: userData } = (
+		req as ValidAuthenticatedRequest<typeof userRegisterSchema>
+	).validData
+	await userService.register(userData)
 	res.status(201).json({
 		message: 'Usuario registrado exitosamente',
 	})
 }
-
 /**
  *
  * @param request.body debe contener email o username y password
  * @returns objeto con accessToken (refreshToken se envía al cliente en una cookie HTTP-only)
  * @throws manejados por middleware apiErrorHandler
  */
-export const loginHandler = async (req, res) => {
-	const tokenPair = await userService.login(req.body)
+export const loginHandler = async (req: Request, res: Response) => {
+	const { body } = (req as ValidAuthenticatedRequest<typeof userLoginSchema>)
+		.validData
+	const tokenPair = await userService.login(body)
 	// Insertar token de actualización en cookie HTTP-only para que el cliente lo envíe automáticamente en cada solicitud
 	res.cookie('refreshToken', tokenPair.refreshToken, getHttpOnlyCookieOptions())
 	res.json({
@@ -41,18 +54,24 @@ export const loginHandler = async (req, res) => {
  *
  * Logout envia instrucciones al navegador para eliminar la cookie HTTP-only refreshToken
  */
-export const logoutHandler = (req, res) => {
-	const options = getHttpOnlyCookieOptions()
+export const logoutHandler = (req: Request, res: Response) => {
+	const options = getHttpOnlyCookieOptions() as CookieOptions
 	delete options.maxAge
 	res.clearCookie('refreshToken', options)
 	res.status(200).json({ message: 'Logout successful' })
 }
 
-// TODO: implementar endpoint para que el usuario pueda actualizar su perfil
-export const userUpdateHandler = (req, res) => {
+export const userUpdateHandler = async (req: Request, res: Response) => {
+	const { user, validData } = req as ValidAuthenticatedRequest<
+		typeof updateCurrUserProfileSchema
+	>
+
+	// validData.body ahora está correctamente tipado con los campos de usuario
+	const updatedUser = await userService.updateUser(user.sub, validData.body)
+
 	res.json({
-		message:
-			'Ruta para actualizar el perfil del usuario autenticado - ID obtenido desde el token de acceso',
+		message: 'Perfil actualizado exitosamente',
+		user: updatedUser,
 	})
 }
 
@@ -64,7 +83,7 @@ export const userUpdateHandler = (req, res) => {
  * El token de actualización se enviará desde el cliente en una cookie HTTP-only para evitar ataques XSS.
  * El cliente no tiene acceso directo a esta cookie, el navegador la envía automáticamente en cada solicitud al backend.
  */
-export const refreshTokenHandler = async (req, res) => {
+export const refreshTokenHandler = async (req: Request, res: Response) => {
 	const token = req.cookies?.refreshToken
 
 	// Denegar acceso si no se proporciona un token de actualización
@@ -116,8 +135,9 @@ export const refreshTokenHandler = async (req, res) => {
  * @returns perfil del usuario autenticado
  * @throws manejados por middleware apiErrorHandler
  */
-export const profileHandler = async (req, res) => {
-	const userProfile = await userService.getUserProfile(req.user.sub)
+export const profileHandler = async (req: Request, res: Response) => {
+	const validReq = req as ValidAuthenticatedRequest
+	const userProfile = await userService.getUserProfile(validReq.user.sub)
 	return res.json({
 		message: 'Perfil de usuario obtenido exitosamente',
 		profile: userProfile,

@@ -1,4 +1,4 @@
-import { db } from '../db/db.js'
+import { db } from '../db/db.ts'
 import { type Center, centers } from '../db/schema.ts'
 
 const getAllCenters: () => Promise<Center[]> = async () => {

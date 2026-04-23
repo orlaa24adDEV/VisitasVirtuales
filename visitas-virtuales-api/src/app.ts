@@ -1,12 +1,13 @@
-import { env } from '../env.ts'
+import type { Request, Response, RequestHandler } from 'express'
+import { env } from './env.ts'
 import express from 'express'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
 import swaggerUi from 'swagger-ui-express'
 import userRoutes from './routes/userRoutes.ts'
 import centerRoutes from './routes/centerRoutes.ts'
-import poiRoutes from './routes/poiRoutes.js'
-import apiErrorThrown from './middlewares/apiErrorThrown.js'
+import poiRoutes from './routes/poiRoutes.ts'
+import errorHandler from './middlewares/errorHandler.ts'
 import cors from 'cors'
 import helmet from 'helmet'
 import { readFileSync } from 'node:fs'
@@ -16,8 +17,11 @@ import { fileURLToPath } from 'node:url'
 const app = express()
 
 // Logger para solicitudes HTTP
-morgan.token('status-message', (req, res) => res.statusMessage || '')
-app.use(morgan('dev'))
+morgan.token(
+	'status-message',
+	(req: Request, res: Response) => res.statusMessage || '',
+)
+app.use(morgan('dev') as RequestHandler)
 
 // Middleware para establecer headers de seguridad en las respuestas
 app.use(helmet())
@@ -26,24 +30,31 @@ app.use(helmet())
 app.use(express.json())
 
 // Middleware para extraer cookies de las solicitudes
-app.use(cookieParser())
+app.use(cookieParser() as RequestHandler)
 
 // Permitir CORS desde la app de React (Vite)
-const allowedOrigins = [env.FRONTEND_URL, 'http://localhost:5173']
+const allowedOrigins = [
+	env.FRONTEND_URL,
+	'http://localhost:5173',
+	'http://localhost:8000',
+]
 
 app.use(
-    cors({
-        // 2. Uso una función para comprobar si el origen de la petición está en la lista
-        origin: (origin, callback) => {
-            if (!origin || allowedOrigins.includes(origin)) {
-                callback(null, true)
-            } else {
-                callback(new Error('Not allowed by CORS'))
-            }
-        },
-        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-        credentials: true,
-    }),
+	cors({
+		// Comprobar si el origen de la petición está en la lista
+		origin: (
+			origin: string | undefined,
+			callback: (err: Error | null, allow?: boolean) => void,
+		) => {
+			if (!origin || allowedOrigins.includes(origin)) {
+				callback(null, true)
+			} else {
+				callback(new Error('Origen no permitido por CORS'))
+			}
+		},
+		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+		credentials: true,
+	}) as RequestHandler,
 )
 
 // Montar rutas de usuarios
@@ -64,7 +75,7 @@ if (env.APP_STAGE !== 'prod') {
 }
 
 // Middleware para manejar errores lanzados desde servicios
-app.use(apiErrorThrown)
+app.use(errorHandler)
 
 app.listen(env.APP_PORT, () =>
 	console.log(`Servidor escuchando en puerto ${env.APP_PORT}`),

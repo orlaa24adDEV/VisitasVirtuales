@@ -1,15 +1,24 @@
 import { Router } from 'express'
 import hasRoles from '../middlewares/hasRole.ts'
 import {
-  poisByCenterHandler,
-  newPoiHandler,
-  deletePoiHandler,
-  poisByCenterAndFuzzyNameHandler,
-  allPoisHandler,
-  updatePoiHandler,
-} from '../controllers/poiController.js'
-import { validateBody, validateParams, validateRequest } from '../middlewares/validation.ts'
-import { poiByCenterSchema, poiCreateSchema, poiDeleteSchema } from '../db/schema.ts'
+	poisByCenterHandler,
+	newPoiHandler,
+	deletePoiHandler,
+	poisByCenterAndFuzzyNameHandler,
+	allPoisHandler,
+	updatePoiHandler,
+} from '../controllers/poiController.ts'
+import {
+	validateBody,
+	validateParams,
+	validateRequest,
+} from '../middlewares/validation.ts'
+import {
+	poiByCenterSchema,
+	createPoiSchema,
+	deletePoiSchema,
+	updatePoiSchema,
+} from '../db/schema.ts'
 
 export const router = Router()
 
@@ -56,10 +65,13 @@ export const router = Router()
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
 router.post(
-  '/centers/:centerId/pois',
-  hasRoles(['admin', 'teacher']),
-  validateBody(poiCreateSchema),
-  newPoiHandler,
+	'/centers/:centerId/pois',
+	hasRoles(['admin', 'teacher']),
+	validateRequest({
+		params: createPoiSchema.shape.params,
+		body: createPoiSchema.shape.body,
+	}),
+	newPoiHandler,
 )
 
 /**
@@ -99,10 +111,15 @@ router.post(
  *       403:
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
-router.get('/centers/:centerId/pois', hasRoles(['admin', 'teacher', 'guest']), validateRequest({
-    params: poiByCenterSchema.shape.params,
-    query: poiByCenterSchema.shape.query
-  }), poisByCenterHandler)
+router.get(
+	'/centers/:centerId/pois',
+	hasRoles(['admin', 'teacher', 'guest']),
+	validateRequest({
+		params: poiByCenterSchema.shape.params,
+		query: poiByCenterSchema.shape.query,
+	}),
+	poisByCenterHandler,
+)
 
 /**
  * @openapi
@@ -135,9 +152,12 @@ router.get('/centers/:centerId/pois', hasRoles(['admin', 'teacher', 'guest']), v
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
 router.get(
-  '/centers/:centerId/pois/search',
-  hasRoles(['admin', 'teacher', 'guest']),
-  poisByCenterAndFuzzyNameHandler,
+	'/centers/:centerId/pois/search',
+	hasRoles(['admin', 'teacher', 'guest']),
+	validateRequest({
+		params: poiByCenterSchema.shape.params,
+	}),
+	poisByCenterAndFuzzyNameHandler,
 )
 
 /**
@@ -200,10 +220,13 @@ router.get('/pois', hasRoles('admin'), allPoisHandler)
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
 router.patch(
-  '/centers/:centerId/pois/:id',
-  hasRoles(['admin', 'teacher']),
-  validateBody(poiCreateSchema),
-  updatePoiHandler,
+	'/centers/:centerId/pois/:id',
+	hasRoles(['admin', 'teacher']),
+	validateRequest({
+		params: updatePoiSchema.shape.params,
+		body: updatePoiSchema.shape.body,
+	}),
+	updatePoiHandler,
 )
 
 /**
@@ -236,10 +259,12 @@ router.patch(
  *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
  */
 router.delete(
-  '/centers/:centerId/pois/:poiId',
-  hasRoles(['admin', 'teacher']),
-  validateParams(poiDeleteSchema),
-  deletePoiHandler,
+	'/centers/:centerId/pois/:id',
+	hasRoles(['admin', 'teacher']),
+	validateRequest({
+		params: deletePoiSchema.shape.params,
+	}),
+	deletePoiHandler,
 )
 
 export default router

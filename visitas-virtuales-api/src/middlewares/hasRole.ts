@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express'
-import { getGuestUser, verifyToken } from '../helpers/jwt.js'
-import { env } from '../../env.ts'
+import { getGuestUser, verifyToken } from '../helpers/jwt.ts'
+import { env } from '../env.ts'
 import type { JWTPayload } from 'jose'
 import type { UserRoleType } from '../db/schema.ts'
 
@@ -48,12 +48,12 @@ const hasRole = (roles: UserRoleType | UserRoleType[]) => {
 				// Si la verificación del token falla y no se permiten invitados, denegar el acceso
 				if (!allowedRoles.includes('guest')) {
 					env.APP_STAGE === 'dev' &&
-					console.warn(
-						'Token de acceso inválido o expirado para ruta protegida: ' +
-							req.method +
-							' ' +
-							req.originalUrl,
-					)
+						console.warn(
+							'Token de acceso inválido o expirado para ruta protegida: ' +
+								req.method +
+								' ' +
+								req.originalUrl,
+						)
 					return res.status(403).json({
 						message: 'Token de acceso inválido o expirado',
 					})
@@ -65,15 +65,11 @@ const hasRole = (roles: UserRoleType | UserRoleType[]) => {
 		if (!authReq.user && allowedRoles.includes('guest')) {
 			authReq.user = getGuestUser() as GuestJWTPayload
 		}
-		
+
 		const userRole = authReq.user?.role
 		if (env.APP_STAGE === 'dev') {
-			console.log(
-				`Rol de usuario detectado: ${userRole}`,
-			)
-			console.log(
-				`Roles permitidos para esta ruta: ${allowedRoles.join(', ')}`,
-			)
+			console.log(`Rol de usuario detectado: ${userRole}`)
+			console.log(`Roles permitidos para esta ruta: ${allowedRoles.join(', ')}`)
 		}
 
 		// Si el token no contiene un rol, denegar el acceso
