@@ -10,6 +10,7 @@ import Button from './Button.jsx';
 import CenterSelectButton from './CenterSelectButton.jsx';
 import ClickOutsideWrapper from './ClickOutsideWrapper.jsx';
 
+
 TopHeader.propTypes = {
     onMenuClick: PropTypes.func.isRequired,
     isLog: PropTypes.bool.isRequired,
@@ -54,7 +55,7 @@ export default function TopHeader({
     const handleLogoutClick = () => {
         onLogout();
         setIsOpen(false);
-        navigate('/login');
+        navigate('/');
     };
 
     return (
