@@ -44,7 +44,7 @@ const hasRole = (roles: UserRoleType | UserRoleType[]) => {
 			try {
 				const { payload } = await verifyToken(token)
 				authReq.user = payload
-			} catch (err) {
+			} catch {
 				// Si la verificación del token falla y no se permiten invitados, denegar el acceso
 				if (!allowedRoles.includes('guest')) {
 					env.APP_STAGE === 'dev' &&

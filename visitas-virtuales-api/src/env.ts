@@ -1,7 +1,17 @@
+import { z } from 'zod'
 import { existsSync } from 'node:fs'
 import { config as loadEnv } from 'dotenv'
 import { expand as expandEnv } from 'dotenv-expand'
-import { z } from 'zod'
+
+// Aceptar .env o .env.dev para desarrollo
+const envFile = existsSync('.env.dev') ? '.env.dev' : '.env'
+if (process.env.APP_STAGE === 'dev' || !process.env.APP_STAGE) {
+	console.log(`Modo desarrollo. Cargando variables desde ${envFile}`)
+	const loaded = loadEnv({ path: envFile, quiet: true })
+	expandEnv(loaded)
+}
+
+// En producción, las variables de entorno son proporcionadas por Docker
 
 // Usar schema de zod para validar las variables de entorno de forma estricta, evitando
 // que la app se ejecute con configuraciones incorrectas o faltantes.
@@ -20,6 +30,12 @@ const envSchema = z.object({
 	JWT_ISSUER: z.string().min(1),
 	JWT_AUDIENCE: z.string().min(1),
 	FRONTEND_URL: z.string().startsWith('http'),
+	MINIO_ROOT_USER: z.string().min(1),
+	MINIO_ROOT_PASSWORD: z.string().min(32),
+	MINIO_ENDPOINT: z.string().min(1),
+	MINIO_PORT: z.coerce.number().min(1).max(65535),
+	MINIO_USE_SSL: z.enum(['true', 'false']).transform((val) => val === 'true'),
+	MINIO_BUCKET_NAME: z.string().min(1),
 })
 
 // Garantizar que la variable de entorno APP_STAGE esté definida, dev por defecto
@@ -28,31 +44,19 @@ const validStageSchema = envSchema
 	.default({ APP_STAGE: 'dev' })
 try {
 	validStageSchema.parse({ APP_STAGE: process.env.APP_STAGE })
-} catch (error) {
+} catch (e) {
 	console.error(
 		"APP_STAGE inválido o no definido. Debe ser 'dev', 'stage' o 'prod'.",
 	)
 	process.exit(1)
 }
 
-// Aceptar .env o .env.dev para desarrollo
-const envFile = existsSync('.env.dev') ? '.env.dev' : '.env'
-
-// En producción, las variables de entorno son proporcionadas por Docker
-
-// Cargar y expandir variables de entorno
-if (process.env.APP_STAGE === 'dev' || !process.env.APP_STAGE) {
-	console.log(`Modo desarrollo. Cargando variables desde ${envFile}`)
-	const loaded = loadEnv({ path: envFile, quiet: true })
-	expandEnv(loaded)
-}
-
 // Exportar objeto env con variables de entorno validadas y tipadas
 export const env = (() => {
 	try {
 		return envSchema.parse(process.env)
-	} catch (error) {
-		console.error('Error en variables de entorno:', error)
+	} catch (e) {
+		console.error('Error en variables de entorno:', e)
 		process.exit(1)
 	}
 })()

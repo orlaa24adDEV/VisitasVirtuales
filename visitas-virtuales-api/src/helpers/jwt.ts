@@ -43,8 +43,8 @@ export const verifyToken = async (token: string) => {
 			audience: env.JWT_AUDIENCE,
 		})
 		return { payload: payload as TokenPayload }
-	} catch (err: any) {
-		throw new Error('Token inválido o expirado: ' + err.message)
+	} catch (e: any) {
+		throw new Error('Token inválido o expirado: ' + e.message)
 	}
 }
 
