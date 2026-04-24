@@ -2,7 +2,7 @@ module.exports = {
 	apps: [
 		{
 			name: 'visitas-virtuales',
-			script: './dist/app.js',
+			script: './dist/index.js',
 			node_args: '--import ./dist/env.js',
 			exec_mode: 'cluster',
 			instances: 'max',

@@ -28,9 +28,28 @@ services:
     networks:
       - vv-network
 
+  minio_service:
+    image: minio/minio
+    container_name: vv-minio
+    env_file:
+      - .env.prod
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_DEFAULT_BUCKETS: bucket1
+    networks:
+      - vv-network
+    ports:
+      - '9000:9000'
+      - '9001:9001' # Consola web de MinIO
+    command: server /data --console-address ":9001"
+    volumes:
+      - miniodata-prod:/data
+
 networks:
   vv-network:
     driver: bridge
 
 volumes:
   pgdata-prod:
+  miniodata-prod:

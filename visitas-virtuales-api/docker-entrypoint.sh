@@ -31,7 +31,7 @@ if [ "$APP_STAGE" = "stage" ]; then
   fi
 
   echo "Base de datos recreada correctamente. Ejecutando migraciones e insertando datos de prueba..."
-  npm run db:migrate && npm run deploy:stage:db:seed
+  npm run db:migrate && npm run stage:db:seed
   if [ $? -ne 0 ]; then
     echo "Error al ejecutar migraciones o insertar datos de prueba."
     exit 1

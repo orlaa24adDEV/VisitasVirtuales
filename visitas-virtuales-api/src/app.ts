@@ -13,6 +13,8 @@ import helmet from 'helmet'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import minioService from './services/minioService.ts'
+import appBootstrap from './helpers/appBootstrap.ts'
 
 const app = express()
 
@@ -54,6 +56,7 @@ app.use(
 		},
 		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
 		credentials: true,
+		exposedHeaders: ['ETag'], // Permitir acceso a header ETag (subida multipart)
 	}) as RequestHandler,
 )
 
@@ -77,8 +80,7 @@ if (env.APP_STAGE !== 'prod') {
 // Middleware para manejar errores lanzados desde servicios
 app.use(errorHandler)
 
-app.listen(env.APP_PORT, () =>
-	console.log(`Servidor escuchando en puerto ${env.APP_PORT}`),
-)
+// El servidor se inicia en index.ts mediante appBootstrap.
+// Primero incializa MinIO y comprueba el bucket, luego arranca el servidor.
 
 export default app
