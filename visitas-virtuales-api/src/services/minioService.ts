@@ -9,6 +9,7 @@ const minioClient = new Minio.Client({
 	useSSL: env.MINIO_USE_SSL,
 	accessKey: env.MINIO_ROOT_USER,
 	secretKey: env.MINIO_ROOT_PASSWORD,
+	pathStyle: true,
 })
 
 // Una sola región y bucket para toda la app, gestionados por este servicio

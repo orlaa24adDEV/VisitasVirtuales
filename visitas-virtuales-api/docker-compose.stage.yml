@@ -11,6 +11,7 @@ services:
     env_file:
       - .env.stage
     depends_on:
+      - minio_service
       - postgres_service
     networks:
       - vv-network
