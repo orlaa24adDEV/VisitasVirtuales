@@ -24,7 +24,7 @@ jobs:
             
             # Desplegar API
             cd visitas-virtuales-api
-            npm run deploy:stage:restart
+            npm run stage:restart
 
             # Desplegar Frontend
             cd ../visitas-virtuales
