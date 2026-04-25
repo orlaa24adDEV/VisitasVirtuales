@@ -13,7 +13,7 @@ const upload = multer({
 
 /**
  * @openapi
- * /upload/init:
+ * /api/v1/upload/init:
  *   post:
  *     summary: Iniciar subida multipart a MinIO
  *     tags:
@@ -57,6 +57,13 @@ const upload = multer({
 // Iniciar subida multipart
 router.post('/upload/init', async (req, res) => {
 	try {
+		if (!req.body) {
+			return res
+				.status(400)
+				.json({
+					error: 'Solicitud sin cuerpo, se requieren fileName y mimeType',
+				})
+		}
 		const { fileName, mimeType } = req.body
 		if (!fileName || !mimeType) {
 			return res
@@ -85,7 +92,7 @@ router.post('/upload/init', async (req, res) => {
 
 /**
  * @openapi
- * /upload/part:
+ * /api/v1/upload/part:
  *   post:
  *     summary: Subir parte de un fichero a MinIO
  *     tags:
@@ -159,7 +166,7 @@ router.post('/upload/part', upload.single('file'), async (req, res) => {
 
 /**
  * @openapi
- * /upload/abort:
+ * /api/v1/upload/abort:
  *   post:
  *     summary: Cancelar una subida multipart en curso
  *     tags:
@@ -212,7 +219,7 @@ router.post('/upload/abort', async (req, res) => {
 
 /**
  * @openapi
- * /upload/complete:
+ * /api/v1/upload/complete:
  *   post:
  *     summary: Completar una subida multipart
  *     tags:

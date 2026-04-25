@@ -81,7 +81,7 @@
         }
       }
     },
-    "/upload/init": {
+    "/api/v1/upload/init": {
       "post": {
         "summary": "Iniciar subida multipart a MinIO",
         "tags": [
@@ -142,7 +142,7 @@
         }
       }
     },
-    "/upload/part": {
+    "/api/v1/upload/part": {
       "post": {
         "summary": "Subir parte de un fichero a MinIO",
         "tags": [
@@ -204,7 +204,7 @@
         }
       }
     },
-    "/upload/abort": {
+    "/api/v1/upload/abort": {
       "post": {
         "summary": "Cancelar una subida multipart en curso",
         "tags": [
@@ -257,7 +257,7 @@
         }
       }
     },
-    "/upload/complete": {
+    "/api/v1/upload/complete": {
       "post": {
         "summary": "Completar una subida multipart",
         "tags": [
