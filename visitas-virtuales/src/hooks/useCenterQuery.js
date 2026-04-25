@@ -3,7 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 import { useNavigate } from 'react-router-dom';
 
-// Mapeo de ID de centro (BD) al índice de escena en el build de Unity
+
+// Mapeo de ID de centro (BD) al índice de escena en el build de Unity.IMPORTANTE: Debe coincidir exactamente con el orden de las escenas
 // Escena 0: Bootstrap (arranque), Escena 1: Madrid, Escena 2: Córdoba las que tenemos
 // Los centros sin escena propia apuntan a la escena 1 como fallback por ahora
 const ESCENAS_POR_CENTRO = {
