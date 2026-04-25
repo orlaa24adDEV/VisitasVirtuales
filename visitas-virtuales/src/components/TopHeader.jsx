@@ -10,6 +10,7 @@ import Button from './Button.jsx';
 import CenterSelectButton from './CenterSelectButton.jsx';
 import ClickOutsideWrapper from './ClickOutsideWrapper.jsx';
 
+
 TopHeader.propTypes = {
     onMenuClick: PropTypes.func.isRequired,
     isLog: PropTypes.bool.isRequired,
@@ -54,7 +55,7 @@ export default function TopHeader({
     const handleLogoutClick = () => {
         onLogout();
         setIsOpen(false);
-        navigate('/login');
+        navigate('/');
     };
 
     return (
@@ -68,7 +69,7 @@ export default function TopHeader({
             ) : null}
             {!user ? (
                 <Link to="/">
-                    <h1 className="hidden lg:flex gap-2 text-lg font-semibold text-slate-800 justify-center items-center">
+                    <h1 className=" lg:flex gap-2 text-lg font-semibold text-slate-800 justify-center items-center">
                     <Compass size={22} strokeWidth={2} className='text-slate-800'/>
                     Visita 360º
                     </h1>

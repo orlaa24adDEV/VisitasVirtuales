@@ -33,8 +33,8 @@ const Button = ({
     const iconOnly = hasIcon && childrenArray.length === 1;
     
     const sizes = {
-        small: `text-sm h-8 ${iconOnly ? 'w-8 p-0' : 'px-3'} font-medium`,
-        normal: `text-base h-10 ${iconOnly ? 'w-10 p-0' : 'px-4'} py-2 font-medium`,
+        small: `text-xs h-8 ${iconOnly ? 'w-8 p-0' : 'px-3'} font-medium`,
+        normal: `text-sm sm:text-base h-10 ${iconOnly ? 'w-10 p-0' : 'px-4'} py-2 font-medium`,
         large: `text-lg h-12 ${iconOnly ? 'w-12 p-0' : 'px-8'} py-3 font-semibold`,
     };
 
@@ -54,7 +54,7 @@ const Button = ({
                     </span>
                 );
             }
-            return child;
+            return typeof child ==='string' ? <span key={idx}>{child}</span> : child;
         });
     };
 

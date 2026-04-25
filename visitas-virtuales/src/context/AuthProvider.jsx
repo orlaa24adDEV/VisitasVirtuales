@@ -1,23 +1,25 @@
-import { createContext } from 'react'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import {
-	setAccessToken,
-	removeAccessToken,
-	isTokenExpired,
-	getAccessToken,
+  setAccessToken,
+  removeAccessToken,
+  isTokenExpired,
+  getAccessToken,
 } from '../helpers/auth.js'
 import { sleep } from '../helpers/sleep.js'
 import { AuthContext } from '@/context/AuthContext.js'
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js'
 import LoadingPage from '../components/LoadingPage.jsx'
+import { useNavigate } from 'react-router-dom';
 
 // Proveedor del contexto. Maneja estado de usuario, autenticación, centros y carga inicial
 export const AuthProvider = ({ children }) => {
-	// Estado de carga inicial (espera a cargar perfil y centros antes de mostrar la app)
-	const [isInitialLoading, setIsInitialLoading] = useState(true)
-	const isFirstLoad = useRef(true);
-	const [isExiting, setIsExiting] = useState(false) // Para manejar transición al cargar página
-
+  // Estado de carga inicial (espera a cargar perfil y centros antes de mostrar la app)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const isFirstLoad = useRef(true);
+  const CHECK_INTERVAL = 5 * 60 * 1000;
+  const lastCheckRef = useRef(Date.now());
+  const [isExiting, setIsExiting] = useState(false) // Para manejar transición al cargar página
+  const navigate = useNavigate();
   // Perfil del usuario autenticado y token de acceso
   const [authState, setAuthState] = useState({
     user: null,
@@ -26,203 +28,229 @@ export const AuthProvider = ({ children }) => {
     userError: null,
   })
 
-	// Todos los centros disponibles y el centro seleccionado
-	const [centerState, setCenterState] = useState({
-		allCenters: [],
-		isCentersLoading: false,
-		centersError: null,
-		selectedCenter: null,
-	})
+  // Carga inicial de centros desde localStorage al montar el proveedor, para evitar parpadeos y llamadas innecesarias
+  const getInitialCenters = () => {
+    let allCenters = [];
+    let selectedCenter = null;
+    try {
+      const storedCenters = localStorage.getItem('allCenters');
+      if (storedCenters) allCenters = JSON.parse(storedCenters);
+      const storedSelected = localStorage.getItem('selectedCenter');
+      if (storedSelected) selectedCenter = JSON.parse(storedSelected);
+    } catch {
+      localStorage.removeItem('allCenters');
+      localStorage.removeItem('selectedCenter');
+    }
+    return {
+      allCenters,
+      isCentersLoading: false,
+      centersError: null,
+      selectedCenter,
+    };
+  };
 
-	/* ============================= */
-	/* ==== Gestión de usuarios ==== */
-	/* ============================= */
+  const [centerState, setCenterState] = useState(getInitialCenters);
 
-	// Al hacer login, se guarda el token y se cargan perfil y centros solo si no están cargados
-	const login = async (accessToken) => {
-		setAccessToken(accessToken);
-		// Solo cargar perfil y centros si no están ya cargados
-		await fetchProfile(accessToken);
-		if (centerState.allCenters.length === 0) {
-			await fetchCenters(accessToken);
-		}
-	}
+  /* =========================================== */
+  /* ==== Autenticación y gestión de tokens ==== */
+  /* =========================================== */
+
+  const refreshTokens = useCallback(async () => {
+    try {
+      const response = await fetchWithTimeout('/api/users/auth/refresh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      }, 5000)
+
+      if (!response.ok) throw new Error('No se pudieron renovar los tokens')
+      const data = await response.json()
+      setAuthState((prev) => ({ ...prev, accessToken: data.accessToken }))
+      return data.accessToken
+    } catch (e) {
+      setAuthState((prev) => ({ ...prev, user: null, accessToken: null }))
+      return null
+    }
+  }, []);
+
+  const getValidAccessToken = useCallback(async () => {
+    const token = getAccessToken()
+    if (!token) return null
+
+    if (isTokenExpired(token)) {
+      const newToken = await refreshTokens()
+      if (!newToken) {
+        removeAccessToken()
+        return null
+      }
+      return newToken
+    }
+
+    return token
+  }, [refreshTokens]);
+
+  /* ============================= */
+  /* ==== Gestión de usuarios ==== */
+  /* ============================= */
 
   // Carga el perfil del usuario autenticado, renovando tokens si es necesario
-	const fetchProfile = async (providedToken = null) => {
-		const minimumTimer = !isFirstLoad.current ? sleep(0) : sleep(1200);
-		isFirstLoad.current = false;
+  const fetchProfile = useCallback(async (providedToken = null) => {
+    try {
+      let token = providedToken || (await getValidAccessToken());
+      if (token) {
+        const res = await fetchWithTimeout(
+          '/api/me',
+          { headers: { Authorization: `Bearer ${token}` } },
+          5000
+        );
+        if (!res.ok) throw new Error('Session invalid');
+        const data = await res.json();
+        setAuthState((prev) => ({ ...prev, user: data.profile }));
+      } else {
+        setAuthState((prev) => ({ ...prev, user: null }));
+      }
+    } catch (err) {
+      removeAccessToken();
+      setAuthState((prev) => ({ ...prev, user: null }));
+    }
+  }, [getValidAccessToken]);
 
-		try {
-			let token = providedToken || (await getValidAccessToken());
+  /* ============================ */
+  /* ==== Gestión de centros ==== */
+  /* ============================ */
 
-			if (token) {
-				const res = await fetchWithTimeout(
-					'/api/me',
-					{ headers: { Authorization: `Bearer ${token}` } },
-					5000
-				);
-				if (!res.ok) throw new Error('Session invalid');
-				const data = await res.json();
-				setAuthState((prev) => ({ ...prev, user: data.profile }));
-			} else {
-				setAuthState((prev) => ({ ...prev, user: null }));
-			}
-		} catch (err) {
-			console.error('Profile fetch failed:', err);
-			removeAccessToken();
-			setAuthState((prev) => ({ ...prev, user: null }));
-		} finally {
-			await minimumTimer; 
-			setIsExiting(true);
-			await sleep(600);
-			setIsInitialLoading(false);
-		}
-	};
+  // Carga la lista de centros, renovando tokens si es necesario
+  const fetchCenters = useCallback(async (providedToken = null) => {
+    setCenterState((prev) => ({ ...prev, isCentersLoading: true, centersError: null }));
+    try {
+      const token = providedToken || (await getValidAccessToken());
+      const response = await fetchWithTimeout(
+        '/api/centers',
+        { headers: { Authorization: `Bearer ${token}` } },
+        5000
+      );
 
-	/* ============================ */
-	/* ==== Gestión de centros ==== */
-	/* ============================ */
+      if (!response.ok) throw new Error('Error al cargar centros');
 
-	
-	const saveSelectedCenter = (center) => {
-		setCenterState((prev) => ({ ...prev, selectedCenter: center }))
-		localStorage.setItem('selectedCenter', JSON.stringify(center))
-	}
+      const data = await response.json();
+      lastCheckRef.current = Date.now();
+      
+      setCenterState((prev) => {
+        const prevStr = JSON.stringify(prev.allCenters);
+        const newStr = JSON.stringify(data.centers);
+        if (prevStr !== newStr) {
+          localStorage.setItem('allCenters', newStr);
+          return { ...prev, allCenters: data.centers };
+        }
+        return { ...prev };
+      });
+    } catch (e) {
+      setCenterState((prev) => ({ ...prev, centersError: 'Error de red' }));
+    } finally {
+      setCenterState((prev) => ({ ...prev, isCentersLoading: false }));
+    }
+  }, [getValidAccessToken]);
 
-	const saveAllCenters = (allCenters) => {
-		setCenterState((prev) => ({ ...prev, allCenters }))
-		localStorage.setItem('allCenters', JSON.stringify(allCenters))
-	}
+  // Al hacer login, se guarda el token y se cargan perfil y centros solo si no están cargados
+  const login = useCallback(async (accessToken) => {
+    setIsInitialLoading(true);
+    setIsExiting(false);
+    
+    setAccessToken(accessToken);
 
-	// Carga la lista de centros, renovando tokens si es necesario
-	const fetchCenters = async (providedToken = null) => {
-		setCenterState((prev) => ({ ...prev, isCentersLoading: true, centersError: null }));
+    // Evitar re-renders innecesarios cargando perfil y centros en paralelo
+    await Promise.all([
+      fetchProfile(accessToken),
+      fetchCenters(accessToken),
+    ]);
 
-		try {
-			const token = providedToken || (await getValidAccessToken());
-			
-			const response = await fetchWithTimeout(
-				'/api/centers', 
-				{ headers: { Authorization: `Bearer ${token}` } }, 
-				5000
-			);
+    setIsExiting(true);
+    setIsInitialLoading(false);
+  }, [fetchProfile, fetchCenters]);
 
-			if (!response.ok) {
-				setCenterState((prev) => ({ ...prev, centersError: 'Error al cargar centros' }));
-				throw new Error('Error al cargar centros');
-			}
+  const saveSelectedCenter = useCallback((center) => {
+    setCenterState((prev) => ({ ...prev, selectedCenter: center }))
+    localStorage.setItem('selectedCenter', JSON.stringify(center))
+  }, []);
 
-			const data = await response.json();
-			setCenterState((prev) => ({ ...prev, allCenters: data.centers }));
-		} catch (e) {
-			console.error('Error al cargar centros:', e);
-			setCenterState((prev) => ({ ...prev, centersError: 'Error de red al cargar centros' }));
-		} finally {
-			setCenterState((prev) => ({ ...prev, isCentersLoading: false }));
-		}
-	};
-	
-	/* =========================================== */
-	/* ==== Autenticación y gestión de tokens ==== */
-	/* =========================================== */
+  const saveAllCenters = useCallback((allCenters) => {
+    setCenterState((prev) => ({ ...prev, allCenters }))
+    localStorage.setItem('allCenters', JSON.stringify(allCenters))
+  }, []);
 
-	const refreshTokens = async () => {
-		try {
-			const response = await fetchWithTimeout('/api/users/auth/refresh', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				credentials: 'include', // Enviar refreshToken (desde cookie HttpOnly)
-			}, 5000)
+  const logout = useCallback(async () => {
+    const token = getAccessToken()
+    setAuthState({ user: null, accessToken: null })
+    setCenterState({ allCenters: [], isCentersLoading: false, centersError: null, selectedCenter: null })
+    removeAccessToken()
+    localStorage.clear();
 
-			if (!response.ok) throw new Error('No se pudieron renovar los tokens')
-			const data = await response.json()
-			setAuthState((prev) => ({ ...prev, accessToken: data.accessToken }))
-			return data.accessToken
-		} catch (e) {
-			console.error('Error al renovar tokens:', e)
-			setAuthState((prev) => ({ ...prev, user: null, accessToken: null }))
-			return null
-		}
-	}
+    setTimeout(() => {
+        navigate('/', { replace: true });
+    }, 10);
 
-	// Helper para obtener un token válido, renovándolo si es necesario
-	const getValidAccessToken = async () => {
-		const token = getAccessToken()
-		if (!token) return null
+    try {
+      await fetch('/api/users/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    } catch (err) {}
+  }, [navigate, setAuthState, setCenterState]);
 
-		if (isTokenExpired(token)) {
-			const newToken = await refreshTokens()
-			if (!newToken) {
-				removeAccessToken()
-				return null
-			}
-			return newToken
-		}
+  // Cargar perfil y centros al montar solo si no están ya cargados ni en localStorage
+  useEffect(() => {
+    const init = async () => {
+      const needsCenters = !centerState.allCenters || centerState.allCenters.length === 0;
+      const expired = lastCheckRef.current + CHECK_INTERVAL < Date.now();
 
-		return token
-	}
+      await Promise.all([
+        fetchProfile(),
+        (needsCenters || expired) ? fetchCenters() : Promise.resolve(),
+        sleep(1200)
+      ]);
 
+      setIsExiting(true);
+      await sleep(1000);
+      setIsInitialLoading(false);
+    }
+    init();
+  }, []);
 
-	// Cargar perfil y centros al montar solo si no están ya cargados
-	useEffect(() => {
-		if (!authState.user) {
-			fetchProfile(authState.accessToken);
-		}
-		if (centerState.allCenters.length === 0) {
-			fetchCenters(authState.accessToken);
-		}
-	}, []);
+  const isAdmin = authState.user?.role === 'admin'
+  const isTeacher = authState.user?.role === 'teacher'
 
-	const logout = async () => {
-		const token = getAccessToken()
-		setAuthState({ user: null, accessToken: null })
-		setCenterState({ allCenters: [], isCentersLoading: false, centersError: null, selectedCenter: null })
-		removeAccessToken()
+  // Evitar re-renders innecesarios usando useMemo
+  const value = useMemo(() => ({
+    authState,
+    centerState,
+    login,
+    logout,
+    fetchProfile,
+    fetchCenters,
+    saveAllCenters,
+    saveSelectedCenter,
+    isInitialLoading,
+    isAdmin,
+    isTeacher,
+  }), [authState, centerState, login, logout, fetchProfile, fetchCenters, saveAllCenters, saveSelectedCenter, isInitialLoading, isAdmin, isTeacher]);
 
-		try {
-			await fetch('/api/users/auth/logout', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`,
-				},
-			})
-		} catch (err) {
-			console.error('Logout failed:', err)
-		}
-	}
+  return (
+    <AuthContext.Provider value={value}>
+      {isInitialLoading && <LoadingPage isExiting={isExiting} />}
 
-	const isAdmin = authState.user?.role === 'admin'
-	const isTeacher = authState.user?.role === 'teacher'
-
-	return (
-		<AuthContext.Provider
-			value={{
-				authState,
-				centerState,
-				login,
-				logout,
-				fetchProfile,
-				fetchCenters,
-				saveAllCenters,
-				saveSelectedCenter,
-				isAdmin,
-				isTeacher,
-			}}
-		>
-			{isInitialLoading && <LoadingPage isExiting={isExiting} />}
-
-			<div 
-				className={`
-					w-full min-h-screen
-					transition-opacity duration-1200 ease-in-out
-					${isExiting ? 'opacity-100' : 'opacity-0'}
-				`}
-			>
-				{children}
-			</div>
-		</AuthContext.Provider>
-	)
+      <div 
+        className={`
+          w-full min-h-screen
+          transition-opacity duration-1000 ease-in-out
+          ${isExiting ? 'opacity-100' : 'opacity-0'}
+          ${isInitialLoading ? 'pointer-events-none' : ''}
+        `}
+      >
+        {children}
+      </div>
+    </AuthContext.Provider>
+  )
 }
-

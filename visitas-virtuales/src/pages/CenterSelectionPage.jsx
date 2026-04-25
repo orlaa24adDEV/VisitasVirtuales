@@ -10,17 +10,13 @@ import Button from '@/components/Button.jsx';
 
 export default function CenterSelectionPage() {
   const navigate = useNavigate();
-  const { centerState, saveSelectedCenter, fetchCenters } = useAuth();
+  const { centerState, saveSelectedCenter } = useAuth();
   const { selectedCenter, allCenters, isCentersLoading, centersError } = centerState;
   
   // Iniciamos el local con lo que haya en el contexto (por si vuelve para cambiar)
   const [localSelectedCenter, setLocalSelectedCenter] = useState(selectedCenter || null);
   const [hasShownToast, setHasShownToast] = useState(false);
   const hasMounted = useRef(false);
-
-  useEffect(() => {
-    fetchCenters();
-  }, []);
 
   useEffect(() => {
     if (isCentersLoading || centersError || !allCenters || allCenters.length === 0) return;
@@ -54,9 +50,9 @@ export default function CenterSelectionPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Botón flotante para volver a la Landing (útil para invitados) */}
-      <div className="absolute top-4 left-2">
+      <div className="w-full max-w-5xl mx-auto p-4 flex flex-col items-start">
         <Link to="/">
-          <Button variant="ghost" size="normal" className="text-slate-500!">
+          <Button variant="ghost" size="normal" className="text-slate-500! items-center gap-2">
             <ArrowLeft size={20} />
             <span>Volver a inicio</span>
           </Button>

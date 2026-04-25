@@ -121,11 +121,11 @@ Puedes explorar la base de datos con Drizzle Kit Studio:
 
 ### Usuarios de prueba
 
-| email                         | username   | password   | role        |
-| :---------------------------- | :--------- | :--------- | :---------- |
-| **admin_mad@instituto.es**    | admin_mad  | Admin123!  | **admin**   |
-| **admin_bar@instituto.es**    | admin_bar  | Admin123!  | **admin**   |
-| **admin_sev@instituto.es**    | admin_sev  | Admin123!  | **admin**   |
-| **profesor_mad@instituto.es** | prof_mad   | Profe123!  | **teacher** |
-| **profesor_bar@instituto.es** | prof_bar   | Profe123!  | **teacher** |
-| **profesor_sev@instituto.es** | prof_sev   | Profe123!  | **teacher** |
+| email                         | username  | password  | role        |
+| :---------------------------- | :-------- | :-------- | :---------- |
+| **admin_mad@instituto.es**    | admin_mad | Admin123! | **admin**   |
+| **admin_bar@instituto.es**    | admin_bar | Admin123! | **admin**   |
+| **admin_sev@instituto.es**    | admin_sev | Admin123! | **admin**   |
+| **profesor_mad@instituto.es** | prof_mad  | Profe123! | **teacher** |
+| **profesor_bar@instituto.es** | prof_bar  | Profe123! | **teacher** |
+| **profesor_sev@instituto.es** | prof_sev  | Profe123! | **teacher** |
