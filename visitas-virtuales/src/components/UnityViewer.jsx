@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth.js';
-import { useSearchParams } from 'react-router-dom';
+import { ESCENAS_POR_CENTRO } from '@/helpers/escenas.js';
 
 // TODO: cambiar a "true" cuando los archivos del build de Unity estén en el folder de Built_Unity
 //Ver instrucciones en public/Build_Unity/.gitkeep
@@ -11,10 +11,9 @@ export default function UnityViewer() {
     const { centerState } = useAuth();
     const { selectedCenter } = centerState;
 
-    // Leemos el parámetro scene de la URL (ej: ?center=2&scene=1)
-    // Si no hay parámetro scene en la URL, sceneId será null
-    const [searchParams] = useSearchParams();
-    const sceneId = searchParams.get('scene');
+    // Calculamos sceneId directamente desde selectedCenter, sin depender de la URL
+    // Así evitamos problemas de timing cuando la URL todavía no fue actualizada
+    const sceneId = selectedCenter ? (ESCENAS_POR_CENTRO[selectedCenter.id] ?? 0) : null;
 
     // Referencia directa al canvas del DOM
     // Es como un "puntero" para que Unity sepa dónde pintarse
@@ -52,25 +51,30 @@ export default function UnityViewer() {
             .then((unityInstance) => {
                 unityInstanceRef.current = unityInstance;
 
-                // EL PUENTE: enviamos el ID del centro a Unity
-                unityInstance.SendMessage(
-                    'WebBridge',  // nombre del GameObject en la escena Unity
-                    'RecibirIdCentro',  // nombre del método en WebBridge.cs
-                    selectedCenter.id.toString()  // el ID del centro
-                );
-
-                console.log('ID enviado a Unity:', selectedCenter.id);
-
-                if(sceneId !== null) {
+                //Delay de 1.5seg para que encuente el gameobject antes
+                setTimeout(() => {
+                    // EL PUENTE: enviamos el ID del centro a Unity
                     unityInstance.SendMessage(
                         'WebBridge',
-                        'RecibirIdEscena',
-                        sceneId.toString()
+                        'RecibirIdCentro',
+                        selectedCenter.id.toString()
                     );
-                    console.log('ID de escena enviado a Unity:', sceneId);
-                } else {
-                    console.log('No se especificó escena en la URL, Unity usará la escena por defecto');
-                }
+
+
+                    console.log('ID enviado a Unity:', selectedCenter.id);
+
+                    if(sceneId !== null) {
+                        unityInstance.SendMessage(
+                            'WebBridge',
+                            'RecibirIdEscena',
+                            sceneId.toString()
+                        );
+                        console.log('ID de escena enviado a Unity:', sceneId);
+                    } else {
+                        console.log('No se especificó escena en la URL, Unity usará la escena por defecto');
+                    }
+                
+                }, 1500); // 1.5 seg de espera 
             })
 
             // Si Unity falla al cargar
@@ -101,7 +105,7 @@ export default function UnityViewer() {
             }
         };
 
-    }, [selectedCenter.id, sceneId]); // <-- [] ejecutar solo una vez al montar el componente
+    }, []);  // <-- [] ejecutar solo una vez al montar el componente
 
     // Lo que se muestra en pantalla
     return (

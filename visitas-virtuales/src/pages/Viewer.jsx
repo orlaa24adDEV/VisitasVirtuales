@@ -19,7 +19,7 @@ export default function Viewer() {
 
     return (
         <div className={`p-8 mx-auto ${!user ? 'max-w-380' : ''}`}>
-            <div className="bg-white rounded-xl shadow-xl/6 p-6 border border-slate-100">
+            <div className="p-6 bg-white border rounded-xl shadow-xl/6 border-slate-100">
                 <div className="flex items-center gap-4 mb-4">
                     {/* Icono dinámico según el rol */}
                     <div className={`p-3 rounded-full transition-colors ${
@@ -63,7 +63,7 @@ export default function Viewer() {
                 <div className="mt-4">
                     <p className="text-gray-700">
                         Actualmente estás visualizando el centro: 
-                        <span className="font-bold text-blue-600 ml-1">
+                        <span className="ml-1 font-bold text-blue-600">
                             {selectedCenter?.name || 'Ninguno seleccionado'}
                         </span>
                     </p>
@@ -76,21 +76,28 @@ export default function Viewer() {
                     'bg-gray-50 border-gray-300'
                 }`}>
                     {isAdmin && (
-                        <p className="text-sm text-rose-900 mb-4 font-medium">
+                        <p className="mb-4 text-sm font-medium text-rose-900">
                             Tienes acceso total. Puedes gestionar puntos de interés (POIs), ver el historial de auditoría y configurar el sistema.
                         </p>
                     )}
                     {isTeacher && (
-                        <p className="text-sm text-sky-900 mb-4 font-medium">
+                        <p className="mb-4 text-sm font-medium text-sky-900">
                             Como profesor, puedes gestionar tus clases y ver la información de los puntos de interés.
                         </p>
                     )}
                     {!isAdmin && !isTeacher && (
-                        <p className="text-sm text-gray-600 mb-4 font-medium">
+                        <p className="mb-4 text-sm font-medium text-gray-600">
                             Puedes explorar el mapa y ver la información de los puntos de interés.
                         </p>
                     )}
-                    <UnityViewer />
+                      {/* Solo montamos Unity cuando selectedCenter ya tiene valor */}
+                    {selectedCenter ? (
+                        <UnityViewer />
+                    ) : (
+                        <div className="flex items-center justify-center h-40 text-gray-400">
+                            <p className="text-sm italic">Cargando centro...</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
