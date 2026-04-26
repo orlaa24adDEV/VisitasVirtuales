@@ -321,11 +321,16 @@ const Dashboard = () => {
                 {lastChanges.map((poi) => {
                   const centerName = getCenterName(poi.centerId) || 'Sin centro';
                   return (
-                    <li key={poi.id} className="border border-slate-100 rounded-lg p-3 hover:bg-slate-50">
+                    <button
+                      key={poi.id}
+                      type="button"
+                      onClick={() => handleCenterCardClick(centerName)}
+                      className="w-full border border-slate-100 rounded-lg p-3 hover:bg-slate-100 hover:border-blue-400 transition cursor-pointer text-left"
+                    >
                       <p className="font-semibold text-slate-800">{poi.name}</p>
                       <p className="text-xs text-slate-500">Centro: {centerName}</p>
                       <p className="text-sm text-slate-600 mt-1">{poi.description}</p>
-                    </li>
+                    </button>
                   );
                 })}
               </ul>
