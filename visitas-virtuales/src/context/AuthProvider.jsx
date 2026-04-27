@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import {
-  setAccessToken,
-  removeAccessToken,
+  setLocalStorageAccessToken,
+  getLocalStorageAccessToken,
+  removeLocalStorageAccessToken,
   isTokenExpired,
-  getAccessToken,
-} from '../helpers/auth.js'
+} from '../helpers/authLocalStorage.js'
 import { sleep } from '../helpers/sleep.js'
 import { AuthContext } from '@/context/AuthContext.js'
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js'
@@ -74,13 +74,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const getValidAccessToken = useCallback(async () => {
-    const token = getAccessToken()
+    const token = getLocalStorageAccessToken()
     if (!token) return null
 
     if (isTokenExpired(token)) {
       const newToken = await refreshTokens()
       if (!newToken) {
-        removeAccessToken()
+        removeLocalStorageAccessToken();
         return null
       }
       return newToken
@@ -109,8 +109,8 @@ export const AuthProvider = ({ children }) => {
       } else {
         setAuthState((prev) => ({ ...prev, user: null }));
       }
-    } catch (err) {
-      removeAccessToken();
+    } catch {
+      removeLocalStorageAccessToken();
       setAuthState((prev) => ({ ...prev, user: null }));
     }
   }, [getValidAccessToken]);
@@ -144,19 +144,38 @@ export const AuthProvider = ({ children }) => {
         }
         return { ...prev };
       });
-    } catch (e) {
+    } catch {
       setCenterState((prev) => ({ ...prev, centersError: 'Error de red' }));
     } finally {
       setCenterState((prev) => ({ ...prev, isCentersLoading: false }));
     }
   }, [getValidAccessToken]);
 
+  // Actualizar la imagen de un centro específico en estado local después de subirla
+  const updateCenterImage = useCallback((centerId, imageUrl) => {
+      const id = Number(centerId);
+      setCenterState((prev) => {
+          const updatedCenters = prev.allCenters.map(c =>
+              c.id === id ? { ...c, imageUrl } : c
+          );
+          const updatedSelected = prev.selectedCenter?.id === id
+              ? { ...prev.selectedCenter, imageUrl }
+              : prev.selectedCenter;
+
+          localStorage.setItem('allCenters', JSON.stringify(updatedCenters));
+          localStorage.setItem('selectedCenter', JSON.stringify(updatedSelected));
+
+          return { ...prev, allCenters: updatedCenters, selectedCenter: updatedSelected };
+      });
+  }, []);
+
   // Al hacer login, se guarda el token y se cargan perfil y centros solo si no están cargados
   const login = useCallback(async (accessToken) => {
     setIsInitialLoading(true);
     setIsExiting(false);
     
-    setAccessToken(accessToken);
+    setLocalStorageAccessToken(accessToken);
+    setAuthState((prev) => ({ ...prev, accessToken }));
 
     // Evitar re-renders innecesarios cargando perfil y centros en paralelo
     await Promise.all([
@@ -178,21 +197,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('allCenters', JSON.stringify(allCenters))
   }, []);
 
-  const updateCenterImage = useCallback((centerId, imageUrl) => {
-    setCenterState((prev) => {
-      const updatedCenters = prev.allCenters.map(center =>
-        center.id === centerId ? { ...center, imageUrl } : center
-      );
-      localStorage.setItem('allCenters', JSON.stringify(updatedCenters));
-      return { ...prev, allCenters: updatedCenters };
-    });
-  }, []);
-
   const logout = useCallback(async () => {
-    const token = getAccessToken()
+    const token = getLocalStorageAccessToken();
     setAuthState({ user: null, accessToken: null })
     setCenterState({ allCenters: [], isCentersLoading: false, centersError: null, selectedCenter: null })
-    removeAccessToken()
+    removeLocalStorageAccessToken();
     localStorage.clear();
 
     setTimeout(() => {
@@ -207,7 +216,9 @@ export const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       })
-    } catch (err) {}
+    } catch (err) {
+      console.error('Error al cerrar sesión:', err);
+    }
   }, [navigate, setAuthState, setCenterState]);
 
   // Cargar perfil y centros al montar solo si no están ya cargados ni en localStorage

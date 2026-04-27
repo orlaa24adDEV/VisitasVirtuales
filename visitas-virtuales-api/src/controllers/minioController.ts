@@ -15,7 +15,7 @@ export const simpleUploadHandler = async (req: Request, res: Response) => {
   try {
     const sanitizedFileName = await minioService.simpleUpload(fileName, mimeType, buffer);
     // Construir la URL pública del fichero subido
-    const fileUrl = `${env.FRONTEND_URL}/assets/${sanitizedFileName}`;
+    const fileUrl = `${env.FRONTEND_URL}/api/${env.API_VERSION}/assets/${sanitizedFileName}`;
     res.json({ message: 'Fichero subido exitosamente.', fileUrl });
   } catch (e) {
     console.error('Error subiendo el fichero:', e);

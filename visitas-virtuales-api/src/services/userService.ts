@@ -88,6 +88,7 @@ const getUserProfile = async (sub: number): Promise<UserProfileType> => {
 			email: users.email,
 			username: users.username,
 			role: users.role,
+			imageUrl: users.imageUrl,
 		})
 		.from(users)
 		.where(eq(users.id, sub))
@@ -144,6 +145,7 @@ const updateUser = async (
 			email: users.email,
 			username: users.username,
 			role: users.role,
+			imageUrl: users.imageUrl,
 		})
 
 	if (!updatedUser) {
