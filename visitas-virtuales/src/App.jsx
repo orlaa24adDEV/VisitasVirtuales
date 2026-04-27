@@ -15,6 +15,7 @@ import './assets/App.css';
 import { Toaster } from 'sonner';
 import LandingPage from './pages/LandingPage.jsx';
 import LoadingPage from './components/LoadingPage.jsx';
+import Settings from './pages/Settings.jsx';
 
 
 function App() {
@@ -76,6 +77,13 @@ function App() {
                         />
                         <Route path="/crud" element={selectedCenter ? <ProtectedRoute requiredRoles={['admin', 'teacher']}><Crud /></ProtectedRoute> : <Navigate to="/centros" replace />} />
                         <Route path="/dashboard" element={<ProtectedRoute requiredRoles={['admin']}><Dashboard /></ProtectedRoute>} />
+
+                        {/*Nueva ruta para el Perfil*/}
+                        <Route 
+                            path="/perfil" 
+                            element={<ProtectedRoute requiredRoles={["admin"]}><Settings /></ProtectedRoute>}
+                        />
+
                         <Route 
                             path="/historial" 
                             element={<ProtectedRoute requiredRoles={["admin"]}><Historial /></ProtectedRoute>}

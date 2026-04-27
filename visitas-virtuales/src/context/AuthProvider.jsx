@@ -178,6 +178,16 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('allCenters', JSON.stringify(allCenters))
   }, []);
 
+  const updateCenterImage = useCallback((centerId, imageUrl) => {
+    setCenterState((prev) => {
+      const updatedCenters = prev.allCenters.map(center =>
+        center.id === centerId ? { ...center, imageUrl } : center
+      );
+      localStorage.setItem('allCenters', JSON.stringify(updatedCenters));
+      return { ...prev, allCenters: updatedCenters };
+    });
+  }, []);
+
   const logout = useCallback(async () => {
     const token = getAccessToken()
     setAuthState({ user: null, accessToken: null })
@@ -232,10 +242,11 @@ export const AuthProvider = ({ children }) => {
     fetchCenters,
     saveAllCenters,
     saveSelectedCenter,
+    updateCenterImage,
     isInitialLoading,
     isAdmin,
     isTeacher,
-  }), [authState, centerState, login, logout, fetchProfile, fetchCenters, saveAllCenters, saveSelectedCenter, isInitialLoading, isAdmin, isTeacher]);
+  }), [authState, centerState, login, logout, fetchProfile, fetchCenters, saveAllCenters, saveSelectedCenter, updateCenterImage, isInitialLoading, isAdmin, isTeacher]);
 
   return (
     <AuthContext.Provider value={value}>

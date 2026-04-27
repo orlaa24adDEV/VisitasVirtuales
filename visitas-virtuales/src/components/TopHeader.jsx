@@ -1,7 +1,7 @@
  
 import '../assets/App.css';
 
-import { ChevronDown, LogOut, Menu, User, Home, MapPin, Compass } from 'lucide-react';
+import { ChevronDown, LogOut, Menu, User, Home, MapPin, Compass, Settings } from 'lucide-react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate, useNavigation } from 'react-router-dom';
@@ -124,8 +124,8 @@ export default function TopHeader({
                                         onClick={() => { navigate('/perfil'); setIsOpen(false); }}
                                         className="w-full text-left px-4 py-2.5 text-sm text-neutral-700 hover:bg-slate-50 font-semibold flex items-center gap-2 transition-colors"
                                     >
-                                        <User className="w-4 h-4 text-neutral-800" />
-                                        Mi Perfil
+                                        <Settings className="w-4 h-4 text-neutral-800" />
+                                        Configuracion
                                     </button>
                                     <hr className="my-1 border-slate-200" />
                                     <button
@@ -139,7 +139,7 @@ export default function TopHeader({
                             )}
                         </div>
                     </ClickOutsideWrapper>
-                ) : (
+                    ) : (
                     <div className="flex items-center gap-2">
                         <Link
                             to="/login"
