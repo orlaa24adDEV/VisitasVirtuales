@@ -83,11 +83,11 @@ export default function CenterSelectionPage() {
           {!isCentersLoading && !centersError && allCenters && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {allCenters.map((center, index) => {
+                {allCenters.map((center) => {
                   const isActive = localSelectedCenter?.id === center.id;
                   return (
                     <button
-                      key={`${center.id}-${index}`}
+                      key={center.id}
                       onClick={() => setLocalSelectedCenter(center)}
                       className={`
                         group relative text-left rounded-2xl overflow-hidden bg-white
