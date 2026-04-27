@@ -7,14 +7,13 @@ import swaggerUi from 'swagger-ui-express'
 import userRoutes from './routes/userRoutes.ts'
 import centerRoutes from './routes/centerRoutes.ts'
 import poiRoutes from './routes/poiRoutes.ts'
+import minioRoutes from './routes/minioRoutes.ts'
 import errorHandler from './middlewares/errorHandler.ts'
 import cors from 'cors'
 import helmet from 'helmet'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import minioService from './services/minioService.ts'
-import appBootstrap from './helpers/appBootstrap.ts'
 
 const app = express()
 
@@ -59,6 +58,9 @@ app.use(
 		exposedHeaders: ['ETag'], // Permitir acceso a header ETag (subida multipart)
 	}) as RequestHandler,
 )
+
+// Montar rutas de MinIO (subida multipart)
+app.use('/api/v1/', minioRoutes)
 
 // Montar rutas de usuarios
 app.use('/api/v1/', userRoutes)
