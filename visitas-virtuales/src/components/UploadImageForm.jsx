@@ -86,7 +86,7 @@ export default function UploadImageForm({ centerId, currentImage }) {
                 {file && (
                     <>
                         <button 
-                            onClick={handleUpload}
+                            onClick={() => handleUpload()}
                             disabled={isUploading}
                             className="cursor-pointer flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors"
                         >
