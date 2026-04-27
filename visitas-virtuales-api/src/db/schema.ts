@@ -307,4 +307,10 @@ export const centerUpdateSchema = z.object({
 	}),
 })
 
+export const centerImageUpdateSchema = z.object({
+	params: z.object({
+		id: z.coerce.number().int().positive(),
+	}),
+})
+
 export type CenterUpdateType = z.infer<typeof centerUpdateSchema>

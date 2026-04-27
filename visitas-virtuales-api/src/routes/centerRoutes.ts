@@ -1,10 +1,15 @@
 import { Router } from 'express'
 import hasRole from '../middlewares/hasRole.ts'
-import { getAllCentersHandler, updateCenterHandler } from '../controllers/centerController.ts'
+import { getAllCentersHandler, updateCenterHandler, updateCenterImageHandler } from '../controllers/centerController.ts'
 import { validateRequest } from '../middlewares/validation.ts'
-import { centerUpdateSchema } from '../db/schema.ts'
+import { centerImageUpdateSchema, centerUpdateSchema } from '../db/schema.ts'
+import multer from 'multer'
 
 export const router = Router()
+const upload = multer({
+	storage: multer.memoryStorage(),
+	limits: { fileSize: 10 * 1024 * 1024 },
+}) // Limitar a 10MB por parte
 
 // ========================= //
 // ==== CRUD de Centros ==== //
@@ -135,5 +140,73 @@ router.get(
  *         description: Centro no encontrado
  */
 router.patch('/centers/:id', hasRole(['admin']), validateRequest({params: centerUpdateSchema.shape.params, body: centerUpdateSchema.shape.body}), updateCenterHandler)
+
+/**
+ * @openapi
+ * /api/v1/centers/{id}/image:
+ *   post:
+ *     summary: Actualizar la imagen de un centro específico
+ *     description: Esta ruta permite a los administradores actualizar la imagen de un centro específico utilizando su ID.
+ *     tags: [Centros]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: ID del centro al que se le actualizará la imagen
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Imagen del centro actualizada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Imagen del centro actualizada exitosamente"
+ *                 center:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: 1
+ *                     name:
+ *                       type: string
+ *                       example: "Instituto Madrid"
+ *                     description:
+ *                       type: string
+ *                       example: "Centro educativo principal en Madrid"
+ *                     location:
+ *                       type: string
+ *                       example: "Madrid, España"
+ *                     imageUrl:
+ *                       type: string
+ *                       format: url
+ *                       example: "https://example.com/new-image.jpg"
+ *       400:
+ *         description: Fichero no proporcionado o inválido
+ *       401:
+ *         description: Token de acceso no proporcionado
+ *       403:
+ *         description: Token de acceso inválido, expirado o el usuario no tiene permisos para actualizar la imagen del centro
+ *       404:
+ *         description: Centro no encontrado
+ */
+router.post('/centers/:id/image', hasRole(['admin']), validateRequest({params: centerImageUpdateSchema.shape.params}), upload.single('file'), updateCenterImageHandler)
 
 export default router

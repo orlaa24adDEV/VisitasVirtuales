@@ -3,13 +3,14 @@ import { Upload, Trash2 } from 'lucide-react';
 import Button from '@/components/Button.jsx';
 import {useAuth} from '@/hooks/useAuth.js';
 import { ImageIcon } from 'lucide-react';
+import { getLocalStorageAccessToken } from '../helpers/authLocalStorage';
 
 export default function UploadImageForm({ centerId, currentImage }) {
 
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState(currentImage || null);
     const [isUploading, setIsUploading] = useState(false);
-    const { updateCenterImage, authState } = useAuth();
+    const { updateCenterImage } = useAuth();
     const fileInputRef = useRef(null);
 
     const handleFileChange = (e) => {
@@ -26,26 +27,27 @@ export default function UploadImageForm({ centerId, currentImage }) {
 
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('centerId', centerId);
 
         try {
-            const response = await fetch('/api/upload', {
+            const token = getLocalStorageAccessToken();
+            const response = await fetch(`/api/centers/${centerId}/image`, {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'Authorization': `Bearer ${authState.accessToken}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
             
             if (response.ok) {
                 const data = await response.json();
-                updateCenterImage(centerId, data.imageUrl);
+                const { imageUrl } = data.center;
+                updateCenterImage(centerId, imageUrl);
                 setFile(null);
-                alert('Imagen subida con éxito');
+                alert('Imagen de centro actualizada exitosamente');
             } else {
                 const errorData = await response.text();
                 console.error('Error del servidor:', errorData);
-                alert(`Error: ${response.status} - No se pudo subir la imagen`);
+                alert(`Error: ${response.status} - No se pudo actualizar la imagen del centro`);
             }
         } catch (error) {
             console.error('Error al subir la imagen:', error);
@@ -86,7 +88,7 @@ export default function UploadImageForm({ centerId, currentImage }) {
                 {file && (
                     <>
                         <button 
-                            onClick={() => handleUpload()}
+                            onClick={handleUpload}
                             disabled={isUploading}
                             className="cursor-pointer flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors"
                         >

@@ -151,6 +151,24 @@ export const AuthProvider = ({ children }) => {
     }
   }, [getValidAccessToken]);
 
+  // Actualizar la imagen de un centro específico en estado local después de subirla
+  const updateCenterImage = useCallback((centerId, imageUrl) => {
+      const id = Number(centerId);
+      setCenterState((prev) => {
+          const updatedCenters = prev.allCenters.map(c =>
+              c.id === id ? { ...c, imageUrl } : c
+          );
+          const updatedSelected = prev.selectedCenter?.id === id
+              ? { ...prev.selectedCenter, imageUrl }
+              : prev.selectedCenter;
+
+          localStorage.setItem('allCenters', JSON.stringify(updatedCenters));
+          localStorage.setItem('selectedCenter', JSON.stringify(updatedSelected));
+
+          return { ...prev, allCenters: updatedCenters, selectedCenter: updatedSelected };
+      });
+  }, []);
+
   // Al hacer login, se guarda el token y se cargan perfil y centros solo si no están cargados
   const login = useCallback(async (accessToken) => {
     setIsInitialLoading(true);
@@ -177,16 +195,6 @@ export const AuthProvider = ({ children }) => {
   const saveAllCenters = useCallback((allCenters) => {
     setCenterState((prev) => ({ ...prev, allCenters }))
     localStorage.setItem('allCenters', JSON.stringify(allCenters))
-  }, []);
-
-  const updateCenterImage = useCallback((centerId, imageUrl) => {
-    setCenterState((prev) => {
-      const updatedCenters = prev.allCenters.map(center =>
-        center.id === centerId ? { ...center, imageUrl } : center
-      );
-      localStorage.setItem('allCenters', JSON.stringify(updatedCenters));
-      return { ...prev, allCenters: updatedCenters };
-    });
   }, []);
 
   const logout = useCallback(async () => {

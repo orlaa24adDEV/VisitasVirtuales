@@ -62,9 +62,50 @@ const updateCenter = async (
 	return updatedCenter
 }
 
+export const updateCenterImage = async (
+	id: number,
+	validData: CenterUpdateType['body'],
+): Promise<Center> => {
+	const { imageUrl } = validData
+
+	// Comprobar si el centro existe antes de intentar actualizarlo
+	const [existingCenter] = await db
+		.select()
+		.from(centers)
+		.where(eq(centers.id, id))
+		.limit(1)
+
+	if (!existingCenter) {
+		throw new ApiError(404, 'Centro no encontrado')
+	}
+
+	const [updatedCenter] = await db
+		.update(centers)
+		.set({
+			imageUrl,
+		})
+		.where(eq(centers.id, id))
+		.returning({
+			id: centers.id,
+			name: centers.name,
+			description: centers.description,
+			location: centers.location,
+			imageUrl: centers.imageUrl,
+			createdAt: centers.createdAt,
+			updatedAt: centers.updatedAt,
+		})
+
+	if (!updatedCenter) {
+		throw new ApiError(404, 'Error al actualizar la imagen del centro')
+	}
+
+	return updatedCenter
+}
+
 export default {
 	getAllCenters,
 	updateCenter,
+	updateCenterImage,
 }
 
 

@@ -24,8 +24,8 @@ morgan.token(
 )
 app.use(morgan('dev') as RequestHandler)
 
-// Middleware para establecer headers de seguridad en las respuestas
-app.use(helmet())
+// Middleware para establecer headers de seguridad en las respuestas (permitiendo embedding de imágenes desde React)
+app.use(helmet({crossOriginResourcePolicy: { policy: 'cross-origin' }}))
 
 // Middleware para extraer JSON de las solicitudes
 app.use(express.json())
