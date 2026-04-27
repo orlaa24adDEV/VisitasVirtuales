@@ -19,6 +19,161 @@
     }
   ],
   "paths": {
+    "/api/v1/centers": {
+      "get": {
+        "summary": "Obtener listado de todos los centros disponibles",
+        "description": "Esta ruta permite a los usuarios obtener una lista de todos los centros disponibles en el sistema",
+        "tags": [
+          "Centros"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Centros obtenidos exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Centros obtenidos exitosamente"
+                    },
+                    "centers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Instituto Madrid"
+                          },
+                          "description": {
+                            "type": "string",
+                            "example": "Centro educativo principal en Madrid"
+                          },
+                          "location": {
+                            "type": "string",
+                            "example": "Madrid, España"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No se proporcionó un token de acceso"
+          },
+          "403": {
+            "description": "Token de acceso inválido o expirado"
+          }
+        }
+      }
+    },
+    "/api/v1/upload": {
+      "post": {
+        "summary": "Subir un fichero completo a MinIO",
+        "tags": [
+          "Assets"
+        ],
+        "description": "Sube un fichero completo a MinIO utilizando Multer para manejar la recepción del fichero. Este endpoint es adecuado para ficheros pequeños (hasta 10MB) y no requiere manejo de partes.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Fichero a subir (Máximo 10MB)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fichero subido exitosamente, devuelve la URL de acceso al fichero",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Mensaje de éxito indicando que el fichero ha sido subido exitosamente"
+                    },
+                    "fileUrl": {
+                      "type": "string",
+                      "description": "URL pública para acceder al fichero subido (ej. \"https://frontend.example.com/assets/550e8400-e29b-41d4-a716-446655440000.jpg\")"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Fichero no proporcionado o inválido"
+          },
+          "500": {
+            "description": "Error al subir el fichero"
+          }
+        }
+      }
+    },
+    "/api/v1/assets/{fileName}": {
+      "get": {
+        "summary": "Obtener imagen desde MinIO (proxy)",
+        "tags": [
+          "Assets"
+        ],
+        "description": "Obtiene una imagen almacenada en MinIO y la transmite al cliente.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fileName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Nombre del fichero a obtener (ej. \"550e8400-e29b-41d4-a716-446655440000.jpg\")"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Imagen obtenida exitosamente, se transmite el contenido de la imagen con los headers adecuados",
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Imagen no encontrada en MinIO"
+          },
+          "500": {
+            "description": "Error al obtener la imagen desde MinIO"
+          }
+        }
+      }
+    },
     "/api/v1/centers/{centerId}/pois": {
       "post": {
         "summary": "Crear un nuevo POI para un centro específico (solo para administradores o profesores)",
@@ -308,68 +463,6 @@
         }
       }
     },
-    "/api/v1/centers": {
-      "get": {
-        "summary": "Obtener listado de todos los centros disponibles",
-        "description": "Esta ruta permite a los usuarios obtener una lista de todos los centros disponibles en el sistema",
-        "tags": [
-          "Centros"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Centros obtenidos exitosamente",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Centros obtenidos exitosamente"
-                    },
-                    "centers": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "example": 1
-                          },
-                          "name": {
-                            "type": "string",
-                            "example": "Instituto Madrid"
-                          },
-                          "description": {
-                            "type": "string",
-                            "example": "Centro educativo principal en Madrid"
-                          },
-                          "location": {
-                            "type": "string",
-                            "example": "Madrid, España"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "No se proporcionó un token de acceso"
-          },
-          "403": {
-            "description": "Token de acceso inválido o expirado"
-          }
-        }
-      }
-    },
     "/api/v1/me": {
       "get": {
         "summary": "Obtener perfil del usuario autenticado (solo para administradores y profesores)",
@@ -478,7 +571,7 @@
         }
       },
       "patch": {
-        "summary": "Editar perfil del usuario autenticado (solo para administradores y profesores) - SIN IMPLEMENTAR",
+        "summary": "Editar perfil del usuario autenticado (solo para administradores y profesores)",
         "description": "Permite al usuario autenticado editar su propio perfil, incluyendo su email, nombre de usuario y contraseña. Requiere un token de acceso válido en el header Authorization.",
         "tags": [
           "User"
@@ -915,7 +1008,7 @@
     "/api/v1/users/auth/refresh": {
       "post": {
         "summary": "Renovar tokens de autenticación utilizando token de actualización (solo para administradores y profesores)",
-        "description": "Permite a un usuario renovar sus tokens utilizando un token de actualización válido. Devuelve un nuevo token de acceso en la respuesta y asigna un nuevo token de actualización en una cookie HTTP-only. Los invitados no necesitan renovar tokens, se les permite el acceso a las rutas públicas sin autenticación.",
+        "description": "Permite a un usuario renovar sus tokens utilizando un token de actualización válido. Devuelve un nuevo token de acceso en la respuesta y asigna un nuevo token de actualización en una cookie HTTP-only. Los invitados no necesitan renovar tokens, se les permite el acceso a las rutas públicas sin autenticación. La validación del token se realiza dentro del handler.",
         "tags": [
           "User"
         ],

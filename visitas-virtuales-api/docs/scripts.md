@@ -23,22 +23,22 @@
 
 ### Staging
 
-- Desplegar e iniciar todo: `npm run deploy:stage:up`
-- Detener: `npm run deploy:stage:down`
-- Reiniciar: `npm run deploy:stage:restart`
-- Ver logs: `npm run deploy:stage:logs`
-- Ver estado de contenedores: `npm run deploy:stage:ps`
+- Desplegar e iniciar todo: `npm run stage:up`
+- Detener: `npm run stage:down`
+- Reiniciar: `npm run stage:restart`
+- Ver logs: `npm run stage:logs`
+- Ver estado de contenedores: `npm run stage:ps`
 
-> En staging, solo es necesario `npm run deploy:stage:up`. La base de datos y migraciones se gestionan automáticamente por el contenedor.
+> En staging, solo es necesario `npm run stage:up`. La base de datos y migraciones se gestionan automáticamente por el contenedor.
 
 ---
 
 ### Producción
 
-- Desplegar y e iniciar todo (API, DB, etc): `npm run deploy:prod:up`
-- Detener: `npm run deploy:prod:down`
-- Reiniciar: `npm run deploy:prod:restart`
-- Ver logs: `npm run deploy:prod:logs`
-- Ver estado de contenedores: `npm run deploy:prod:ps`
+- Desplegar y e iniciar todo (API, DB, etc): `npm run prod:up`
+- Detener: `npm run prod:down`
+- Reiniciar: `npm run prod:restart`
+- Ver logs: `npm run prod:logs`
+- Ver estado de contenedores: `npm run prod:ps`
 
-> En producción, solo es necesario `npm run deploy:prod:up`. La base de datos y migraciones se gestionan automáticamente por el contenedor.
+> En producción, solo es necesario `npm run prod:up`. La base de datos y migraciones se gestionan automáticamente por el contenedor.

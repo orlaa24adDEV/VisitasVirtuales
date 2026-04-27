@@ -9,6 +9,7 @@ import { sleep } from '../helpers/sleep.js'
 import { AuthContext } from '@/context/AuthContext.js'
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js'
 import LoadingPage from '../components/LoadingPage.jsx'
+import { useNavigate } from 'react-router-dom';
 
 // Proveedor del contexto. Maneja estado de usuario, autenticación, centros y carga inicial
 export const AuthProvider = ({ children }) => {
@@ -18,7 +19,7 @@ export const AuthProvider = ({ children }) => {
   const CHECK_INTERVAL = 5 * 60 * 1000;
   const lastCheckRef = useRef(Date.now());
   const [isExiting, setIsExiting] = useState(false) // Para manejar transición al cargar página
-
+  const navigate = useNavigate();
   // Perfil del usuario autenticado y token de acceso
   const [authState, setAuthState] = useState({
     user: null,
@@ -161,11 +162,9 @@ export const AuthProvider = ({ children }) => {
     await Promise.all([
       fetchProfile(accessToken),
       fetchCenters(accessToken),
-      sleep(1500)
     ]);
 
     setIsExiting(true);
-    await sleep(1000); 
     setIsInitialLoading(false);
   }, [fetchProfile, fetchCenters]);
 
@@ -184,6 +183,11 @@ export const AuthProvider = ({ children }) => {
     setAuthState({ user: null, accessToken: null })
     setCenterState({ allCenters: [], isCentersLoading: false, centersError: null, selectedCenter: null })
     removeAccessToken()
+    localStorage.clear();
+
+    setTimeout(() => {
+        navigate('/', { replace: true });
+    }, 10);
 
     try {
       await fetch('/api/users/auth/logout', {
@@ -194,7 +198,7 @@ export const AuthProvider = ({ children }) => {
         },
       })
     } catch (err) {}
-  }, []);
+  }, [navigate, setAuthState, setCenterState]);
 
   // Cargar perfil y centros al montar solo si no están ya cargados ni en localStorage
   useEffect(() => {
@@ -228,9 +232,10 @@ export const AuthProvider = ({ children }) => {
     fetchCenters,
     saveAllCenters,
     saveSelectedCenter,
+    isInitialLoading,
     isAdmin,
     isTeacher,
-  }), [authState, centerState, login, logout, fetchProfile, fetchCenters, saveAllCenters, saveSelectedCenter, isAdmin, isTeacher]);
+  }), [authState, centerState, login, logout, fetchProfile, fetchCenters, saveAllCenters, saveSelectedCenter, isInitialLoading, isAdmin, isTeacher]);
 
   return (
     <AuthContext.Provider value={value}>

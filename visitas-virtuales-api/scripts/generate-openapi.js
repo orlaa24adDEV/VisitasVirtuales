@@ -17,7 +17,7 @@ try {
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		apis: ['./src/routes/*.js', './src/routes/*.ts'],
+		apis: ['./src/routes/*.ts', './src/routes/*'],
 	})
 	fs.writeFileSync('docs/openapi.json', JSON.stringify(swaggerSpec, null, 2))
 	console.log('OpenAPI spec written to docs/openapi.json')
