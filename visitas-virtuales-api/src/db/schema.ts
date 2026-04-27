@@ -150,11 +150,11 @@ export type User = typeof users.$inferSelect
 export type Poi = typeof pois.$inferSelect
 export type Stat = typeof stats.$inferSelect
 
-/* Exportar schemas para validación datos recibido en endpoints */
 const USERNAME_PATTERN = /^[a-zA-Z0-9_]{6,24}$/
 const PASSWORD_PATTERN =
 	/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,32}$/
 
+/* Exportar schemas para validación datos recibido en endpoints */
 export const userSelectSchema = createSelectSchema(users)
 export type UserSelectType = z.infer<typeof userSelectSchema>
 
@@ -168,39 +168,56 @@ export const userRegisterBaseSchema = createInsertSchema(users).pick({
 	role: true,
 })
 
-export const userRegisterSchema = userRegisterBaseSchema.safeExtend({
-	email: z.email(),
-	username: userRegisterBaseSchema.shape.username.refine(
-		(username) => USERNAME_PATTERN.test(username),
-		'El nombre de usuario debe tener entre 6 y 24 caracteres y solo puede contener letras, números y guiones bajos',
-	),
-	password: userRegisterBaseSchema.shape.password.refine(
-		(password) => PASSWORD_PATTERN.test(password),
-		'La contraseña debe tener entre 8 y 32 caracteres y contener al menos un símbolo, un número y una letra mayúscula',
-	),
+export const userRegisterSchema = z.object({
+	body: userRegisterBaseSchema.extend({
+		username: z.string().min(6).max(24).regex(USERNAME_PATTERN),
+		password: z.string().min(8).max(32).regex(PASSWORD_PATTERN),
+	}),
 })
-
 export type UserRegisterType = z.infer<typeof userRegisterSchema>
 
 const userLoginBaseSchema = createSelectSchema(users)
 	.partial({ email: true, username: true })
 	.omit({ id: true, role: true })
-	.refine(
-		(data) => data.email || data.username,
-		'Se debe proporcionar al menos un email o un nombre de usuario para iniciar sesión',
-	)
 
-export const userLoginSchema = userLoginBaseSchema.safeExtend({
-	email: z.email(),
-	username: userLoginBaseSchema.shape.username.refine(
-		(username) => !username || USERNAME_PATTERN.test(username),
-		'Credenciales inválidas',
-	),
-	password: userInsertSchema.shape.password.refine(
-		(password) => PASSWORD_PATTERN.test(password),
-		'Credenciales inválidas',
-	),
+export const userLoginSchema = z.object({
+	body: userLoginBaseSchema.refine((data) => data.email || data.username),
 })
+
+const userUpdateBaseSchema = createInsertSchema(users).omit({ password: true })
+
+export const updateCurrUserProfileSchema = z.object({
+	body: userUpdateBaseSchema
+		.omit({ id: true, role: true })
+		.extend({
+			email: z.email().optional(),
+			username: z.string().min(6).max(24).regex(USERNAME_PATTERN).optional(),
+			currentPassword: z
+				.string()
+				.min(8)
+				.max(32)
+				.regex(PASSWORD_PATTERN)
+				.optional(),
+			newPassword: z.string().min(8).max(32).regex(PASSWORD_PATTERN).optional(),
+		})
+		.partial()
+		.refine((data) => !(data.newPassword && !data.currentPassword), {
+			message: 'Se requiere la contraseña actual para establecer una nueva',
+			path: ['currentPassword'],
+		}),
+})
+export type UpdateCurrUserProfileType = z.infer<
+	typeof updateCurrUserProfileSchema
+>
+
+export const updateUserSchema = z.object({
+	params: z.object({
+		id: z.coerce.number().int().positive(),
+	}),
+	body: userUpdateBaseSchema.omit({ id: true }).partial(),
+})
+export type UpdateUserType = z.infer<typeof updateUserSchema>
+
 export type UserLoginType = z.infer<typeof userLoginSchema>
 
 export const TokenResponseSchema = z.object({
@@ -218,13 +235,30 @@ export const UserRoleSchema = z.enum([...userRolesArray])
 export type UserRoleType = z.infer<typeof UserRoleSchema>
 
 export const UserRoleEditSchema = z.object({
-	userId: z.number().int().positive(),
-	role: userRoles('role').notNull(),
+	params: updateUserSchema.shape.params,
+	body: updateUserSchema.shape.body.omit({
+		email: true,
+		username: true,
+	}),
 })
+
 export type UserRoleEditType = z.infer<typeof UserRoleEditSchema>
 
-export const poiSelectSchema = createSelectSchema(pois)
-export type PoiSelectType = z.infer<typeof poiSelectSchema>
+export const poiInsertSchema = createInsertSchema(pois)
+export type PoiInsertType = z.infer<typeof poiInsertSchema>
+
+export const createPoiSchema = z.object({
+	params: z.object({
+		centerId: z.coerce.number().int().positive(),
+	}),
+	body: poiInsertSchema.omit({
+		id: true,
+		userId: true,
+		centerId: true,
+	}),
+})
+export type CreatePoiType = z.infer<typeof createPoiSchema>
+
 export const poiByCenterSchema = z.object({
 	params: z.object({
 		centerId: z.coerce.number().int().positive(),
@@ -234,19 +268,21 @@ export const poiByCenterSchema = z.object({
 		lastId: z.coerce.number().int().positive().optional(),
 	}),
 })
-export type PoiByCenterType = z.infer<typeof poiByCenterSchema>
 
-export const poiInsertSchema = createInsertSchema(pois)
-export type PoiInsertType = z.infer<typeof poiInsertSchema>
-
-export const poiCreateSchema = poiInsertSchema.omit({
-	id: true,
-	userId: true,
-	centerId: true,
+export const updatePoiSchema = z.object({
+	params: z.object({
+		centerId: z.coerce.number().int().positive(),
+		id: z.coerce.number().int().positive(),
+	}),
+	body: z.object({
+		name: z.string().min(1).optional(),
+		details: z.any().optional(),
+	}),
 })
-export type PoiCreateType = z.infer<typeof poiCreateSchema>
 
-export const poiDeleteSchema = z.object({
-	centerId: z.coerce.number().int().positive(),
-	poiId: z.coerce.number().int().positive(),
+export const deletePoiSchema = z.object({
+	params: z.object({
+		centerId: z.coerce.number().int().positive(),
+		id: z.coerce.number().int().positive(),
+	}),
 })

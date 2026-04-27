@@ -30,6 +30,7 @@ GitHub Actions configurado para deploy automático a staging. Consulta [.github/
 3.  **Configurar el entorno**: Copia `.env.template` a `.env` y define credenciales seguras para:
     - `POSTGRES_PASSWORD`
     - `JWT_SECRET`
+    - `MINIO_ROOT_PASSWORD`
       > Puedes usar `openssl rand -hex 32` para generar credenciales seguras. Usa valores distintos para cada variable.
 
 4.  **Iniciar la base de datos**:
@@ -39,7 +40,16 @@ GitHub Actions configurado para deploy automático a staging. Consulta [.github/
     npm run db:logs # opcional, para ver logs
     ```
 
-5.  **Aplicar migraciones e insertar datos de prueba**:
+5.  **Iniciar almacen de blobs (MinIO)**:
+
+    ```bash
+    npm run storage:up
+    npm run storage:logs # opcional, para ver logs
+    ```
+
+    > MinIO es un servicio de almacenamiento de objetos compatible con S3. Se utiliza para almacenar imágenes de centros y usuarios.
+
+6.  **Aplicar migraciones e insertar datos de prueba**:
 
     ```bash
     npm run db:generate
@@ -49,7 +59,7 @@ GitHub Actions configurado para deploy automático a staging. Consulta [.github/
 
     > Las migraciones versionan el esquema y permiten revertir cambios. Más info: [db](./docs/db.md)
 
-6.  **Iniciar la aplicación**: `npm run dev`
+7.  **Iniciar la aplicación**: `npm run dev`
 
 ---
 
