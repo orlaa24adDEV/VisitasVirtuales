@@ -1,6 +1,8 @@
 import { Router } from 'express'
 import minioService from '../services/minioService.ts'
 import multer from 'multer'
+import hasRole from '../middlewares/hasRole.ts'
+import { simpleUploadHandler } from '../controllers/minioController.ts'
 
 const router = Router()
 // Configurar multer para guardar partes de ficheros en memoria antes de subirlas a MinIO
@@ -11,13 +13,53 @@ const upload = multer({
 
 // TODO: Mover lógica a controller y service para mantener router limpio
 
+// Endpoint para subida simple
 /**
  * @openapi
+ * /api/v1/upload:
+ *   post:
+ *     summary: Subir un fichero completo a MinIO
+ *     tags:
+ *       - Assets
+ *     description: Sube un fichero completo a MinIO utilizando Multer para manejar la recepción del fichero. Este endpoint es adecuado para ficheros pequeños (hasta 10MB) y no requiere manejo de partes.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: Fichero a subir (Máximo 10MB)
+ *     responses:
+ *       200:
+ *         description: Fichero subido exitosamente, devuelve la URL de acceso al fichero
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Mensaje de éxito indicando que el fichero ha sido subido exitosamente
+ *                 fileUrl:
+ *                   type: string
+ *                   description: URL pública para acceder al fichero subido (ej. "https://frontend.example.com/assets/550e8400-e29b-41d4-a716-446655440000.jpg")
+ *       400:
+ *         description: Fichero no proporcionado o inválido
+ *       500:
+ *         description: Error al subir el fichero
+ */
+router.post('/upload', hasRole(['admin', 'teacher']), upload.single('file'), simpleUploadHandler);
+
+/**
  * /api/v1/upload/init:
  *   post:
  *     summary: Iniciar subida multipart a MinIO
  *     tags:
- *       - Upload
+ *       - Assets
  *     description: Solicita un uploadId para iniciar una subida multipart. El cliente debe proporcionar el nombre del fichero y su tipo MIME.
  *     requestBody:
  *       required: true
@@ -90,8 +132,8 @@ router.post('/upload/init', async (req, res) => {
 	}
 })
 
+// Ocultar endpoints multipart
 /**
- * @openapi
  * /api/v1/upload/part:
  *   post:
  *     summary: Subir parte de un fichero a MinIO
@@ -165,7 +207,6 @@ router.post('/upload/part', upload.single('file'), async (req, res) => {
 })
 
 /**
- * @openapi
  * /api/v1/upload/abort:
  *   post:
  *     summary: Cancelar una subida multipart en curso
@@ -218,7 +259,6 @@ router.post('/upload/abort', async (req, res) => {
 })
 
 /**
- * @openapi
  * /api/v1/upload/complete:
  *   post:
  *     summary: Completar una subida multipart
@@ -296,6 +336,34 @@ router.post('/upload/complete', async (req, res) => {
 	}
 })
 
+/**
+ * @openapi
+ * /api/v1/assets/{fileName}:
+ *   get:
+ *     summary: Obtener imagen desde MinIO (proxy)
+ *     tags:
+ *       - Assets
+ *     description: Obtiene una imagen almacenada en MinIO y la transmite al cliente.
+ *     parameters:
+ *       - in: path
+ *         name: fileName
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Nombre del fichero a obtener (ej. "550e8400-e29b-41d4-a716-446655440000.jpg")
+ *     responses:
+ *       200:
+ *         description: Imagen obtenida exitosamente, se transmite el contenido de la imagen con los headers adecuados
+ *         content:
+ *           image/jpeg:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       404:
+ *         description: Imagen no encontrada en MinIO
+ *       500:
+ *         description: Error al obtener la imagen desde MinIO
+ */
 // Obtener imagen (proxy)
 router.get('/assets/:fileName', async (req, res) => {
 	try {

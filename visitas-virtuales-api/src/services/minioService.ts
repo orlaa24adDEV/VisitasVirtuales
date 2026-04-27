@@ -37,6 +37,15 @@ class MinioService {
 		}
 	}
 
+	// Iniciar subida simple de un fichero completo (Multer proporciona el buffer completo del fichero en memoria)
+	simpleUpload = async (fileName: string, mimeType: string, buffer: Buffer) => {
+		const sanitizedFileName = await this.sanitizeFileName(fileName)
+		await minioClient.putObject(this.bucketName, sanitizedFileName, buffer, buffer.length, {
+			'Content-Type': mimeType,
+		})
+		return sanitizedFileName
+	}
+
 	// Iniciar subida de fichero por partes. El frontend necesita enviar el nombre y tipo MIME del fichero
 	startMultipart = async (fileName: string, mimeType: string) => {
 		const uploadId = await minioClient.initiateNewMultipartUpload(
