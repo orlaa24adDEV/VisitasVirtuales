@@ -15,7 +15,6 @@ import { useNavigate } from 'react-router-dom';
 export const AuthProvider = ({ children }) => {
   // Estado de carga inicial (espera a cargar perfil y centros antes de mostrar la app)
   const [isInitialLoading, setIsInitialLoading] = useState(true)
-  const isFirstLoad = useRef(true);
   const CHECK_INTERVAL = 5 * 60 * 1000;
   const lastCheckRef = useRef(Date.now());
   const [isExiting, setIsExiting] = useState(false) // Para manejar transición al cargar página
@@ -23,7 +22,6 @@ export const AuthProvider = ({ children }) => {
   // Perfil del usuario autenticado y token de acceso
   const [authState, setAuthState] = useState({
     user: null,
-    accessToken: null,
     isUserLoading: false,
     userError: null,
   })
@@ -67,7 +65,7 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json()
       setAuthState((prev) => ({ ...prev, accessToken: data.accessToken }))
       return data.accessToken
-    } catch (e) {
+    } catch {
       setAuthState((prev) => ({ ...prev, user: null, accessToken: null }))
       return null
     }

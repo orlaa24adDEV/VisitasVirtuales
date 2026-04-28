@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 import centerService from '../services/centerService.ts'
-import minioService from '../services/storageService.ts'
+import storageService from '../services/storageService.ts'
 import { asyncHandler } from '../middlewares/asyncHandler.ts'
 import type { ValidAuthenticatedRequest } from '../middlewares/validation.ts'
 import type { centerImageUpdateSchema, centerUpdateSchema } from '../db/schema.ts'
@@ -60,7 +60,7 @@ export const updateCenterImageHandler = asyncHandler(
 		}
 
 		// Subir la imagen a MinIO y obtener la URL pública
-		const sanitizedFileName = await minioService.simpleUpload(fileName, mimeType, buffer)
+		const sanitizedFileName = await storageService.simpleUpload(fileName, mimeType, buffer)
 		const fileUrl = `${env.FRONTEND_URL}/api/${env.API_VERSION}/assets/${sanitizedFileName}`;
 		// Actualizar el centro con la nueva URL de la imagen
 		const updatedCenter = await centerService.updateCenterImage(id, { imageUrl : fileUrl })

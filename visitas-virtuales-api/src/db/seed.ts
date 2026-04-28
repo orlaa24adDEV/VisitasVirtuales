@@ -67,70 +67,80 @@ async function main() {
 				username: 'admin_mad',
 				password: adminPassword,
 				role: 'admin',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_mad'
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_mad',
+				centerPreferenceId: insertedCenters[0]?.id
 			},
 			{
 				email: 'admin_bar@instituto.es',
 				username: 'admin_bar',
 				password: adminPassword,
 				role: 'admin',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_bar'
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_bar',
+				centerPreferenceId: insertedCenters[1]?.id
 			},
 			{
 				email: 'admin_sev@instituto.es',
 				username: 'admin_sev',
 				password: adminPassword,
 				role: 'admin',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_sev'
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_sev',
+				centerPreferenceId: insertedCenters[2]?.id
 			},
 			{
 				email: 'admin_val@instituto.es',
 				username: 'admin_val',
 				password: adminPassword,
 				role: 'admin',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_val'
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_val',
+				centerPreferenceId: insertedCenters[3]?.id
 			},
 			{
 				email: 'admin_cor@instituto.es',
 				username: 'admin_cor',
 				password: adminPassword,
 				role: 'admin',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_cor'
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_cor',
+				centerPreferenceId: insertedCenters[4]?.id
 			},
 			{
 				email: 'profesor_mad@instituto.es',
 				username: 'prof_mad',
 				password: teacherPassword,
 				role: 'teacher',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_mad'
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_mad',
+				centerPreferenceId: insertedCenters[0]?.id
 			},
 			{
 				email: 'profesor_bar@instituto.es',
 				username: 'prof_bar',
 				password: teacherPassword,
 				role: 'teacher',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_bar'
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_bar',
+				centerPreferenceId: insertedCenters[1]?.id
 			},
 			{
 				email: 'profesor_sev@instituto.es',
 				username: 'prof_sev',
 				password: teacherPassword,
 				role: 'teacher',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_sev'
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_sev',
+				centerPreferenceId: insertedCenters[2]?.id
 			},
 			{
 				email: 'profesor_val@instituto.es',
 				username: 'prof_val',
 				password: teacherPassword,
 				role: 'teacher',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_val'
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_val',
+				centerPreferenceId: insertedCenters[3]?.id
 			},
 			{
 				email: 'profesor_cor@instituto.es',
 				username: 'prof_cor',
 				password: teacherPassword,
 				role: 'teacher',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_cor'
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_cor',
+				centerPreferenceId: insertedCenters[4]?.id
 			},
 		]
 		const insertedUsers: { id: number; username: string }[] = await db

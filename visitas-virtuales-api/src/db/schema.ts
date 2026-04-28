@@ -34,6 +34,8 @@ export const users = pgTable('users', {
 	imageUrl: text('image_url'),
 	createdAt: timestamp('created_at').notNull().defaultNow(),
 	updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+	centerPreferenceId: integer('center_preference_id')
+		.references(() => centers.id, { onDelete: 'set null' })
 })
 
 export const pois = pgTable(
@@ -187,7 +189,7 @@ const userLoginBaseSchema = createSelectSchema(users)
 	.omit({ id: true, role: true })
 
 export const userLoginSchema = z.object({
-	body: userLoginBaseSchema.omit({imageUrl: true, createdAt: true, updatedAt: true}).refine((data) => data.email || data.username),
+	body: userLoginBaseSchema.omit({imageUrl: true, createdAt: true, updatedAt: true, centerPreferenceId: true}).refine((data) => data.email || data.username),
 })
 
 const userUpdateBaseSchema = createInsertSchema(users).omit({ password: true })
@@ -205,6 +207,7 @@ export const updateCurrUserProfileSchema = z.object({
 				.regex(PASSWORD_PATTERN)
 				.optional(),
 			newPassword: z.string().min(8).max(32).regex(PASSWORD_PATTERN).optional(),
+			centerPreferenceId: z.coerce.number().int().positive().optional(),
 		})
 		.partial()
 		.refine((data) => !(data.newPassword && !data.currentPassword), {
@@ -251,6 +254,12 @@ export const UserRoleEditSchema = z.object({
 })
 
 export type UserRoleEditType = z.infer<typeof UserRoleEditSchema>
+
+export const userImageUpdateSchema = z.object({
+	params: z.object({
+		id: z.coerce.number().int().positive(),
+	}),
+})
 
 export const poiInsertSchema = createInsertSchema(pois)
 export type PoiInsertType = z.infer<typeof poiInsertSchema>

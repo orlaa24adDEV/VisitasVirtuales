@@ -139,5 +139,5 @@ class MinioService {
 	}
 }
 
-const minioService = new MinioService()
-export default minioService
+const storageService = new MinioService()
+export default storageService
