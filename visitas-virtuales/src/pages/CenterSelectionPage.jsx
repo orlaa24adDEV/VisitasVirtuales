@@ -139,7 +139,7 @@ export default function CenterSelectionPage() {
                         </div>
 
                         {/* Indicador visual de selección */}
-                        <div className="mt-4">
+                        <div className="mt-4 ">
                           {isActive ? (
                             <Button variant="primary" size="small" className="w-full"
                               onClick={(e) => {
@@ -150,7 +150,7 @@ export default function CenterSelectionPage() {
                               Acceder al Centro
                             </Button>
                           ) : (
-                            <div className="w-full py-2 text-center text-xs font-bold text-slate-100 border-rounded border-slate-400 group-hover:text-blue-600 transition-colors duration-300">
+                            <div className="h-9 flex justify-center items-center text-sm font-bold text-slate-100 border-rounded border-slate-400 group-hover:text-blue-600 transition-colors duration-300">
                               Haz clic para seleccionar
                             </div>
                           )}
