@@ -66,18 +66,15 @@ export default function Login() {
 						return text.charAt(0).toUpperCase() + text.slice(1);
 					});
 					setErrors(errorMessages);
-					clearForm();
 					return;
 				}
 
 				if (typeof message === 'string' && message.trim()) {
 					setErrors([message.trim()]);
-					clearForm();
 					return;
 				}
 
 				setErrors(['Error desconocido al iniciar sesión']);
-				clearForm();
 				return;
 			}
         
