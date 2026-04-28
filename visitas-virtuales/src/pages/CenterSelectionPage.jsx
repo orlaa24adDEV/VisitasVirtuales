@@ -86,7 +86,7 @@ export default function CenterSelectionPage() {
                 {allCenters.map((center) => {
                   const isActive = localSelectedCenter?.id === center.id;
                   return (
-                    <button
+                    <div
                       key={center.id}
                       onClick={() => setLocalSelectedCenter(center)}
                       className={`
@@ -117,28 +117,26 @@ export default function CenterSelectionPage() {
                         </div>
 
                         {/* Indicador visual de selección */}
-                        <div className={`mt-4 w-full py-2 rounded-lg text-center text-xs font-bold transition-colors ${
-                          isActive ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600'
-                        }`}>
-                          {isActive ? 'CENTRO SELECCIONADO' : 'SELECCIONAR'}
+                        <div className="mt-4">
+                          {isActive ? (
+                            <Button variant="primary" size="small" className="w-full"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleConfirm();
+                              }}
+                            >
+                              Acceder al Centro
+                            </Button>
+                          ) : (
+                            <div className="w-full py-2 text-center text-xs font-bold text-slate-100 border-rounded border-slate-400 group-hover:text-blue-600 transition-colors duration-300">
+                              Haz clic para seleccionar
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </button>
+                    </div>
                   );
                 })}
-              </div>
-
-              {/* Botón confirmar mejorado */}
-              <div className="mt-12 flex justify-center">
-                <Button
-                  onClick={handleConfirm}
-                  disabled={!localSelectedCenter}
-                  variant={"primary"}
-                  size={"large"}
-                >
-                  Acceder al Centro
-                </Button>
-                
               </div>
             </>
           )}
