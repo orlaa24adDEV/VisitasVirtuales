@@ -5,7 +5,7 @@
       "centerName": "CENTER 1",
       "centerDescription": "Sede de Sevilla.",
       "POIs": [
-        { "id": 1, "name": "Entrada ", "description": "Acceso principal al centro con control de seguridad y recepción.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
+        { "id": 1, "name": "Entrada", "description": "Acceso principal al centro con control de seguridad y recepción.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
         { "id": 2, "name": "Recepción", "description": "Zona de atención al visitante e información general del centro.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
         { "id": 3, "name": "Biblioteca", "description": "Amplia biblioteca con fondos de más de 5.000 volúmenes y zona de estudio.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },
         { "id": 4, "name": "Comedor", "description": "Servicio de comedor con menú diario para alumnos y personal.", "loc_poi": { "x": 0, "y": 0, "z": 0 } },

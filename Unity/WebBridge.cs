@@ -12,6 +12,34 @@ public class WebBridge : MonoBehaviour
     private bool _centroRecibido = false;
     private bool _escenaRecibida = false;
 
+    // Control de pantalla completa
+    // Guarda el estado actual de la pantalla completa
+    private bool isFullScreen = false;
+
+    // Enlace con la función JavaScript del archivo Fullscreen.jslib
+    // Solo se usa en WebGL, en el Editor se usa Screen.fullScreen
+    [System.Runtime.InteropServices.DllImport("__Internal")]
+    private static extern void ToggleFullscreenJS();
+
+    public void toggleFullScreen()
+{
+    isFullScreen = !isFullScreen;
+    Debug.Log("[WebBridge] toggleFullScreen llamado: " + isFullScreen);
+
+    #if UNITY_WEBGL && !UNITY_EDITOR
+        Debug.Log("[WebBridge] Llamando a ToggleFullscreenJS...");
+        ToggleFullscreenJS();
+    #else
+        Screen.fullScreen = isFullScreen;
+    #endif
+}
+
+    // Activa la pantalla completa directamente
+    public void fullScreen()
+    {
+        Screen.fullScreen = true;
+    }
+
     // JavaScript llama a este método primero
     public void RecibirIdCentro(string idCentro)
     {
