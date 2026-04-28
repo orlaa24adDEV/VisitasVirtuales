@@ -9,7 +9,7 @@ const Button = ({
     children,
     className = ''
 }) => {
-    const baseStyles = "group rounded-md transition-all min-w-fit flex items-center justify-center whitespace-nowrap disabled:cursor-not-allowed cursor-pointer shadow-sm duration-200";
+    const baseStyles = "group rounded-md transition-all min-w-fit flex items-center justify-center whitespace-nowrap disabled:cursor-not-allowed cursor-pointer shadow-sm duration-200 active:scale-95 select-none shadow-sm";
     
     const variants = {
         primary: "bg-blue-600 text-white hover:bg-blue-700",
