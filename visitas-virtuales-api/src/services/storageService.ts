@@ -23,6 +23,7 @@ class MinioService {
 	async init() {
 		console.log('Inicializando MinIO blob storage...')
 		await this.ensureBucketExists()
+		console.log('MinIO inicializado y listo para usar.')
 	}
 
 	// Verificar que el bucket existe, si no, crearlo
@@ -40,9 +41,15 @@ class MinioService {
 	// Iniciar subida simple de un fichero completo (Multer proporciona el buffer completo del fichero en memoria)
 	simpleUpload = async (fileName: string, mimeType: string, buffer: Buffer) => {
 		const sanitizedFileName = await this.sanitizeFileName(fileName)
-		await minioClient.putObject(this.bucketName, sanitizedFileName, buffer, buffer.length, {
-			'Content-Type': mimeType,
-		})
+		await minioClient.putObject(
+			this.bucketName,
+			sanitizedFileName,
+			buffer,
+			buffer.length,
+			{
+				'Content-Type': mimeType,
+			},
+		)
 		return sanitizedFileName
 	}
 

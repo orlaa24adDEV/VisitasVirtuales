@@ -1,3 +1,3 @@
 import appBootstrap from './helpers/appBootstrap.ts'
 
-appBootstrap()
+await appBootstrap()

@@ -1,19 +1,22 @@
 import { Router } from 'express'
-import minioService from '../services/minioService.ts'
 import multer from 'multer'
 import hasRole from '../middlewares/hasRole.ts'
-import { simpleUploadHandler } from '../controllers/minioController.ts'
+import {
+	abortMultipartHandler,
+	completeMultipartHandler,
+	getFileHandler,
+	simpleUploadHandler,
+	startMultipartHandler,
+	uploadPartHandler,
+} from '../controllers/storageController.ts'
 
 const router = Router()
 // Configurar multer para guardar partes de ficheros en memoria antes de subirlas a MinIO
 const upload = multer({
 	storage: multer.memoryStorage(),
-	limits: { fileSize: 10 * 1024 * 1024 },
-}) // Limitar a 10MB por parte
+	limits: { fileSize: 10 * 1024 * 1024 }, // Límite de 10MB por parte
+})
 
-// TODO: Mover lógica a controller y service para mantener router limpio
-
-// Endpoint para subida simple
 /**
  * @openapi
  * /api/v1/upload:
@@ -52,7 +55,12 @@ const upload = multer({
  *       500:
  *         description: Error al subir el fichero
  */
-router.post('/upload', hasRole(['admin', 'teacher']), upload.single('file'), simpleUploadHandler);
+router.post(
+	'/upload',
+	hasRole(['admin', 'teacher']),
+	upload.single('file'),
+	simpleUploadHandler,
+)
 
 /**
  * /api/v1/upload/init:
@@ -92,54 +100,23 @@ router.post('/upload', hasRole(['admin', 'teacher']), upload.single('file'), sim
  *                   type: string
  *                   description: Nombre del fichero limpiado para evitar colisiones o problemas de seguridad
  *       400:
- *         description: Faltan datos requeridos (fileName o mimeType)
+ *         description: Faltan datos requeridos para iniciar subida multipart (fileName o mimeType)
  *       500:
  *         description: Error al iniciar la subida multipart
  */
-// Iniciar subida multipart
-router.post('/upload/init', async (req, res) => {
-	try {
-		if (!req.body) {
-			return res
-				.status(400)
-				.json({
-					error: 'Solicitud sin cuerpo, se requieren fileName y mimeType',
-				})
-		}
-		const { fileName, mimeType } = req.body
-		if (!fileName || !mimeType) {
-			return res
-				.status(400)
-				.json({ error: 'fileName y mimeType son requeridos' })
-		}
+router.post(
+	'/upload/init',
+	hasRole(['admin', 'teacher']),
+	startMultipartHandler,
+)
 
-		// Limpiar el nombre del fichero para evitar problemas de seguridad o colisiones
-		const sanitizedFileName = await minioService.sanitizeFileName(fileName)
-
-		// Indicar a MinIO que vamos a subir un nuevo fichero por partes, obteniendo un uploadId para identificar la subida multipart en curso
-		const uploadId = await minioService.startMultipart(
-			sanitizedFileName,
-			mimeType,
-		)
-		res.json({
-			message: 'uploadId generado exitosamente, listo para recibir partes',
-			uploadId,
-			fileName: sanitizedFileName,
-		})
-	} catch (e) {
-		console.error('Error al iniciar subida multipart:', e)
-		res.status(500).json({ error: 'Error al iniciar subida multipart' })
-	}
-})
-
-// Ocultar endpoints multipart
 /**
  * /api/v1/upload/part:
  *   post:
  *     summary: Subir parte de un fichero a MinIO
  *     tags:
  *       - Upload
- *     description: Sube una parte de un fichero utilizando el uploadId generado previamente. El cliente debe proporcionar el nombre del fichero, el uploadId, el número de parte y el contenido de la parte.
+ *     description: Sube una parte de un fichero utilizando el uploadId generado previamente. El cliente debe proporcionar el nombre del fichero, el uploadId, el número de parte y el contenido de la parte. fileName es obtenido mediante uploadId gracias al map uploadIdSanitizedFileNameMap.
  *     requestBody:
  *       required: true
  *       content:
@@ -147,9 +124,6 @@ router.post('/upload/init', async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               fileName:
- *                 type: string
- *                 description: Nombre del fichero (debe coincidir con el usado para iniciar la subida)
  *               uploadId:
  *                 type: string
  *                 description: Identificador de la subida multipart en curso
@@ -162,7 +136,7 @@ router.post('/upload/init', async (req, res) => {
  *                 description: Contenido de la parte (Máximo 10MB)
  *     responses:
  *       200:
- *         description: Parte subida correctamente, devuelve el etag de la parte para su posterior uso en la finalización de la subida
+ *         description: Parte ${partNumber} subida exitosamente
  *         content:
  *           application/json:
  *             schema:
@@ -172,39 +146,17 @@ router.post('/upload/init', async (req, res) => {
  *                   type: string
  *                   description: eTag de la parte subida, necesario para completar la subida multipart
  *       400:
- *         description: Faltan datos requeridos (fileName, uploadId, partNumber o file)
+ *         description: Faltan datos requeridos para subir la parte (fileName, mimeType, buffer, uploadId o partNumber)
  *       500:
- *         description: Error al subir la parte del fichero
+ *         description: Error al procesar parte de subida multipart
  */
 // Subir parte (multer intercepta la parte y la pone en req.file.buffer)
-router.post('/upload/part', upload.single('file'), async (req, res) => {
-	try {
-		const { fileName, uploadId, partNumber } = req.body
-		const buffer = req.file?.buffer
-		if (!buffer || !fileName || !uploadId || !partNumber) {
-			return res.status(400).json({
-				error: 'fileName, uploadId, partNumber y file (parte) son requeridos',
-			})
-		}
-
-		const partData = await minioService.uploadPart(
-			fileName,
-			uploadId,
-			parseInt(partNumber), // Aseguramos que sea número
-			buffer,
-		)
-
-		res.json({
-			message: `Parte ${partNumber} subida exitosamente`,
-			etag: partData.etag, // Devolver el etag de la parte para su uso en la finalización de la subida
-		})
-	} catch (e) {
-		console.error('Error al procesar parte de subida multipart:', e)
-		res
-			.status(500)
-			.json({ error: 'Error al procesar parte de subida multipart' })
-	}
-})
+router.post(
+	'/upload/part',
+	hasRole(['admin', 'teacher']),
+	upload.single('file'),
+	uploadPartHandler,
+)
 
 /**
  * /api/v1/upload/abort:
@@ -212,7 +164,7 @@ router.post('/upload/part', upload.single('file'), async (req, res) => {
  *     summary: Cancelar una subida multipart en curso
  *     tags:
  *       - Upload
- *     description: Cancela una subida multipart utilizando el uploadId. Esto eliminará cualquier parte subida y limpiará los recursos asociados a esa subida multipart en MinIO.
+ *     description: Cancela una subida multipart utilizando el uploadId. Esto eliminará cualquier parte subida y limpiará los recursos asociados a esa subida multipart en MinIO. fileName es obtenido mediante uploadId gracias al map uploadIdSanitizedFileNameMap.
  *     requestBody:
  *       required: true
  *       content:
@@ -220,9 +172,6 @@ router.post('/upload/part', upload.single('file'), async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               fileName:
- *                 type: string
- *                 description: Nombre del fichero asociado a la subida multipart (debe coincidir con el usado para iniciar la subida)
  *               uploadId:
  *                 type: string
  *                 description: Identificador de la subida multipart en curso que se desea cancelar
@@ -242,21 +191,11 @@ router.post('/upload/part', upload.single('file'), async (req, res) => {
  *       500:
  *         description: Error al cancelar la subida multipart
  */
-// Cancelar subida multipart
-router.post('/upload/abort', async (req, res) => {
-	try {
-		const { fileName, uploadId } = req.body
-		if (!fileName || !uploadId) {
-			return res
-				.status(400)
-				.json({ error: 'fileName y uploadId son requeridos' })
-		}
-		await minioService.abortMultipart(fileName, uploadId)
-		res.json({ message: 'Subida cancelada y limpieza realizada' })
-	} catch (e) {
-		res.status(500).json({ error: 'Error al abortar subida' })
-	}
-})
+router.post(
+	'/upload/abort',
+	hasRole(['admin', 'teacher']),
+	abortMultipartHandler,
+)
 
 /**
  * /api/v1/upload/complete:
@@ -264,7 +203,7 @@ router.post('/upload/abort', async (req, res) => {
  *     summary: Completar una subida multipart
  *     tags:
  *       - Upload
- *     description: Completa una subida multipart utilizando el uploadId y la lista de partes subidas. Esto unirá todas las partes en MinIO y hará que el fichero esté disponible para su acceso.
+ *     description: Completa una subida multipart utilizando el uploadId y la lista de partes subidas. Esto unirá todas las partes en MinIO y hará que el fichero esté disponible para su acceso. fileName es obtenido mediante uploadId gracias al map uploadIdSanitizedFileNameMap
  *     requestBody:
  *       required: true
  *       content:
@@ -272,9 +211,6 @@ router.post('/upload/abort', async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               fileName:
- *                 type: string
- *                 description: Nombre del fichero asociado a la subida multipart (debe coincidir con el usado para iniciar la subida)
  *               uploadId:
  *                 type: string
  *                 description: Identificador de la subida multipart en curso que se desea completar
@@ -302,39 +238,17 @@ router.post('/upload/abort', async (req, res) => {
  *                   description: Mensaje de éxito indicando que la subida multipart ha sido completada y el fichero está disponible para acceso
  *                 url:
  *                   type: string
- *                   example: "/assets/550e8400-e29b-41d4-a716-446655440000.jpg"
+ *                   example: "https://frontend.example.com/api/v1/assets/550e8400-e29b-41d4-a716-446655440000.jpg"
  *       400:
- *         description: Faltan datos requeridos (fileName, uploadId o parts) o formato incorrecto de parts
+ *         description: Faltan datos requeridos (fileName, uploadId o parts)
  *       500:
- *         description: Error al completar la subida multipart
+ *         description: Error al completar subida multipart
  */
-// Subir fichero completo una vez disponemos de todas las partes
-// MinIO las une en el orden correcto usando los etags y almacena el fichero final
-router.post('/upload/complete', async (req, res) => {
-	try {
-		const { fileName, uploadId, parts } = req.body
-		if (!fileName || !uploadId || !parts || !Array.isArray(parts)) {
-			return res
-				.status(400)
-				.json({ error: 'fileName, uploadId y parts (array) son requeridos' })
-		}
-
-		const result = await minioService.completeMultipart(
-			fileName,
-			uploadId,
-			parts,
-		)
-
-		// Proporcionar URL de acceso al fichero subido
-		res.json({
-			message: 'Subida multipart completada',
-			url: `/assets/${fileName}`,
-		})
-	} catch (e) {
-		console.error('Error al completar subida multipart:', e)
-		res.status(500).json({ error: 'Error al completar subida multipart' })
-	}
-})
+router.post(
+	'/upload/complete',
+	hasRole(['admin', 'teacher']),
+	completeMultipartHandler,
+)
 
 /**
  * @openapi
@@ -365,34 +279,6 @@ router.post('/upload/complete', async (req, res) => {
  *         description: Error al obtener la imagen desde MinIO
  */
 // Obtener imagen (proxy)
-router.get('/assets/:fileName', async (req, res) => {
-	try {
-		const fileName = req.params.fileName
-		// Obtener stream del fichero y headers desde MinIO
-		const { stream, contentType, size } =
-			await minioService.getImageStream(fileName)
-
-		// Configurar headers de respuesta
-		res.setHeader('Content-Type', contentType)
-		res.setHeader('Content-Length', size)
-
-		// Indicar que el nombre del fichero es immutable
-		res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
-
-		// Manejar errores para evitar leaks de memoria si el stream falla (cerrar socket de red hacia MinIO)
-		stream.on('error', (err) => {
-			console.error('Error en el stream de MinIO:', err)
-			if (!res.headersSent) {
-				res.status(500).send('Error al transmitir la imagen')
-			}
-		})
-
-		// Enviar el stream al cliente
-		stream.pipe(res)
-	} catch (e) {
-		console.error('Error al obtener imagen:', e)
-		res.status(404).json({ error: 'Imagen no encontrada' })
-	}
-})
+router.get('/assets/:fileName', getFileHandler)
 
 export default router

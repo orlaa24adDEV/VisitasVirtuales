@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 import centerService from '../services/centerService.ts'
-import minioService from '../services/minioService.ts'
+import minioService from '../services/storageService.ts'
 import { asyncHandler } from '../middlewares/asyncHandler.ts'
 import type { ValidAuthenticatedRequest } from '../middlewares/validation.ts'
 import type { centerImageUpdateSchema, centerUpdateSchema } from '../db/schema.ts'
