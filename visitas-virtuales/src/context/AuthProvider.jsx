@@ -199,7 +199,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = useCallback(async () => {
     const token = getLocalStorageAccessToken();
-    setAuthState({ user: null, accessToken: null })
+    setAuthState({ user: null, accessToken: null, isUserLoading: false })
     setCenterState({ allCenters: [], isCentersLoading: false, centersError: null, selectedCenter: null })
     removeLocalStorageAccessToken();
     localStorage.clear();

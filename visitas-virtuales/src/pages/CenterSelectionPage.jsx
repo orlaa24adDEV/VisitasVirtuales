@@ -1,5 +1,5 @@
 // CenterSelectionPage — tarjetas con imagen superior, info centrada y línea azul inferior
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, use } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 // eslint-disable-next-line no-unused-vars
@@ -10,7 +10,7 @@ import Button from '@/components/Button.jsx';
 
 export default function CenterSelectionPage() {
   const navigate = useNavigate();
-  const { centerState, saveSelectedCenter, isAdmin } = useAuth();
+  const { centerState, saveSelectedCenter, isAdmin, fetchCenters } = useAuth();
   const { selectedCenter, allCenters, isCentersLoading, centersError } = centerState;
   
   // Iniciamos el local con lo que haya en el contexto (por si vuelve para cambiar)
@@ -19,7 +19,17 @@ export default function CenterSelectionPage() {
   const hasMounted = useRef(false);
 
   useEffect(() => {
-    if (isCentersLoading || centersError || !allCenters || allCenters.length === 0) return;
+
+    if (!isCentersLoading && (!allCenters || allCenters.length === 0)) {
+      fetchCenters();
+    }
+  }, [allCenters, isCentersLoading, fetchCenters]);
+
+  useEffect(() => {
+    if (isCentersLoading || centersError ) return;
+
+     // Si no hay centros, no hacemos nada (el toast se muestra en la Landing)
+    if (!allCenters || allCenters.length === 0) return;
 
     if (hasMounted.current) {
       if (!selectedCenter && !hasShownToast) {
