@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import CenterBanner from './CenterBanner';
+import CenterIndicator from './CenterIndicator.jsx';
 import Button from './Button.jsx';
 
 import { useAuth } from '@/hooks/useAuth.js';
@@ -121,13 +121,10 @@ function Crud() {
     return (
         <div className="flex flex-col items-center justify-center min-h-full w-full p-6">
             <section className="flex flex-col gap-2 w-full max-w-4xl p-5 shadow-sm rounded-2xl bg-white min-h-125">
-            <CenterBanner centerName={selectedCenter.name} />
-            <h2 className="text-2xl font-bold mb-6">Gestionar Puntos de Interés</h2>
+            
+            <h2 className="text-2xl flex w-full justify-between items-center font-bold my-2">{isEditing ? 'Editar POI' : 'Crear Nuevo POI'}<CenterIndicator centerName={selectedCenter.name} /></h2>
             {/* Formulario */}
-            <form action={handleSubmit} onSubmit={handleSubmit} className="mb-8 p-4 outline outline-slate-200 rounded-lg bg-white shadow-sm/8">
-                <h3 className="text-lg font-semibold mb-4">
-                    {isEditing ? 'Editar POI' : 'Crear Nuevo POI'}
-                </h3>
+            <form action={handleSubmit} onSubmit={handleSubmit} className="mb-8 p-4 outline outline-slate-200 rounded-lg bg-slate-50 shadow-sm/8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
                         <label className="block text-sm font-medium mb-1">Nombre:</label>
@@ -136,7 +133,7 @@ function Crud() {
                             name="name"
                             value={formData.name || ''}
                             onChange={handleInputChange}
-                            className="w-full p-2 outline outline-slate-200 rounded-lg"
+                            className="w-full p-2 outline outline-slate-200 rounded-lg bg-white"
                             placeholder="Nombre del POI"
                             required
                         />
@@ -147,16 +144,13 @@ function Crud() {
                             name="description"
                             value={formData.description || ''}
                             onChange={handleInputChange}
-                            className="w-full p-2 outline outline-slate-200 rounded-lg h-24"
+                            className="w-full p-2 outline outline-slate-200 rounded-lg h-24 bg-white"
                             placeholder="Descripción del punto de interés"
                             required
                         />
                     </div>
                 </div>
                 <div className="mt-4 flex w-full justify-end gap-2">
-                    <Button type="submit" variant="primary" onClick={handleSubmit}>
-                        {isEditing ? 'Actualizar POI' : 'Crear POI'}
-                    </Button>
                     <Button
                         type="button"
                         variant="secondary"
@@ -166,6 +160,9 @@ function Crud() {
                         }}
                     >
                         Cancelar
+                    </Button>
+                    <Button type="submit" variant="primary" onClick={handleSubmit}>
+                        {isEditing ? 'Actualizar POI' : 'Crear POI'}
                     </Button>
                 </div>
             </form>

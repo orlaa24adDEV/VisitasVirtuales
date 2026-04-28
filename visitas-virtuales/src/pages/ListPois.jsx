@@ -7,12 +7,9 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import CenterBanner from "@/components/CenterBanner.jsx";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
-import Button from "../components/Button";
-import Input from "../components/Input";
+import CenterIndicator from '../components/CenterIndicator';
 
 export default function ListPois({ centerId }) {
     const [pois, setPois] = useState([]);
@@ -94,10 +91,13 @@ export default function ListPois({ centerId }) {
 
   //He metido todo el section dentro de un div para centrarlo.
   return (
-    <div className="flex flex-col items-center justify-center min-h-full w-full  ">
+    <div className="flex flex-col items-center justify-center min-h-full w-full gap-4">
+      <div className='p-2 flex w-full justify-center'>
+          <CenterIndicator centerName={centerState.selectedCenter.name} size="lg" />
+        </div>
       <section className="flex flex-col gap-2 w-full max-w-4xl p-2 shadow-sm rounded-2xl bg-white min-h-125">
-        <CenterBanner centerName={selectedCenter.name} />
-        <div className="flex flex-row gap-2 border-2 border-gray-200 rounded-lg items-center focus-within:border-2 hover:border-blue-600 focus-within:border-blue-600 focus-within:border-solid">
+        
+        <div className="flex flex-row gap-2 h-10 border-2 border-gray-200 rounded-lg items-center focus-within:border-2 hover:border-blue-600 focus-within:border-blue-600 focus-within:border-solid">
           <Search size={24} className="text-gray-300 ml-2" />
           <input
             type="text"
@@ -114,7 +114,7 @@ export default function ListPois({ centerId }) {
               description: "",
               isEditing: false,
             }}
-            className="flex items-center w-45 gap-1 px-3 py-1.5 justify-center text-white text-sm font-medium bg-blue-600 border border-transparent hover:bg-blue-800 rounded-r-md cursor-pointer transition-all"
+            className="flex items-center w-38 gap-1 px-3 h-full py-1.5 justify-center text-white text-sm font-medium bg-blue-600 border border-transparent hover:bg-blue-800 rounded-r-md cursor-pointer transition-all"
           >
             <Plus size={18} strokeWidth={3} /> Nuevo POI
           </Link>
