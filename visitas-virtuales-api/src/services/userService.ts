@@ -110,6 +110,10 @@ const updateUser = async (
 	let newPasswordHash: string | undefined
 	console.log(currentPassword, newPassword)
 
+	if (dataToUpdate.imageUrl === '') {
+		dataToUpdate.imageUrl = null
+	}
+
 	// Si se proporciona una nueva contraseña sin la contraseña actual, se lanza un error de validación
 	if (newPassword && !currentPassword) {
 		throw new ApiError(

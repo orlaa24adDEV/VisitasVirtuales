@@ -89,8 +89,11 @@ export const userUpdateHandler = async (req: Request, res: Response) => {
 		// Subir la imagen a MinIO y obtener la URL pública
 		const sanitizedFileName = await storageService.simpleUpload(fileName, mimeType, buffer)
 		fileUrl = `${env.FRONTEND_URL}/api/${env.API_VERSION}/assets/${sanitizedFileName}`;
+		validData.body.imageUrl = fileUrl // Agregar la URL de la imagen al cuerpo de datos a actualizar
+	} else {
+		// El frontend envía una string vacía para indicar que se desea eliminar la imagen de perfil
+		validData.body.imageUrl = req.body.imageUrl;
 	}
-	validData.body.imageUrl = fileUrl // Agregar la URL de la imagen al cuerpo de datos a actualizar
 
 	console.log(validData.body)
 	// validData.body ahora está correctamente tipado con los campos de usuario

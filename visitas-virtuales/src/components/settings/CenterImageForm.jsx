@@ -92,19 +92,10 @@ export default function CenterImageForm() {
                 
                 {selectedId && (
                     <div className="flex gap-2">
-                     {file && (
-                        <>
-                        <Button variant='danger' onClick={handleClearImage} className='w-full flex-2'>
-                            <Trash2 className="w-4 h-4" /> Eliminar
-                        </Button>
-                        <Button onClick={handleUpload} variant="primary" className='w-full flex-2' disabled={isUploading}>
-                            {isUploading ? <LoaderCircle className="animate-spin w-4 h-4" /> : <Save className="w-4 h-4" />}
-                            {isUploading ? 'Subiendo...' : 'Guardar'}
-                        </Button></>
-                    ) || null}
+                     
                     <Button
                         onClick={() => fileInputRef.current.click()}
-                        variant="tertiary"
+                        variant="secondary"
                         className='w-full flex-2'
                     >
                         {file ? (
@@ -114,6 +105,18 @@ export default function CenterImageForm() {
                         )}
                         {file ? 'Cambiar imagen' : 'Subir nueva imagen'}
                     </Button>
+                    {file && (
+                        <>
+                        <Button variant='danger' onClick={handleClearImage} className='w-full flex-2'>
+                            <Trash2 className="w-4 h-4" /> Eliminar
+                        </Button>
+                        <Button onClick={handleUpload} variant="primary" className='w-full flex-2' disabled={isUploading}>
+                            {isUploading ? <LoaderCircle className="animate-spin w-4 h-4" /> : <Save className="w-4 h-4" />}
+                            {isUploading ? 'Subiendo...' : 'Guardar'}
+                        </Button>
+                        </>
+                    ) || null}
+                    
                 </div>) || null}
             </div>
         </>

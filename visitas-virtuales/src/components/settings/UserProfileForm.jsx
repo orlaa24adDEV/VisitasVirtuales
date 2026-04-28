@@ -1,4 +1,4 @@
-import { Pencil, RotateCcw, Save, User } from 'lucide-react';
+import { Pencil, RotateCcw, Save, Trash, User } from 'lucide-react';
 import Button from '../Button';
 import Input from '../Input';
 import Select from '../Select';
@@ -14,17 +14,24 @@ export default function UserProfileForm() {
           username: user?.username || '',
           email: user?.email || '',
           centerPreferenceId: String(user.centerPreferenceId) || '',
+          imageUrl: user?.imageUrl || ''
       };
 
     const [userFormState, setUserFormState] = useState(userFormInitialState);
-    const imageUrl = user?.imageUrl || `https://api.dicebear.com/9.x/identicon/svg?seed=${user?.email}`;
+    const defaultImageUrl = `https://api.dicebear.com/9.x/identicon/svg?seed=${user?.email}`;
+    const imageUrl = user?.imageUrl || defaultImageUrl;
     const [preview, setPreview] = useState(imageUrl);
+    const hasImage = !!preview && !preview.startsWith('https://api.dicebear.com');
     console.log(preview)
 
     const updateUserAction = async (formData) => {
         // Eliminar el campo de centro si no se ha seleccionado ninguno
         if (formData.get('centerPreferenceId') === '') {
             formData.delete('centerPreferenceId');
+        }
+        if (preview === defaultImageUrl) {
+            formData.set('imageUrl', '');
+            formData.delete('file');
         }
         
         try {
@@ -54,6 +61,7 @@ export default function UserProfileForm() {
     const resetChanges = async () => {
         console.log('Resetting to:', userFormInitialState)
         setUserFormState(userFormInitialState);
+        setPreview(imageUrl);
     }
 
     const handleUserImageChange = (e) => {
@@ -61,6 +69,10 @@ export default function UserProfileForm() {
         if (selectedFile) {
             setPreview(URL.createObjectURL(selectedFile));
         }
+    }
+
+    const handleClearImage = () => {
+        setPreview(defaultImageUrl);
     }
 
     return (
@@ -79,6 +91,14 @@ export default function UserProfileForm() {
                                         <div className="absolute bottom-2 right-2 bg-blue-600 p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-colors" onClick={() => userImageRef.current.click()}>
                                             <Pencil className="w-4 h-4 text-white" />
                                         </div>
+                                        {hasImage && (
+                                            <div
+                                                className="absolute bottom-2 left-2 bg-red-100 p-2 rounded-full cursor-pointer hover:bg-red-200 transition-colors"
+                                                onClick={handleClearImage}
+                                            >
+                                                <Trash className="w-4 h-4 text-red-600" />
+                                            </div>
+                                        )}
                                         <input name="file" type='file' onChange={handleUserImageChange} ref={userImageRef} className='hidden'/>
                                     </div>
                                 </div>
@@ -96,7 +116,7 @@ export default function UserProfileForm() {
                                         <Select name='centerPreferenceId' options={allCenters} value={userFormState.centerPreferenceId} onChange={(e) => setUserFormState(prev => ({ ...prev, centerPreferenceId: e.target.value }))} />
                                     </div>
                                     <div className='flex w-full justify-end gap-2 mt-6'>
-                                        <Button type="button" variant="tertiary" onClick={resetChanges}><RotateCcw className='w-5 h-5' />Olvidar cambios</Button>
+                                        <Button type="button" variant="secondary" onClick={resetChanges}><RotateCcw className='w-5 h-5' />Olvidar cambios</Button>
                                         <Button type="submit" variant="primary"><Save className='w-5 h-5' />Guardar cambios</Button>
                                     </div>
                                 </div>
