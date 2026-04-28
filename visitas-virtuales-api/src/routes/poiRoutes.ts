@@ -62,7 +62,7 @@ export const router = Router()
  *       401:
  *         description: No se proporcionó un token de acceso
  *       403:
- *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
+ *         description: Token de acceso inválido o expirado
  */
 router.post(
 	'/centers/:centerId/pois',
@@ -109,7 +109,7 @@ router.post(
  *       401:
  *         description: No se proporcionó un token de acceso
  *       403:
- *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
+ *         description: Token de acceso inválido o expirado
  */
 router.get(
 	'/centers/:centerId/pois',
@@ -149,7 +149,7 @@ router.get(
  *       401:
  *         description: No se proporcionó un token de acceso
  *       403:
- *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
+ *         description: Token de acceso inválido o expirado
  */
 router.get(
 	'/centers/:centerId/pois/search',
@@ -175,7 +175,7 @@ router.get(
  *       401:
  *         description: No se proporcionó un token de acceso
  *       403:
- *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
+ *         description: Token de acceso inválido o expirado
  */
 router.get('/pois', hasRoles('admin'), allPoisHandler)
 
@@ -217,7 +217,7 @@ router.get('/pois', hasRoles('admin'), allPoisHandler)
  *       401:
  *         description: No se proporcionó un token de acceso
  *       403:
- *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
+ *         description: Token de acceso inválido o expirado
  */
 router.patch(
 	'/centers/:centerId/pois/:id',
@@ -256,7 +256,7 @@ router.patch(
  *       401:
  *         description: No se proporcionó un token de acceso
  *       403:
- *         description: Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso
+ *         description: Token de acceso inválido o expirado
  */
 router.delete(
 	'/centers/:centerId/pois/:id',

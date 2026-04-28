@@ -14,12 +14,11 @@ import { ProtectedRoute } from './components/ProtectedRoute.jsx';
 import './assets/App.css';
 import { Toaster } from 'sonner';
 import LandingPage from './pages/LandingPage.jsx';
-import LoadingPage from './components/LoadingPage.jsx';
 import Settings from './pages/Settings.jsx';
 
 
 function App() {
-    const { authState, centerState, logout, isInitialLoading } = useAuth();
+    const { authState, centerState, logout } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { user } = authState;
     const { selectedCenter } = centerState;
@@ -48,7 +47,7 @@ function App() {
                         userName={user?.username || 'Invitado'}
                         userEmail={user?.email || ''}
                         role={user?.role || 'guest'}
-                        userImg={`https://api.dicebear.com/9.x/identicon/svg?seed=${user?.email || 'invitado'}`}
+                        userImg={user?.imageUrl || `https://api.dicebear.com/9.x/identicon/svg?seed=${user?.email}`}
                     />
                 )}
 
@@ -70,7 +69,7 @@ function App() {
                             element={selectedCenter ? <Viewer /> : <Navigate to="/centros" replace />} 
                         />
 
-                        {/* 5. RUTAS BLOQUEADAS PARA INVITADOS (Solo Admin/Profe) */}
+                        {/* 5. RUTAS SOLO PARA ADMIN/PROFE */}
                         <Route 
                             path="/listpois" 
                             element={selectedCenter ? <ProtectedRoute requiredRoles={['admin', 'teacher']}><ListPois centerId={centerState.selectedCenter.id} /></ProtectedRoute> : <Navigate to="/centros" replace />}
@@ -78,9 +77,8 @@ function App() {
                         <Route path="/crud" element={selectedCenter ? <ProtectedRoute requiredRoles={['admin', 'teacher']}><Crud /></ProtectedRoute> : <Navigate to="/centros" replace />} />
                         <Route path="/dashboard" element={<ProtectedRoute requiredRoles={['admin']}><Dashboard /></ProtectedRoute>} />
 
-                        {/*Nueva ruta para el Perfil*/}
                         <Route 
-                            path="/perfil" 
+                            path="/settings" 
                             element={<ProtectedRoute requiredRoles={["admin"]}><Settings /></ProtectedRoute>}
                         />
 

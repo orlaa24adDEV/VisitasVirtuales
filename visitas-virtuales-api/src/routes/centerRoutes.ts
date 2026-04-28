@@ -67,7 +67,7 @@ router.get(
  * @openapi
  * /api/v1/centers/{id}:
  *   patch:
- *     summary: Actualizar un centro específico
+ *     summary: Actualizar un centro específico (solo para administradores)
  *     description: Esta ruta permite a los administradores actualizar la información de un centro específico utilizando su ID
  *     tags: [Centros]
  *     security:
@@ -145,7 +145,7 @@ router.patch('/centers/:id', hasRole(['admin']), validateRequest({params: center
  * @openapi
  * /api/v1/centers/{id}/image:
  *   post:
- *     summary: Actualizar la imagen de un centro específico
+ *     summary: Actualizar la imagen de un centro específico (solo para administradores)
  *     description: Esta ruta permite a los administradores actualizar la imagen de un centro específico utilizando su ID.
  *     tags: [Centros]
  *     security:
@@ -203,7 +203,7 @@ router.patch('/centers/:id', hasRole(['admin']), validateRequest({params: center
  *       401:
  *         description: Token de acceso no proporcionado
  *       403:
- *         description: Token de acceso inválido, expirado o el usuario no tiene permisos para actualizar la imagen del centro
+ *         description: Token de acceso inválido o expirado
  *       404:
  *         description: Centro no encontrado
  */

@@ -8,14 +8,21 @@ import {
 	logoutHandler,
 } from '../controllers/userController.ts'
 import {
-	updateUserSchema as updateCurrUserSchema,
+	updateCurrUserProfileSchema,
+	userImageUpdateSchema,
 	userLoginSchema,
 	userRegisterSchema,
 	UserRoleEditSchema,
 } from '../db/schema.ts'
 import { validateRequest } from '../middlewares/validation.ts'
 import hasRole from '../middlewares/hasRole.ts'
-const router = Router()
+import multer from 'multer'
+
+export const router = Router()
+const upload = multer({
+	storage: multer.memoryStorage(),
+	limits: { fileSize: 10 * 1024 * 1024 },
+}) // Limitar a 10MB por parte
 
 /**
  * @openapi
@@ -315,7 +322,6 @@ router.post('/users/auth/logout', hasRole(['admin', 'teacher']), logoutHandler)
  *       content:
  *         application/json:
  *           schema:
- *             required: [currentPassword]
  *             type: object
  *             properties:
  *               currentPassword:
@@ -326,6 +332,15 @@ router.post('/users/auth/logout', hasRole(['admin', 'teacher']), logoutHandler)
  *                 type: string
  *               newPassword:
  *                 type: string
+ *               centerPreferenceId:
+ *                 type: integer
+ *     multipart/form-data:
+ *       schema:
+ *         type: object
+ *         properties:
+ *           file:
+ *             type: string
+ *             format: binary
  *     responses:
  *       200:
  *         description: Usuario actualizado con éxito
@@ -376,7 +391,8 @@ router.post('/users/auth/logout', hasRole(['admin', 'teacher']), logoutHandler)
 router.patch(
 	'/me',
 	hasRole(['admin', 'teacher']),
-	validateRequest({ body: updateCurrUserSchema.shape.body }),
+	upload.single('file'), 
+	validateRequest({ body: updateCurrUserProfileSchema.shape.body }),
 	userUpdateHandler,
 )
 

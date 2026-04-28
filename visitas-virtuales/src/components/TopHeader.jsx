@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth.js';
 import Button from './Button.jsx';
 import CenterSelectButton from './CenterSelectButton.jsx';
 import ClickOutsideWrapper from './ClickOutsideWrapper.jsx';
+import DropdownItem from './DropdownItem.jsx';
 
 
 TopHeader.propTypes = {
@@ -114,27 +115,19 @@ export default function TopHeader({
 
                             {/* Dropdown Menu */}
                             {isOpen && (
-                                <div className="absolute py-1 right-0 top-full mt-2 w-56 bg-white border border-slate-100 rounded-xl shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in duration-200">
-                                    <div className="px-4 pb-3 pt-3 border-b border-slate-50 bg-slate-50/50">
+                                <div className="absolute outline py-px outline-slate-100 right-0 divide-y divide-slate-200 gap-3 top-full mt-2 w-56 bg-white rounded-xl shadow-lg/8 z-20 overflow-hidden animate-in fade-in zoom-in duration-200">
+                                    <div className="bg-slate-50/50 py-3.25 px-4">
                                         <p className="text-xs text-slate-500 font-medium">Conectado</p>
                                         <p className="text-sm font-bold text-slate-700 truncate">{userEmail}</p>
                                     </div>
-                                    <hr className="my-1 border-slate-200" />
-                                    <button
-                                        onClick={() => { navigate('/perfil'); setIsOpen(false); }}
-                                        className="w-full text-left px-4 py-2.5 text-sm text-neutral-700 hover:bg-slate-50 font-semibold flex items-center gap-2 transition-colors"
-                                    >
-                                        <Settings className="w-4 h-4 text-neutral-800" />
-                                        Configuracion
-                                    </button>
-                                    <hr className="my-1 border-slate-200" />
-                                    <button
-                                        onClick={handleLogoutClick}
-                                        className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 font-semibold flex items-center gap-2 transition-colors"
-                                    >
-                                        <LogOut className="w-4 h-4" />
+                                    <DropdownItem onClick={() => navigate('/settings')}>
+                                        <Settings size={16} />
+                                        Configuración
+                                    </DropdownItem>
+                                    <DropdownItem onClick={handleLogoutClick} className='hover:bg-red-50! text-red-500!'>
+                                        <LogOut size={16}/>
                                         Cerrar sesión
-                                    </button>
+                                    </DropdownItem>
                                 </div>
                             )}
                         </div>

@@ -9,12 +9,13 @@ const Button = ({
     children,
     className = ''
 }) => {
-    const baseStyles = "group rounded-md transition-all min-w-fit flex items-center justify-center whitespace-nowrap disabled:cursor-not-allowed cursor-pointer shadow-sm duration-200 active:scale-95 select-none shadow-sm";
+    const baseStyles = "group rounded-md transition-all min-w-fit flex items-center disabled:opacity-50 justify-center whitespace-nowrap disabled:cursor-not-allowed cursor-pointer shadow-sm duration-200 active:scale-95 select-none shadow-sm";
     
     const variants = {
         primary: "bg-blue-600 text-white hover:bg-blue-700",
         secondary: "bg-slate-500 text-white hover:bg-slate-600",
-        danger: "bg-red-500 text-white hover:bg-red-600",
+        tertiary: "bg-slate-100 text-slate-700 rounded-lg! hover:bg-slate-200",
+        danger: "bg-red-100 text-red-600 hover:bg-red-200",
         outline: "bg-transparent border border-slate-200 text-slate-700 hover:bg-slate-50",
         ghost: "bg-transparent text-slate-700 hover:bg-slate-50 shadow-none!",
     };
@@ -33,9 +34,9 @@ const Button = ({
     const iconOnly = hasIcon && childrenArray.length === 1;
     
     const sizes = {
-        small: `text-xs h-8 ${iconOnly ? 'w-8 p-0' : 'px-3'} font-medium`,
-        normal: `text-sm sm:text-base h-10 ${iconOnly ? 'w-10 p-0' : 'px-4'} py-2 font-medium`,
-        large: `text-lg h-12 ${iconOnly ? 'w-12 p-0' : 'px-8'} py-3 font-semibold`,
+        small: `text-sm h-9 ${iconOnly ? 'w-9 p-0' : 'px-3'} font-medium ${hasIcon ? 'pl-2.5 pr-3.25' : ''}`,
+        normal: `text-sm sm:text-base h-10 ${iconOnly ? 'w-10 p-0' : 'px-4'} py-2 font-medium ${hasIcon ? 'pl 3.5 pr-4.25' : ''}`,
+        large: `text-lg h-12 ${iconOnly ? 'w-12 p-0' : 'px-8'} py-3 font-semibold ${hasIcon ? 'pl-7.5 pr-8.25' : ''}`,
     };
 
     const renderChildren = () => {

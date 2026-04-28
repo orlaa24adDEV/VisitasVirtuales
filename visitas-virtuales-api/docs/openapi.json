@@ -83,7 +83,7 @@
     },
     "/api/v1/centers/{id}": {
       "patch": {
-        "summary": "Actualizar un centro específico",
+        "summary": "Actualizar un centro específico (solo para administradores)",
         "description": "Esta ruta permite a los administradores actualizar la información de un centro específico utilizando su ID",
         "tags": [
           "Centros"
@@ -194,7 +194,7 @@
     },
     "/api/v1/centers/{id}/image": {
       "post": {
-        "summary": "Actualizar la imagen de un centro específico",
+        "summary": "Actualizar la imagen de un centro específico (solo para administradores)",
         "description": "Esta ruta permite a los administradores actualizar la imagen de un centro específico utilizando su ID.",
         "tags": [
           "Centros"
@@ -282,7 +282,7 @@
             "description": "Token de acceso no proporcionado"
           },
           "403": {
-            "description": "Token de acceso inválido, expirado o el usuario no tiene permisos para actualizar la imagen del centro"
+            "description": "Token de acceso inválido o expirado"
           },
           "404": {
             "description": "Centro no encontrado"
@@ -347,7 +347,7 @@
             "description": "No se proporcionó un token de acceso"
           },
           "403": {
-            "description": "Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso"
+            "description": "Token de acceso inválido o expirado"
           }
         }
       },
@@ -400,7 +400,7 @@
             "description": "No se proporcionó un token de acceso"
           },
           "403": {
-            "description": "Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso"
+            "description": "Token de acceso inválido o expirado"
           }
         }
       }
@@ -445,7 +445,7 @@
             "description": "No se proporcionó un token de acceso"
           },
           "403": {
-            "description": "Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso"
+            "description": "Token de acceso inválido o expirado"
           }
         }
       }
@@ -470,7 +470,7 @@
             "description": "No se proporcionó un token de acceso"
           },
           "403": {
-            "description": "Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso"
+            "description": "Token de acceso inválido o expirado"
           }
         }
       }
@@ -532,7 +532,7 @@
             "description": "No se proporcionó un token de acceso"
           },
           "403": {
-            "description": "Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso"
+            "description": "Token de acceso inválido o expirado"
           }
         }
       },
@@ -574,7 +574,7 @@
             "description": "No se proporcionó un token de acceso"
           },
           "403": {
-            "description": "Token de acceso inválido o expirado o el usuario no tiene permisos para acceder a este recurso"
+            "description": "Token de acceso inválido o expirado"
           }
         }
       }
@@ -795,9 +795,6 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": [
-                  "currentPassword"
-                ],
                 "type": "object",
                 "properties": {
                   "currentPassword": {
@@ -811,8 +808,22 @@
                   },
                   "newPassword": {
                     "type": "string"
+                  },
+                  "centerPreferenceId": {
+                    "type": "integer"
                   }
                 }
+              }
+            }
+          }
+        },
+        "multipart/form-data": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string",
+                "format": "binary"
               }
             }
           }
