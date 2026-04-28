@@ -19,6 +19,317 @@
     }
   ],
   "paths": {
+    "/api/v1/centers": {
+      "get": {
+        "summary": "Obtener listado de todos los centros disponibles",
+        "description": "Esta ruta permite a los usuarios obtener una lista de todos los centros disponibles en el sistema",
+        "tags": [
+          "Centros"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Centros obtenidos exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Centros obtenidos exitosamente"
+                    },
+                    "centers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Instituto Madrid"
+                          },
+                          "description": {
+                            "type": "string",
+                            "example": "Centro educativo principal en Madrid"
+                          },
+                          "location": {
+                            "type": "string",
+                            "example": "Madrid, España"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No se proporcionó un token de acceso"
+          },
+          "403": {
+            "description": "Token de acceso inválido o expirado"
+          }
+        }
+      }
+    },
+    "/upload/init": {
+      "post": {
+        "summary": "Iniciar subida multipart a MinIO",
+        "tags": [
+          "Upload"
+        ],
+        "description": "Solicita un uploadId para iniciar una subida multipart. El cliente debe proporcionar el nombre del fichero y su tipo MIME.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fileName": {
+                    "type": "string",
+                    "description": "Nombre del fichero a subir (sin path)"
+                  },
+                  "mimeType": {
+                    "type": "string",
+                    "description": "Tipo MIME del fichero (ej. image/jpeg)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "uploadId generado correctamente, listo para recibir partes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Mensaje de éxito indicando que el uploadId se ha generado y la subida multipart está lista para recibir partes"
+                    },
+                    "uploadId": {
+                      "type": "string",
+                      "description": "Identificador de la subida multipart en curso"
+                    },
+                    "fileName": {
+                      "type": "string",
+                      "description": "Nombre del fichero limpiado para evitar colisiones o problemas de seguridad"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan datos requeridos (fileName o mimeType)"
+          },
+          "500": {
+            "description": "Error al iniciar la subida multipart"
+          }
+        }
+      }
+    },
+    "/upload/part": {
+      "post": {
+        "summary": "Subir parte de un fichero a MinIO",
+        "tags": [
+          "Upload"
+        ],
+        "description": "Sube una parte de un fichero utilizando el uploadId generado previamente. El cliente debe proporcionar el nombre del fichero, el uploadId, el número de parte y el contenido de la parte.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fileName": {
+                    "type": "string",
+                    "description": "Nombre del fichero (debe coincidir con el usado para iniciar la subida)"
+                  },
+                  "uploadId": {
+                    "type": "string",
+                    "description": "Identificador de la subida multipart en curso"
+                  },
+                  "partNumber": {
+                    "type": "integer",
+                    "description": "Número de parte (comenzando en 1)"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Contenido de la parte (Máximo 10MB)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Parte subida correctamente, devuelve el etag de la parte para su posterior uso en la finalización de la subida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "etag": {
+                      "type": "string",
+                      "description": "eTag de la parte subida, necesario para completar la subida multipart"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan datos requeridos (fileName, uploadId, partNumber o file)"
+          },
+          "500": {
+            "description": "Error al subir la parte del fichero"
+          }
+        }
+      }
+    },
+    "/upload/abort": {
+      "post": {
+        "summary": "Cancelar una subida multipart en curso",
+        "tags": [
+          "Upload"
+        ],
+        "description": "Cancela una subida multipart utilizando el uploadId. Esto eliminará cualquier parte subida y limpiará los recursos asociados a esa subida multipart en MinIO.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fileName": {
+                    "type": "string",
+                    "description": "Nombre del fichero asociado a la subida multipart (debe coincidir con el usado para iniciar la subida)"
+                  },
+                  "uploadId": {
+                    "type": "string",
+                    "description": "Identificador de la subida multipart en curso que se desea cancelar"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subida multipart cancelada y recursos limpiados correctamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Mensaje de éxito indicando que la subida multipart ha sido cancelada y los recursos asociados han sido limpiados"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan datos requeridos (fileName o uploadId)"
+          },
+          "500": {
+            "description": "Error al cancelar la subida multipart"
+          }
+        }
+      }
+    },
+    "/upload/complete": {
+      "post": {
+        "summary": "Completar una subida multipart",
+        "tags": [
+          "Upload"
+        ],
+        "description": "Completa una subida multipart utilizando el uploadId y la lista de partes subidas. Esto unirá todas las partes en MinIO y hará que el fichero esté disponible para su acceso.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fileName": {
+                    "type": "string",
+                    "description": "Nombre del fichero asociado a la subida multipart (debe coincidir con el usado para iniciar la subida)"
+                  },
+                  "uploadId": {
+                    "type": "string",
+                    "description": "Identificador de la subida multipart en curso que se desea completar"
+                  },
+                  "parts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "partNumber": {
+                          "type": "integer",
+                          "description": "Número de parte (comenzando en 1)"
+                        },
+                        "etag": {
+                          "type": "string",
+                          "description": "eTag de la parte subida, obtenido al subir cada parte, necesario para completar la subida multipart"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subida multipart completada y fichero disponible para acceso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Mensaje de éxito indicando que la subida multipart ha sido completada y el fichero está disponible para acceso"
+                    },
+                    "url": {
+                      "type": "string",
+                      "example": "/assets/550e8400-e29b-41d4-a716-446655440000.jpg"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan datos requeridos (fileName, uploadId o parts) o formato incorrecto de parts"
+          },
+          "500": {
+            "description": "Error al completar la subida multipart"
+          }
+        }
+      }
+    },
     "/api/v1/centers/{centerId}/pois": {
       "post": {
         "summary": "Crear un nuevo POI para un centro específico (solo para administradores o profesores)",
@@ -81,8 +392,8 @@
         }
       },
       "get": {
-        "summary": "Listar todos los POIs de un centro específico",
-        "description": "Esta ruta permite a los usuarios obtener una lista de todos los POIs asociados a un centro específico. El ID del centro se proporciona como parámetro en la URL.",
+        "summary": "Listar POIs de un centro específico con paginación",
+        "description": "Esta ruta permite a los usuarios obtener una lista de POIs asociados a un centro específico. El ID del centro se proporciona como parámetro en la URL. Además, se pueden incluir parámetros de consulta para paginar los resultados, como el número de POIs por página (limit) y el ID del último POI obtenido en la página anterior (lastId) para cargar la siguiente página de resultados.",
         "tags": [
           "POIs"
         ],
@@ -100,6 +411,25 @@
               "type": "string"
             },
             "description": "ID del centro del cual se desean obtener los POIs"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Número de POIs por página para paginación (opcional, por defecto es 10)"
+          },
+          {
+            "in": "query",
+            "name": "lastId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del último POI obtenido en la página anterior para paginación (opcional)"
           }
         ],
         "responses": {
@@ -397,7 +727,7 @@
         }
       },
       "patch": {
-        "summary": "Editar perfil del usuario autenticado (solo para administradores y profesores) - SIN IMPLEMENTAR",
+        "summary": "Editar perfil del usuario autenticado (solo para administradores y profesores)",
         "description": "Permite al usuario autenticado editar su propio perfil, incluyendo su email, nombre de usuario y contraseña. Requiere un token de acceso válido en el header Authorization.",
         "tags": [
           "User"
@@ -497,6 +827,121 @@
           },
           "500": {
             "description": "Error del servidor al actualizar el usuario",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users": {
+      "post": {
+        "summary": "Registrar nuevo usuario (solo para administradores)",
+        "description": "Registra un nuevo usuario con email, nombre de usuario, contraseña y, opcionalmente, su rol. Por defecto el rol asignado es el de menor rango, \"guest\". No devuelve tokens, estos se proveeran cuando el usuario registrado inicie sesión.",
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "username",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "maxLength": 120,
+                    "format": "email",
+                    "example": "alumno_mad_2@instituto.es"
+                  },
+                  "username": {
+                    "type": "string",
+                    "minLength": 6,
+                    "maxLength": 24,
+                    "example": "alumno_mad_2"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 32,
+                    "example": "Alumno123!"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "admin",
+                      "teacher",
+                      "guest"
+                    ],
+                    "description": "Rol del usuario (opcional, por defecto \"guest\")"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario registrado con éxito",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email, nombre de usuario o contraseña no proporcionados, o con formato no válido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email o nombre de usuario ya en uso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor al registrar el usuario",
             "content": {
               "application/json": {
                 "schema": {
@@ -719,7 +1164,7 @@
     "/api/v1/users/auth/refresh": {
       "post": {
         "summary": "Renovar tokens de autenticación utilizando token de actualización (solo para administradores y profesores)",
-        "description": "Permite a un usuario renovar sus tokens utilizando un token de actualización válido. Devuelve un nuevo token de acceso en la respuesta y asigna un nuevo token de actualización en una cookie HTTP-only. Los invitados no necesitan renovar tokens, se les permite el acceso a las rutas públicas sin autenticación.",
+        "description": "Permite a un usuario renovar sus tokens utilizando un token de actualización válido. Devuelve un nuevo token de acceso en la respuesta y asigna un nuevo token de actualización en una cookie HTTP-only. Los invitados no necesitan renovar tokens, se les permite el acceso a las rutas públicas sin autenticación. La validación del token se realiza dentro del handler.",
         "tags": [
           "User"
         ],
@@ -835,68 +1280,6 @@
           },
           "403": {
             "description": "El token proporcionado no es válido o el usuario no tiene permisos de administrador"
-          }
-        }
-      }
-    },
-    "/api/v1/centers": {
-      "get": {
-        "summary": "Obtener listado de todos los centros disponibles",
-        "description": "Esta ruta permite a cualquier usuario autenticado obtener una lista de todos los centros disponibles en el sistema",
-        "tags": [
-          "Centros"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Centros obtenidos exitosamente",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Centros obtenidos exitosamente"
-                    },
-                    "centers": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "example": 1
-                          },
-                          "name": {
-                            "type": "string",
-                            "example": "Instituto Madrid"
-                          },
-                          "description": {
-                            "type": "string",
-                            "example": "Centro educativo principal en Madrid"
-                          },
-                          "location": {
-                            "type": "string",
-                            "example": "Madrid, España"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "No se proporcionó un token de acceso"
-          },
-          "403": {
-            "description": "Token de acceso inválido o expirado"
           }
         }
       }

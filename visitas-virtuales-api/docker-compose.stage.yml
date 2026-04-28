@@ -3,12 +3,15 @@ services:
     build: .
     container_name: vv-api
     image: visitas-virtuales-api:0.1.0
+    ports:
+      - '8000:8000'
     restart: always
     environment:
       - APP_STAGE=stage
     env_file:
       - .env.stage
     depends_on:
+      - minio_service
       - postgres_service
     networks:
       - vv-network
@@ -26,24 +29,23 @@ services:
     networks:
       - vv-network
 
-  nginx_service:
-    image: nginx:alpine
-    container_name: vv-nginx
-    restart: always
-    ports:
-      - '8080:80'
-      - '443:443'
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      # Montar los certificados SSL desde el host
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-      # Montar app de React/Vite
-      - ../visitas-virtuales/dist:/usr/share/nginx/html:ro
-    depends_on:
-      - postgres_service
-      - api_service
+  minio_service:
+    image: minio/minio
+    container_name: vv-minio
+    env_file:
+      - .env.stage
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_DEFAULT_BUCKETS: bucket1
     networks:
       - vv-network
+    ports:
+      - '9000:9000'
+      - '9001:9001' # Consola web de MinIO
+    command: server /data --console-address ":9001"
+    volumes:
+      - miniodata-stage:/data
 
 networks:
   vv-network:
@@ -51,3 +53,4 @@ networks:
 
 volumes:
   pgdata-stage:
+  miniodata-stage:

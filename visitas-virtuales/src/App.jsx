@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom'; // Añadimos Navigate
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'; // Añadimos Navigate
 import TopHeader from './components/TopHeader';
 import Sidebar from './components/Sidebar';
 import Login from './components/Login';
@@ -9,91 +9,96 @@ import Historial from './pages/Historial.jsx';
 import CenterSelectionPage from './pages/CenterSelectionPage.jsx';
 import ListPois from './pages/ListPois.jsx';
 import { useAuth } from '@/hooks/useAuth.js';
-import Home from './pages/Home.jsx';
-import { AdminRoute } from './components/ProtectedRoute.jsx';
-import Register from './components/Register.jsx';
+import Viewer from './pages/Viewer.jsx';
+import { ProtectedRoute } from './components/ProtectedRoute.jsx';
 import './assets/App.css';
+import { Toaster } from 'sonner';
+import LandingPage from './pages/LandingPage.jsx';
+import LoadingPage from './components/LoadingPage.jsx';
 
 
 function App() {
-    // Extraemos isAdmin y isTeacher para usarlos en las rutas
-    const { user, logout, selectedCenter, isAdmin} = useAuth();
+    const { authState, centerState, logout, isInitialLoading } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { user } = authState;
+    const { selectedCenter } = centerState;
+    const location = useLocation();
+
+    // Detectamos si es la Landing para limpiar el diseño
+    const isLanding = location.pathname === '/' || location.pathname === '/login' || location.pathname === '/centros';
 
     return (
         <div className="w-full flex bg-white min-h-screen">
-            {/* Sidebar solo si hay login */}
-            {user && (
+            {/* Sidebar: SOLO para usuarios logueados y fuera de la Landing */}
+            {user && !isLanding && (
                 <Sidebar 
                     isMobileMenuOpen={isMobileMenuOpen} 
                     setIsMobileMenuOpen={setIsMobileMenuOpen} 
                 />
             )}
             
-            <div className="flex-col flex w-full h-screen overflow-hidden">
-                <TopHeader 
-                    onMenuClick={() => setIsMobileMenuOpen(true)}
-                    isLog={!!user}
-                    onLogout={logout}
-                    userName={user?.username || user?.name || ''}
-                    userEmail={user?.email || ''}
-                    userImg={"https://unavatar.io/x/unknow"}
-                    role={user?.role || ''}
-                />
+            <div className="flex-col flex w-full h-screen relative">
+                {/* Header: Se oculta en Landing. Muestra 'Invitado' si no hay user */}
+                {!isLanding && (
+                    <TopHeader 
+                        onMenuClick={() => setIsMobileMenuOpen(true)}
+                        isLog={!!user}
+                        onLogout={logout}
+                        userName={user?.username || 'Invitado'}
+                        userEmail={user?.email || ''}
+                        role={user?.role || 'guest'}
+                        userImg={`https://api.dicebear.com/9.x/identicon/svg?seed=${user?.email || 'invitado'}`}
+                    />
+                )}
 
-                <main className="flex-1 overflow-y-auto">
+                <main className={`flex-1 ${isLanding ? '' : 'overflow-x-hidden absolute inset-0 pt-18'}`}>
                     <Routes>
-                        {/* 1. MANEJO DE RUTAS PÚBLICAS */}
-                        <Route path="/login" element={!user ? <Login/> : <Navigate to="/" replace />} />
-                        <Route path="/register" element={<Register />} />
+                        {/* 1. LANDING: Punto de entrada total */}
+                        <Route path="/" element={<LandingPage />} />
 
-                        <Route path="/" element={
-                            !user 
-                                ? <Navigate to="/login" replace /> 
-                                : (selectedCenter ? <Navigate to="/home" replace /> : <Navigate to="/centros" replace />)
-                        } />
+                        {/* 2. ACCESO ADMIN/PROFE */}
+                        <Route path="/login" element={<Login />} />
 
-                        {/* 2. RUTAS PROTEGIDAS (Requieren estar logueado) */}
-                        {user ? (
-                            <>
-                                {/* Selección de centro (obligatorio antes de ver contenido) */}
-                                <Route path="/centros" element={<CenterSelectionPage />} />
+                        {/* 3. SELECCIÓN DE CENTROS: Pública para el invitado */}
+                        <Route path="/centros" element={<CenterSelectionPage />} />
 
-                                {selectedCenter ? (
-                                    <>
-                                        {/* Contenido General */}
-                                        <Route path="/home" element={<Home />} />
-                                        <Route path="/listpois" element={<ListPois centerId={selectedCenter.id} />} />
-                                        <Route path="/perfil" element={<div className="p-10 text-center text-black text-3xl font-bold">Perfil de {selectedCenter.name}</div>} />
-                                        <Route path="/mensajes" element={<div className="p-10 text-center text-black text-3xl font-bold">Mensajes de {selectedCenter.name}</div>} />
+                        {/* 4. VIEWER (ESCENA UNITY): 
+                               Accesible si hay un centro seleccionado (sea invitado o admin) */}
+                        <Route 
+                            path="/viewer" 
+                            element={selectedCenter ? <Viewer /> : <Navigate to="/centros" replace />} 
+                        />
 
-                                        {/* ZONA DE GESTIÓN (Acceso: Admin y Profesores) */}
-                                        {/* Usamos AdminRoute que ya permite a ambos */}
-                                        <Route path="/crud" element={<AdminRoute><Crud /></AdminRoute>} />
-                                        <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
+                        {/* 5. RUTAS BLOQUEADAS PARA INVITADOS (Solo Admin/Profe) */}
+                        <Route 
+                            path="/listpois" 
+                            element={selectedCenter ? <ProtectedRoute requiredRoles={['admin', 'teacher']}><ListPois centerId={centerState.selectedCenter.id} /></ProtectedRoute> : <Navigate to="/centros" replace />}
+                        />
+                        <Route path="/crud" element={selectedCenter ? <ProtectedRoute requiredRoles={['admin', 'teacher']}><Crud /></ProtectedRoute> : <Navigate to="/centros" replace />} />
+                        <Route path="/dashboard" element={<ProtectedRoute requiredRoles={['admin']}><Dashboard /></ProtectedRoute>} />
+                        <Route 
+                            path="/historial" 
+                            element={<ProtectedRoute requiredRoles={["admin"]}><Historial /></ProtectedRoute>}
+                        />
 
-                                        {/* ZONA DE AUDITORÍA (Acceso: SOLO Admin) */}
-                                        <Route 
-                                            path="/historial" 
-                                            element={isAdmin ? <AdminRoute><Historial /></AdminRoute> : <Navigate to="/home" replace />} 
-                                        />
-                                        
-                                        <Route path="*" element={<Navigate to="/home" replace />} />
-                                    </>
-                                ) : (
-                                    /* Si no ha seleccionado centro, cualquier ruta lo manda al selector */
-                                    <Route path="*" element={<Navigate to="/centros" replace />} />
-                                )}
-                            </>
-                        ) : (
-                            /* Si no hay login, cualquier ruta manda al login */
-                            <Route path="*" element={<Navigate to="/login" replace />} />
-                        )}
+                        {/* 6. REDIRECCIÓN FINAL: Si se pierde, vuelve a la Landing */}
+                        <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </main>
             </div>
+            <Toaster 
+                richColors 
+                position='top-right' 
+                expand={true} 
+                visibleToasts={6} 
+                closeButton 
+                offset={
+                    isLanding 
+                        ? 16
+                        : { top: 80, right: 20 }
+                } 
+            />
         </div>
     );
 }
-
 export default App;

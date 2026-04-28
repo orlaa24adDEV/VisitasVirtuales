@@ -1,4 +1,21 @@
-import { ZodError, type ZodType } from 'zod'
+import type { ZodType, z } from 'zod'
+import { ZodError } from 'zod'
+import type { Request } from 'express'
+
+export interface ValidRequest extends Request {
+	validData: {
+		params: any
+		body: any
+		query: any
+	}
+}
+
+export interface ValidAuthenticatedRequest<
+	T extends ZodType = any,
+> extends Request {
+	user: { sub: number; role: string }
+	validData: z.infer<T>
+}
 
 export const validateBody = (schema: ZodType) => {
 	return (req: any, res: any, next: any) => {
@@ -8,14 +25,10 @@ export const validateBody = (schema: ZodType) => {
 			next()
 		} catch (e) {
 			if (e instanceof ZodError) {
-				return res.status(400).json({
-					error: 'Error de validación de datos de entrada',
-					details: e.issues.map((err) => ({
-						field: err.path.join('.'),
-						message: err.message,
-					})),
-				})
+				// Pasar error a middleware de manejo de errores
+				e.name = 'ZodValidationError'
 			}
+			next(e)
 		}
 	}
 }
@@ -28,14 +41,51 @@ export const validateParams = (schema: ZodType) => {
 			next()
 		} catch (e) {
 			if (e instanceof ZodError) {
-				return res.status(400).json({
-					error: 'Error de validación de parámetros de ruta',
-					details: e.issues.map((err) => ({
-						field: err.path.join('.'),
-						message: err.message,
-					})),
-				})
+				// Pasar error a middleware de manejo de errores
+				e.name = 'ZodValidationError'
 			}
+			next(e)
+		}
+	}
+}
+
+export const validateQuery = (schema: ZodType) => {
+	return (req: any, res: any, next: any) => {
+		try {
+			const validatedData = schema.parse(req.query)
+			;(req as any).query = validatedData
+			next()
+		} catch (e) {
+			if (e instanceof ZodError) {
+				// Pasar error a middleware de manejo de errores
+				e.name = 'ZodValidationError'
+			}
+			next(e)
+		}
+	}
+}
+
+export const validateRequest = (schema: {
+	params?: ZodType
+	query?: ZodType
+	body?: ZodType
+}) => {
+	return (req: any, res: any, next: any) => {
+		try {
+			// Creamos un objeto para guardar lo validado
+			const params = schema.params
+				? schema.params.parse(req.params)
+				: req.params
+			const query = schema.query ? schema.query.parse(req.query) : req.query
+			const body = schema.body ? schema.body.parse(req.body) : req.body
+			req.validData = { params, query, body }
+			next()
+		} catch (e) {
+			if (e instanceof ZodError) {
+				// Pasar error a middleware de manejo de errores
+				e.name = 'ZodValidationError'
+			}
+			next(e)
 		}
 	}
 }
