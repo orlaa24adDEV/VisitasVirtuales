@@ -5,12 +5,12 @@ import { useAuth } from '@/hooks/useAuth.js';
 // eslint-disable-next-line no-unused-vars
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 import { toast } from 'sonner';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Settings } from 'lucide-react';
 import Button from '@/components/Button.jsx';
 
 export default function CenterSelectionPage() {
   const navigate = useNavigate();
-  const { centerState, saveSelectedCenter } = useAuth();
+  const { centerState, saveSelectedCenter, isAdmin } = useAuth();
   const { selectedCenter, allCenters, isCentersLoading, centersError } = centerState;
   
   // Iniciamos el local con lo que haya en el contexto (por si vuelve para cambiar)
@@ -72,7 +72,7 @@ export default function CenterSelectionPage() {
             </p>
           </div>
 
-          {/* ... (Tus estados de carga y error se mantienen igual) ... */}
+          {/* ... (Estados de carga y error se mantienen igual) ... */}
           {isCentersLoading && (
              <div className="flex justify-center items-center h-48">
                <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full" />
@@ -93,9 +93,21 @@ export default function CenterSelectionPage() {
                         group relative text-left rounded-2xl overflow-hidden bg-white
                         border-2 transition-all duration-300 focus:outline-none
                         hover:shadow-2xl cursor-pointer flex flex-col
-                        ${isActive ? 'border-blue-600 ring-4 ring-blue-50' : 'border-slate-100 hover:border-blue-200'}
+                        ${isActive ? 'border-blue-600 ring-10 ring-blue-50' : 'border-slate-100 hover:border-blue-200'}
                       `}
                     >
+                      {/*Boton de configuracion para admins*/}
+                      {isAdmin && isActive && (
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate('/perfil' , { state: { centerId: center.id } });
+                          }}
+                          className="cursor-pointer absolute top-3 right-3 z-10 p-2 bg-white/80 hover:bg-white rounded-full shadow-md transition-colors duration-200 backdrop-blur-sm"
+                        >
+                          <Settings size={16} />
+                        </button>
+                      )}
                       {/* Imagen con overlay si está activo */}
                       <div className="relative h-40 w-full overflow-hidden">
                         {center.imageUrl ? (
@@ -105,7 +117,7 @@ export default function CenterSelectionPage() {
                             {center.name.charAt(0)}
                           </div>
                         )}
-                        {isActive && <div className="absolute inset-0 bg-blue-600/10 backdrop-blur-[1px]" />}
+                        {isActive && <div className="absolute inset-0" />}
                       </div>
 
                       <div className="p-5 flex-1 flex flex-col justify-between">
