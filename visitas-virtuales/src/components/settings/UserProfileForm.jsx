@@ -52,6 +52,7 @@ export default function UserProfileForm() {
     }
 
     const resetChanges = async () => {
+        console.log('Resetting to:', userFormInitialState)
         setUserFormState(userFormInitialState);
     }
 
@@ -84,15 +85,15 @@ export default function UserProfileForm() {
                                 <div className='col-span-2 flex flex-col'>
                                     <div>
                                         <p className="text-sm text-slate-600 mb-2 font-medium">Nombre de usuario</p>
-                                    <Input type="text" name="username" value={userFormState.username} onChange={(e) => setUserFormState(prev => ({ ...prev, username: e.target.value }))} defaultValue={user?.username} placeholder="Tu nombre de usuario" className="mb-4" />
+                                    <Input type="text" name="username" value={userFormState.username} onChange={(e) => setUserFormState(prev => ({ ...prev, username: e.target.value }))} placeholder="Tu nombre de usuario" className="mb-4" />
                                     </div>
                                     <div>
                                         <p className="text-sm text-slate-600 mb-2 font-medium">Correo electrónico</p>
-                                        <Input type="email" name="email" value={userFormState.email} defaultValue={userFormState.email} onChange={(e) => setUserFormState(prev => ({ ...prev, email: e.target.value }))} placeholder="Tu correo electrónico" className="mb-4" />
+                                        <Input type="email" name="email" value={userFormState.email} onChange={(e) => setUserFormState(prev => ({ ...prev, email: e.target.value }))} placeholder="Tu correo electrónico" className="mb-4" />
                                     </div>
                                     <div>
                                         <p className="text-sm text-slate-600 mb-2 font-medium">Centro educativo predeterminado</p>
-                                        <Select name='centerPreferenceId' options={allCenters} value={userFormState.centerPreferenceId} onChange={(e) => setUserFormState(prev => ({ ...prev, centerPreferenceId: e.target.value }))} defaultValue={userFormState.centerPreferenceId} />
+                                        <Select name='centerPreferenceId' options={allCenters} value={userFormState.centerPreferenceId} onChange={(e) => setUserFormState(prev => ({ ...prev, centerPreferenceId: e.target.value }))} />
                                     </div>
                                     <div className='flex w-full justify-end gap-2 mt-6'>
                                         <Button type="button" variant="tertiary" onClick={resetChanges}><RotateCcw className='w-5 h-5' />Olvidar cambios</Button>
