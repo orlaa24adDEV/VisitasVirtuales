@@ -1,5 +1,5 @@
 // CenterSelectionPage — tarjetas con imagen superior, info centrada y línea azul inferior
-import { useState, useEffect, useRef, use } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 // eslint-disable-next-line no-unused-vars
@@ -111,7 +111,7 @@ export default function CenterSelectionPage() {
                         <button 
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate('/perfil' , { state: { centerId: center.id } });
+                            navigate('/settings' , { state: { centerId: center.id } });
                           }}
                           className="cursor-pointer absolute top-3 right-3 z-10 p-2 bg-white/80 hover:bg-white rounded-full shadow-md transition-colors duration-200 backdrop-blur-sm"
                         >
