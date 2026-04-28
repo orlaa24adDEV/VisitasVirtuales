@@ -1,0 +1,50 @@
+import { SignJWT, jwtVerify } from 'jose'
+import assert from 'node:assert'
+
+const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+const expiration = process.env.JWT_ACCESS_TOKEN_TTL
+const issuer = process.env.JWT_ISSUER
+const audience = process.env.JWT_AUDIENCE
+const alg = 'HS256'
+
+
+const generateToken = (sub, role, ttl) => {
+	const payload = {
+		sub: Number(sub),
+		role,
+	}
+	return new SignJWT(payload)
+		.setProtectedHeader({ alg })
+		.setIssuer(issuer)
+		.setIssuedAt()
+		.setAudience(audience)
+		.setExpirationTime(ttl)
+		.sign(secret)
+}
+
+const generateAccessToken = (sub, role) => {
+	return generateToken(sub, role, expiration)
+}
+
+const generateRefreshToken = (sub, role) => {
+	return generateToken(sub, role, process.env.JWT_REFRESH_TOKEN_TTL)
+}
+
+const verifyToken = async (token) => {
+	try {
+		const { payload } = await jwtVerify(token, secret, {
+			issuer,
+			audience,
+		})
+		return { payload }
+	} catch (err) {
+		throw new Error('Token inválido o expirado: ' + err.message)
+	}
+}
+
+const getGuestUser = () => ({
+  sub: '0',
+  role: 'guest',
+})
+
+export { generateAccessToken, generateRefreshToken, verifyToken, getGuestUser }
