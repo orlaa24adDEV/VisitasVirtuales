@@ -88,7 +88,7 @@ export default function UserProfileForm() {
                                     </div>
                                     <div>
                                         <p className="text-sm text-slate-600 mb-2 font-medium">Correo electrónico</p>
-                                        <Input type="email" name="email" defaultValue={userFormState.email} onChange={(e) => setUserFormState(prev => ({ ...prev, email: e.target.value }))} placeholder="Tu correo electrónico" className="mb-4" />
+                                        <Input type="email" name="email" value={userFormState.email} defaultValue={userFormState.email} onChange={(e) => setUserFormState(prev => ({ ...prev, email: e.target.value }))} placeholder="Tu correo electrónico" className="mb-4" />
                                     </div>
                                     <div>
                                         <p className="text-sm text-slate-600 mb-2 font-medium">Centro educativo predeterminado</p>
