@@ -1,14 +1,21 @@
-// components/ProtectedRoute.jsx
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
+import LoadingPage from './LoadingPage';
 
-export const AdminRoute = ({ children }) => {
-    const { authState, isAdmin, isTeacher } = useAuth();
+export const ProtectedRoute = ({ requiredRoles, children }) => {
+    const { authState, isAdmin, isTeacher, isInitialLoading } = useAuth();
     const { user } = authState;
+    const location = useLocation();
+    const requiresAdmin = requiredRoles?.includes('admin');
+    const requiresTeacher = requiredRoles?.includes('teacher');
 
-    if (!user) return <Navigate to="/login" />;
-    if ( isAdmin || isTeacher ) return children;
+    if (isInitialLoading) return <LoadingPage />;
+    // Si no hay usuario, redirigir a login con la ruta de origen para volver después
+    if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
+    // Las rutas de admin solo pueden ser accedidas por admins
+    if (requiresAdmin && !isAdmin) return <Navigate to="/" replace />;
+    // Las rutas de profesor pueden ser accedidas por profesores y admins
+    if (requiresTeacher && !isTeacher && !isAdmin) return <Navigate to="/" replace />;
 
-    return <Navigate to="/home" />;
-
+    return children;
 };

@@ -1,20 +1,28 @@
 import { Router } from 'express'
 import {
-  loginHandler,
-  userUpdateHandler,
-  refreshTokenHandler,
-  profileHandler,
-  registerHandler,
-  logoutHandler,
-} from '../controllers/userController.js'
+	loginHandler,
+	userUpdateHandler,
+	refreshTokenHandler,
+	profileHandler,
+	registerHandler,
+	logoutHandler,
+} from '../controllers/userController.ts'
 import {
-  userLoginSchema,
-  userRegisterSchema,
-  UserRoleEditSchema,
+	updateCurrUserProfileSchema,
+	userImageUpdateSchema,
+	userLoginSchema,
+	userRegisterSchema,
+	UserRoleEditSchema,
 } from '../db/schema.ts'
-import { validateBody } from '../middlewares/validation.ts'
+import { validateRequest } from '../middlewares/validation.ts'
 import hasRole from '../middlewares/hasRole.ts'
-const router = Router()
+import multer from 'multer'
+
+export const router = Router()
+const upload = multer({
+	storage: multer.memoryStorage(),
+	limits: { fileSize: 10 * 1024 * 1024 },
+}) // Limitar a 10MB por parte
 
 /**
  * @openapi
@@ -85,7 +93,6 @@ const router = Router()
  */
 router.get('/me', hasRole(['admin', 'teacher']), profileHandler)
 
-
 /**
  * @openapi
  * /api/v1/users:
@@ -119,7 +126,7 @@ router.get('/me', hasRole(['admin', 'teacher']), profileHandler)
  *               role:
  *                 type: string
  *                 enum: [admin, teacher, guest]
- *                 description: Rol del usuario (opcional, por defecto "guest") 
+ *                 description: Rol del usuario (opcional, por defecto "guest")
  *     responses:
  *       201:
  *         description: Usuario registrado con éxito
@@ -158,7 +165,14 @@ router.get('/me', hasRole(['admin', 'teacher']), profileHandler)
  *                 message:
  *                   type: string
  */
-router.post('/users', validateBody(userRegisterSchema), hasRole('admin'), registerHandler)
+router.post(
+	'/users',
+	hasRole('admin'),
+	validateRequest({
+		body: userRegisterSchema.shape.body,
+	}),
+	registerHandler,
+)
 
 /**
  * @openapi
@@ -239,7 +253,11 @@ router.post('/users', validateBody(userRegisterSchema), hasRole('admin'), regist
  *                 message:
  *                   type: string
  */
-router.post('/users/auth', validateBody(userLoginSchema), loginHandler)
+router.post(
+	'/users/auth',
+	validateRequest({ body: userLoginSchema.shape.body }),
+	loginHandler,
+)
 
 /**
  * @openapi
@@ -294,7 +312,7 @@ router.post('/users/auth/logout', hasRole(['admin', 'teacher']), logoutHandler)
  * @openapi
  * /api/v1/me:
  *   patch:
- *     summary: Editar perfil del usuario autenticado (solo para administradores y profesores) - SIN IMPLEMENTAR
+ *     summary: Editar perfil del usuario autenticado (solo para administradores y profesores)
  *     description: Permite al usuario autenticado editar su propio perfil, incluyendo su email, nombre de usuario y contraseña. Requiere un token de acceso válido en el header Authorization.
  *     tags: [User]
  *     security:
@@ -304,7 +322,6 @@ router.post('/users/auth/logout', hasRole(['admin', 'teacher']), logoutHandler)
  *       content:
  *         application/json:
  *           schema:
- *             required: [currentPassword]
  *             type: object
  *             properties:
  *               currentPassword:
@@ -315,6 +332,15 @@ router.post('/users/auth/logout', hasRole(['admin', 'teacher']), logoutHandler)
  *                 type: string
  *               newPassword:
  *                 type: string
+ *               centerPreferenceId:
+ *                 type: integer
+ *     multipart/form-data:
+ *       schema:
+ *         type: object
+ *         properties:
+ *           file:
+ *             type: string
+ *             format: binary
  *     responses:
  *       200:
  *         description: Usuario actualizado con éxito
@@ -362,14 +388,20 @@ router.post('/users/auth/logout', hasRole(['admin', 'teacher']), logoutHandler)
  *                 message:
  *                   type: string
  */
-router.patch('/me', hasRole(['admin', 'teacher']), userUpdateHandler)
+router.patch(
+	'/me',
+	hasRole(['admin', 'teacher']),
+	upload.single('file'), 
+	validateRequest({ body: updateCurrUserProfileSchema.shape.body }),
+	userUpdateHandler,
+)
 
 /**
  * @openapi
  * /api/v1/users/auth/refresh:
  *   post:
  *     summary: Renovar tokens de autenticación utilizando token de actualización (solo para administradores y profesores)
- *     description: Permite a un usuario renovar sus tokens utilizando un token de actualización válido. Devuelve un nuevo token de acceso en la respuesta y asigna un nuevo token de actualización en una cookie HTTP-only. Los invitados no necesitan renovar tokens, se les permite el acceso a las rutas públicas sin autenticación.
+ *     description: Permite a un usuario renovar sus tokens utilizando un token de actualización válido. Devuelve un nuevo token de acceso en la respuesta y asigna un nuevo token de actualización en una cookie HTTP-only. Los invitados no necesitan renovar tokens, se les permite el acceso a las rutas públicas sin autenticación. La validación del token se realiza dentro del handler.
  *     tags: [User]
  *     security:
  *       - cookieAuth: []
@@ -404,11 +436,7 @@ router.patch('/me', hasRole(['admin', 'teacher']), userUpdateHandler)
  *                 message:
  *                   type: string
  */
-router.post(
-  '/users/auth/refresh',
-  hasRole(['admin', 'teacher']),
-  refreshTokenHandler,
-)
+router.post('/users/auth/refresh', refreshTokenHandler)
 
 /**
  * @openapi
@@ -447,14 +475,17 @@ router.post(
  *         description: El token proporcionado no es válido o el usuario no tiene permisos de administrador
  */
 router.patch(
-  '/users/:id/role',
-  hasRole('admin'),
-  validateBody(UserRoleEditSchema),
-  (req, res) => {
-    res.json({
-      message: `Ruta para cambiar el rol del usuario con ID ${req.params.id} - solo accesible para administradores`,
-    })
-  },
+	'/users/:id/role',
+	hasRole('admin'),
+	validateRequest({
+		params: UserRoleEditSchema.shape.params,
+		body: UserRoleEditSchema.shape.body,
+	}),
+	(req, res) => {
+		res.json({
+			message: `Ruta para cambiar el rol del usuario con ID ${req.params.id} - solo accesible para administradores`,
+		})
+	},
 )
 
 export default router

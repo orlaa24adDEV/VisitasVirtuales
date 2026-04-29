@@ -27,6 +27,19 @@ public class JsonLoader : MonoBehaviour
 
     void Start()
     {
+        // Antes de pedir POIs, revisa WebBridge recibio un ID desde la web, si lo tiene usa ese.
+        // Si no lo tiene sigue usando el número que está en el inspector
+        if (!string.IsNullOrEmpty(WebBridge.IdCentroActual) 
+            && int.TryParse(WebBridge.IdCentroActual, out int idDesdeWeb))
+        {
+            idCentro = idDesdeWeb;
+            Debug.Log($"[JsonLoader] Usando ID de centro desde WebBridge: {idCentro}");
+        }
+        else
+        {
+            Debug.LogWarning($"[JsonLoader] WebBridge sin ID, usando valor del Inspector: {idCentro}");
+        }
+
         // Primero hacemos login para obtener el token
         // y cuando lo tengamos empezamos a pedir los POIs
         StartCoroutine(IniciarConexion());

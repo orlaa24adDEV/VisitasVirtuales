@@ -2,8 +2,8 @@ module.exports = {
 	apps: [
 		{
 			name: 'visitas-virtuales',
-			script: './src/app.js',
-			node_args: '--require ./env.ts',
+			script: './dist/index.js',
+			node_args: '--import ./dist/env.js',
 			exec_mode: 'cluster',
 			instances: 'max',
 			autorestart: true,

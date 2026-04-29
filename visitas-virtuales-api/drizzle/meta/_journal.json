@@ -36,6 +36,20 @@
       "when": 1776677730616,
       "tag": "0004_misty_punisher",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1777301996924,
+      "tag": "0005_magenta_hellcat",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1777376469664,
+      "tag": "0006_amusing_madrox",
+      "breakpoints": true
     }
   ]
 }

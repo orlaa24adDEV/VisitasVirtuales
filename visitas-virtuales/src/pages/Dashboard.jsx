@@ -10,8 +10,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const { centerState } = useAuth();
-  const { allCenters, selectCenter } = centerState;
+  const { centerState, saveSelectedCenter } = useAuth();
+  const { allCenters } = centerState;
   const navigate = useNavigate();
 
   // Cargar todos los POIs al montar el componente
@@ -135,26 +135,62 @@ const Dashboard = () => {
   const [mostRecentCenterName, mostRecentCenterCount] = Object.entries(recentCountsByCenter)
     .sort(([, a], [, b]) => b - a)[0] || [null, 0];
 
+  // Obtener el último centro activo (el último en el array de allCenters)
+  const lastActiveCenterName = (allCenters && allCenters.length > 0) ? allCenters[allCenters.length - 1].name : null;
+
+  // Obtener el centro con POIs de hoy más reciente
+  const poiTodayByCenter = pois.filter((poi) => {
+    const date = getPoiTimestamp(poi);
+    return date && date >= startOfToday;
+  }).sort((a, b) => {
+    const dateA = getPoiTimestamp(a);
+    const dateB = getPoiTimestamp(b);
+    return dateB - dateA;
+  })[0];
+  const lastPoiTodayCenterName = poiTodayByCenter ? getCenterName(poiTodayByCenter.centerId) : mostRecentCenterName;
+
+  // Obtener el centro con POIs de los últimos 7 días más reciente
+  const poiLast7DaysByCenter = pois.filter((poi) => {
+    const date = getPoiTimestamp(poi);
+    return date && date >= startOfLast7Days;
+  }).sort((a, b) => {
+    const dateA = getPoiTimestamp(a);
+    const dateB = getPoiTimestamp(b);
+    return dateB - dateA;
+  })[0];
+  const lastPoi7DaysCenterName = poiLast7DaysByCenter ? getCenterName(poiLast7DaysByCenter.centerId) : mostRecentCenterName;
+
   const filteredPoisByCenter = searchQuery
     ? poisByCenterWithPercent.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
     : poisByCenterWithPercent;
 
   const handleCenterCardClick = (centerName) => {
-    if (!centerName || !allCenters) return;
+    if (!centerName || !allCenters) {
+      navigate('/centros');
+      return;
+    }
     const center = allCenters.find((c) => c.name === centerName);
     if (center) {
-      selectCenter(center);
-      navigate('/home');
+      saveSelectedCenter(center);
+      navigate('/viewer');
+    } else {
+      navigate('/centros');
     }
   };
 
   // Handler para click en las barras del gráfico
   const handleBarClick = (data) => {
     const centerName = data.name;
+    if (!centerName || !allCenters) {
+      navigate('/centros');
+      return;
+    }
     const center = allCenters.find((c) => c.name === centerName);
     if (center) {
-      selectCenter(center);
-      navigate('/home');
+      saveSelectedCenter(center);
+      navigate('/viewer');
+    } else {
+      navigate('/centros');
     }
   };
 
@@ -181,7 +217,7 @@ const Dashboard = () => {
       ) : (
         <>
           <section className="grid gap-4 lg:grid-cols-4">
-            <article className="group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md">
+            <button type="button" onClick={() => navigate('/centros')} className="cursor-pointer group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md text-left">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-slate-500">Total de POIs</p>
@@ -190,9 +226,9 @@ const Dashboard = () => {
                 <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-blue-100 text-blue-700 text-xl">📍</div>
               </div>
               <p className="mt-4 text-sm text-slate-500">Todo el inventario de puntos de interés.</p>
-            </article>
+            </button>
 
-            <article className="group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md">
+            <button type="button" onClick={() => handleCenterCardClick(lastActiveCenterName)} className="cursor-pointer group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md text-left">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-slate-500">Centros activos</p>
@@ -201,9 +237,9 @@ const Dashboard = () => {
                 <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-emerald-100 text-emerald-700 text-xl">🏢</div>
               </div>
               <p className="mt-4 text-sm text-slate-500">Centros con al menos un POI asignado.</p>
-            </article>
+            </button>
 
-            <article className="group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md">
+            <button type="button" onClick={() => handleCenterCardClick(lastPoiTodayCenterName)} className="cursor-pointer group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md text-left">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-slate-500">POIs hoy</p>
@@ -212,9 +248,9 @@ const Dashboard = () => {
                 <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-indigo-100 text-indigo-700 text-xl">🕐</div>
               </div>
               <p className="mt-4 text-sm text-slate-500">{hasPoiDates ? 'Registros con fecha de hoy' : 'Basado en últimos cambios'}</p>
-            </article>
+            </button>
 
-            <article className="group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md">
+            <button type="button" onClick={() => handleCenterCardClick(lastPoi7DaysCenterName)} className="cursor-pointer group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md text-left">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-slate-500">Actividad 7 días</p>
@@ -228,15 +264,14 @@ const Dashboard = () => {
                 </span>
               </div>
               <p className="mt-3 text-sm text-slate-500">{weeklyChangeCaption}</p>
-            </article>
+            </button>
           </section>
 
           <section className="grid gap-4 sm:grid-cols-2">
             <button
               type="button"
               onClick={() => handleCenterCardClick(mostActiveCenter?.name)}
-              disabled={!mostActiveCenter}
-              className="group w-full rounded-xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-blue-500 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70"
+              className="group w-full rounded-xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-blue-500 hover:shadow-md hover:cursor-pointer"
             >
               <p className="text-sm text-slate-500">Centro con más POIs</p>
               <p className="text-2xl font-bold text-slate-800">{mostActiveCenter ? mostActiveCenter.name : '—'}</p>
@@ -245,8 +280,7 @@ const Dashboard = () => {
             <button
               type="button"
               onClick={() => handleCenterCardClick(mostRecentCenterName)}
-              disabled={!mostRecentCenterName}
-              className="group w-full rounded-xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-blue-500 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70"
+              className="group w-full rounded-xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-blue-500 hover:shadow-md hover:cursor-pointer"
             >
               <p className="text-sm text-slate-500">Centro con más cambios recientes</p>
               <p className="text-2xl font-bold text-slate-800">{mostRecentCenterName || '—'}</p>
@@ -261,13 +295,18 @@ const Dashboard = () => {
             ) : (
               <ol className="space-y-3">
                 {topCenters.map((center, index) => (
-                  <li key={center.name} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                  <button
+                    key={center.name}
+                    type="button"
+                    onClick={() => handleCenterCardClick(center.name)}
+                    className="w-full rounded-xl border border-slate-100 bg-slate-50 p-4 hover:bg-slate-100 hover:border-blue-400 transition cursor-pointer text-left"
+                  >
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-semibold text-slate-700">#{index + 1} {center.name}</span>
                       <span className="text-sm text-slate-500">{center.percentage}%</span>
                     </div>
                     <p className="mt-2 text-sm text-slate-600">{center.value} POIs · {center.recentCount} cambios recientes</p>
-                  </li>
+                  </button>
                 ))}
               </ol>
             )}
@@ -282,11 +321,16 @@ const Dashboard = () => {
                 {lastChanges.map((poi) => {
                   const centerName = getCenterName(poi.centerId) || 'Sin centro';
                   return (
-                    <li key={poi.id} className="border border-slate-100 rounded-lg p-3 hover:bg-slate-50">
+                    <button
+                      key={poi.id}
+                      type="button"
+                      onClick={() => handleCenterCardClick(centerName)}
+                      className="w-full border border-slate-100 rounded-lg p-3 hover:bg-slate-100 hover:border-blue-400 transition cursor-pointer text-left"
+                    >
                       <p className="font-semibold text-slate-800">{poi.name}</p>
                       <p className="text-xs text-slate-500">Centro: {centerName}</p>
                       <p className="text-sm text-slate-600 mt-1">{poi.description}</p>
-                    </li>
+                    </button>
                   );
                 })}
               </ul>

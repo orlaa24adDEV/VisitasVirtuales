@@ -2,17 +2,24 @@ import { useState, useEffect } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import '@/assets/Login.css';
 import { useAuth } from '@/hooks/useAuth.js';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function Login() {
 	const [errors, setErrors] = useState([]);
 	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
 	const [rememberMe, setRememberMe] = useState(false);
-	// eslint-disable-next-line no-unused-vars
-	const { login, fetchProfile } = useAuth();
+	const { login } = useAuth();
 	const navigate = useNavigate();
+	const location = useLocation();
+	const origin = location.state?.from
+
+	const clearForm = () => {
+		setEmail('');
+		setPassword('');
+	};
 
 	useEffect(() => {
 		const rememberedEmail = localStorage.getItem('rememberedEmail');
@@ -42,21 +49,32 @@ export default function Login() {
 				body: payload
 			});
 
-			const responseData = await response.json();
-			const { details, accessToken } = responseData;
+			let responseData = null;
+			try {
+				responseData = await response.json();
+			} catch (jsonError) {
+				responseData = {};
+			}
 
-			if (!response.ok) {
-				// Mostrar errores de validación del backend si existen
-				if (details) {
-					setIsLoading(false);
-					const errorMessages = details.map((error) => {
-						const message = error.message || 'Error desconocido';
-						return message.charAt(0).toUpperCase() + message.slice(1);
+			const { details, accessToken, message } = responseData;
+
+			if (!response.ok) { //Antes solo añadía details al error, ahora también el mensaje general
+				setIsLoading(false);
+				if (details && Array.isArray(details) && details.length > 0) {
+					const errorMessages = details.map((item) => {
+						const text = item?.message || item?.msg || 'Error desconocido';
+						return text.charAt(0).toUpperCase() + text.slice(1);
 					});
 					setErrors(errorMessages);
-				} else {
-					setErrors(['Error desconocido al iniciar sesión']);
+					return;
 				}
+
+				if (typeof message === 'string' && message.trim()) {
+					setErrors([message.trim()]);
+					return;
+				}
+
+				setErrors(['Error desconocido al iniciar sesión']);
 				return;
 			}
         
@@ -74,9 +92,15 @@ export default function Login() {
 
 			setIsLoading(false);
 			await login(accessToken);
-			navigate('/viewer');
+			// Redirigir a la ruta de origen o a la selección de centros si no hay origen
+			if (origin && origin !== '/login' && origin !== '/') {
+				navigate(origin, { replace: true });
+			} else {
+				navigate('/centros', { replace: true });
+			}
 		} catch (error) {
 			console.error('Error al iniciar sesión:', error);
+			setIsLoading(false);
 			setErrors(['Error de red al iniciar sesión']);
 		}
 	};
@@ -117,6 +141,8 @@ export default function Login() {
 								id="password"
 								name="password"
 								placeholder="Contraseña"
+												value={password}
+												onChange={(event) => setPassword(event.target.value)}
 								disabled={isLoading}
 								required
 							/>
@@ -141,12 +167,6 @@ export default function Login() {
 			<button type='submit' disabled={isLoading} className="submit-button">
 						{isLoading ? 'Cargando...' : 'Iniciar Sesión'}
 					</button>
-					{/* <p>
-						¿Aún no tienes cuenta?
-						<Link to="/register" className="create-account-link">
-							Regístrate aquí
-						</Link>
-					</p> */}
 				</form>
 			</section>
 		</main>

@@ -3,14 +3,16 @@ import assert from 'node:assert'
 import { config as loadEnv } from 'dotenv'
 import { expand as expandEnv } from 'dotenv-expand'
 import { defineConfig } from 'drizzle-kit'
-import { env } from './env.ts'
+
+const stage = process.env.APP_STAGE
 
 const envFile =
-	env.APP_STAGE === 'prod'
+	stage === 'prod'
 		? '.env.prod'
-		: env.APP_STAGE === 'dev' && existsSync('.env.dev')
+		: stage === 'dev' && existsSync('.env.dev')
 			? '.env.dev'
 			: '.env'
+
 expandEnv(loadEnv({ path: envFile, quiet: true }))
 
 assert(

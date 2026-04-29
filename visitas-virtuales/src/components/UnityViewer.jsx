@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth.js';
-import { useSearchParams } from 'react-router-dom';
+import { ESCENAS_POR_CENTRO } from '@/helpers/escenas.js';
 
 // TODO: cambiar a "true" cuando los archivos del build de Unity estén en el folder de Built_Unity
 //Ver instrucciones en public/Build_Unity/.gitkeep
@@ -11,14 +11,23 @@ export default function UnityViewer() {
     const { centerState } = useAuth();
     const { selectedCenter } = centerState;
 
-    // Leemos el parámetro scene de la URL (ej: ?center=2&scene=1)
-    // Si no hay parámetro scene en la URL, sceneId será null
-    const [searchParams] = useSearchParams();
-    const sceneId = searchParams.get('scene');
+    // Calculamos sceneId directamente desde selectedCenter, sin depender de la URL
+    // Así evitamos problemas de timing cuando la URL todavía no fue actualizada
+    const sceneId = selectedCenter ? (ESCENAS_POR_CENTRO[selectedCenter.id] ?? 0) : null;
 
     // Referencia directa al canvas del DOM
     // Es como un "puntero" para que Unity sepa dónde pintarse
     const canvasRef = useRef(null);
+    const unityInstanceRef = useRef(null);
+    const containerRef = useRef(null);
+
+    const handleFullscreen = () => {
+        if (containerRef.current) {
+            containerRef.current.requestFullscreen().catch((err) => {
+                console.warn('Error al activar fullscreen:', err);
+            });
+        }
+    };
 
     // Se ejecuta una sola vez cuando el componente aparece en pantalla
     useEffect(() => {
@@ -31,7 +40,7 @@ export default function UnityViewer() {
 
         // Crear el script del loader de Unity dinámicamente
         const script = document.createElement('script');
-        script.src = '/Built_Unity/Build/Built_Unity.loader.js';
+        script.src = '/Build_Unity/Build/Build_Unity.loader.js';
 
         // Cuando el script termina de cargar, arrancamos Unity
         script.onload = () => {
@@ -40,36 +49,41 @@ export default function UnityViewer() {
             // Recibe: el canvas, los paths a los archivos del build, y un callback de progreso
             // eslint-disable-next-line no-undef
             createUnityInstance(canvasRef.current, {
-                dataUrl:      '/Built_Unity/Build/Built_Unity.data',
-                frameworkUrl: '/Built_Unity/Build/Built_Unity.framework.js',
-                codeUrl:      '/Built_Unity/Build/Built_Unity.wasm',
+                dataUrl:      '/Build_Unity/Build/Build_Unity.data',
+                frameworkUrl: '/Build_Unity/Build/Build_Unity.framework.js',
+                codeUrl:      '/Build_Unity/Build/Build_Unity.wasm',
             }, (progress) => {
                 console.log('Cargando Unity... ' + Math.round(progress * 100) + '%');
             })
 
             //Cuando Unity termino de cargar correctamente
             .then((unityInstance) => {
-                console.log('Unity cargado correctamente');
+                unityInstanceRef.current = unityInstance;
 
-                // EL PUENTE: enviamos el ID del centro a Unity
-                unityInstance.SendMessage(
-                    'WebBridge',  // nombre del GameObject en la escena Unity
-                    'RecibirIdCentro',  // nombre del método en WebBridge.cs
-                    selectedCenter.id.toString()  // el ID del centro
-                );
-
-                console.log('ID enviado a Unity:', selectedCenter.id);
-
-                if(sceneId !== null) {
+                //Delay de 1.5seg para que encuente el gameobject antes
+                setTimeout(() => {
+                    // EL PUENTE: enviamos el ID del centro a Unity
                     unityInstance.SendMessage(
                         'WebBridge',
-                        'RecibirIdEscena',
-                        sceneId.toString()
+                        'RecibirIdCentro',
+                        selectedCenter.id.toString()
                     );
-                    console.log('ID de escena enviado a Unity:', sceneId);
-                } else {
-                    console.log('No se especificó escena en la URL, Unity usará la escena por defecto');
-                }
+
+
+                    console.log('ID enviado a Unity:', selectedCenter.id);
+
+                    if(sceneId !== null) {
+                        unityInstance.SendMessage(
+                            'WebBridge',
+                            'RecibirIdEscena',
+                            sceneId.toString()
+                        );
+                        console.log('ID de escena enviado a Unity:', sceneId);
+                    } else {
+                        console.log('No se especificó escena en la URL, Unity usará la escena por defecto');
+                    }
+                
+                }, 1500); // 1.5 seg de espera 
             })
 
             // Si Unity falla al cargar
@@ -81,12 +95,26 @@ export default function UnityViewer() {
         // Agregar el script al documento para que empiece a descargarse
         document.body.appendChild(script);
 
-        // Limpieza cuando el usuario salga de esta página, quitamos el script
+        // Limpieza cuando el usuario salga de esta página, y que no quede unity en segundo plano
         return () => {
-            document.body.removeChild(script);
+            if (unityInstanceRef.current) {
+                unityInstanceRef.current.Quit().then(() => {
+                    if (document.body.contains(script)) {
+                        document.body.removeChild(script);
+                    }
+                }).catch(() => {
+                    if (document.body.contains(script)) {
+                        document.body.removeChild(script);
+                    }
+                });
+            } else {
+                if (document.body.contains(script)) {
+                    document.body.removeChild(script);
+                }
+            }
         };
 
-    }, [selectedCenter.id, sceneId]); // <-- [] ejecutar solo una vez al montar el componente
+    }, []);  // <-- [] ejecutar solo una vez al montar el componente
 
     // Lo que se muestra en pantalla
     return (
@@ -100,15 +128,27 @@ export default function UnityViewer() {
                 <p className="text-xl italic text-gray-500">Inicio</p>
             </div>
 
-            {/* Canvas de Unity — solo se muestra cuando el build está listo */}
+            {/* Contenedor del canvas con botón de fullscreen */}
             {UNITY_BUILD_LISTO ? (
-                <canvas
-                    ref={canvasRef}
-                    id="unity-canvas"
-                    className="flex-1 w-full"
-                    style={{ display: 'block' }}
-                />
-            ) : (
+                <div ref={containerRef} className="relative flex-1 w-full">
+                    <canvas
+                        ref={canvasRef}
+                        id="unity-canvas"
+                        className="w-full h-full"
+                        style={{ display: 'block' }}
+                    />
+                    {/* Botón de fullscreen — esquina inferior derecha */}
+                    <button
+                        onClick={handleFullscreen}
+                        title="Pantalla completa"
+                        className="absolute z-10 p-2 text-white transition-colors duration-200 rounded-lg cursor-pointer bottom-3 right-3 bg-black/50 hover:bg-black/80"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                        </svg>
+                    </button>
+                </div>
+                ) : (
                 <div className="flex flex-col items-center justify-center flex-1 text-gray-400">
                     <p className="text-sm italic">Vista de Unity no disponible aún</p>
                 </div>

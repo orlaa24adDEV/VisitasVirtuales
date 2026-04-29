@@ -1,6 +1,6 @@
 import { Children } from "react";
 
-export default function Input({ name, value, onChange, type = 'text', placeholder = '', className = '' , children }) {
+export default function Input({ name, defaultValue, value, onChange, type = 'text', placeholder = '', className = '' , children }) {
     const baseStyles = "group flex w-full flex-row gap-2 items-center bg-white border border-slate-200 rounded-lg shadow-sm transition-all duration-200 focus-within:ring-4 focus-within:ring-blue-600/10 focus-within:border-blue-600";
     const childArray = Children.toArray(children);
     const hasTwoChildren = childArray.length >= 2;
@@ -11,6 +11,7 @@ export default function Input({ name, value, onChange, type = 'text', placeholde
         <input
           type={type}
           name={name}
+          defaultValue={defaultValue}
           value={value}
           onChange={onChange}
           placeholder={placeholder}
