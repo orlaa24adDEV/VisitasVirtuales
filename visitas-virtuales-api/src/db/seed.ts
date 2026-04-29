@@ -67,7 +67,7 @@ async function main() {
 				username: 'admin_mad',
 				password: adminPassword,
 				role: 'admin',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_mad',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_mad@instituto.es',
 				centerPreferenceId: insertedCenters[0]?.id
 			},
 			{
@@ -75,7 +75,7 @@ async function main() {
 				username: 'admin_bar',
 				password: adminPassword,
 				role: 'admin',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_bar',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_bar@instituto.es',
 				centerPreferenceId: insertedCenters[1]?.id
 			},
 			{
@@ -83,7 +83,7 @@ async function main() {
 				username: 'admin_sev',
 				password: adminPassword,
 				role: 'admin',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_sev',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_sev@instituto.es',
 				centerPreferenceId: insertedCenters[2]?.id
 			},
 			{
@@ -91,7 +91,7 @@ async function main() {
 				username: 'admin_val',
 				password: adminPassword,
 				role: 'admin',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_val',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_val@instituto.es',
 				centerPreferenceId: insertedCenters[3]?.id
 			},
 			{
@@ -99,7 +99,7 @@ async function main() {
 				username: 'admin_cor',
 				password: adminPassword,
 				role: 'admin',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_cor',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_cor@instituto.es',
 				centerPreferenceId: insertedCenters[4]?.id
 			},
 			{
@@ -107,7 +107,7 @@ async function main() {
 				username: 'prof_mad',
 				password: teacherPassword,
 				role: 'teacher',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_mad',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=profesor_mad@instituto.es',
 				centerPreferenceId: insertedCenters[0]?.id
 			},
 			{
@@ -115,7 +115,7 @@ async function main() {
 				username: 'prof_bar',
 				password: teacherPassword,
 				role: 'teacher',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_bar',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=profesor_bar@instituto.es',
 				centerPreferenceId: insertedCenters[1]?.id
 			},
 			{
@@ -123,7 +123,7 @@ async function main() {
 				username: 'prof_sev',
 				password: teacherPassword,
 				role: 'teacher',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_sev',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=profesor_sev@instituto.es',
 				centerPreferenceId: insertedCenters[2]?.id
 			},
 			{
@@ -131,7 +131,7 @@ async function main() {
 				username: 'prof_val',
 				password: teacherPassword,
 				role: 'teacher',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_val',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=profesor_val@instituto.es',
 				centerPreferenceId: insertedCenters[3]?.id
 			},
 			{
@@ -139,7 +139,7 @@ async function main() {
 				username: 'prof_cor',
 				password: teacherPassword,
 				role: 'teacher',
-				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_cor',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=profesor_cor@instituto.es',
 				centerPreferenceId: insertedCenters[4]?.id
 			},
 		]

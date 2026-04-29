@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import Button from './Button.jsx';
 
-import { useAuth } from '@/hooks/useAuth.js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { MapPinIcon } from 'lucide-react';
+import { useCenter } from '../hooks/useCenter.js';
 
 function Crud() {
-    const { centerState } = useAuth();
-    const { selectedCenter } = centerState;
+    const { selectedCenter } = useCenter();
     const [formData, setFormData] = useState({
         id: '',
         centerId: '',

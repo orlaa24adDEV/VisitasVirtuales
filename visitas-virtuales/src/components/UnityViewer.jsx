@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { useAuth } from '@/hooks/useAuth.js';
 import { ESCENAS_POR_CENTRO } from '@/helpers/escenas.js';
+import { useCenter } from '../hooks/useCenter';
 
 // TODO: cambiar a "true" cuando los archivos del build de Unity estén en el folder de Built_Unity
 //Ver instrucciones en public/Build_Unity/.gitkeep
@@ -8,8 +8,7 @@ const UNITY_BUILD_LISTO = true;
 
 export default function UnityViewer() {
   // Obtenemos el centro seleccionado del contexto global
-    const { centerState } = useAuth();
-    const { selectedCenter } = centerState;
+    const { selectedCenter } = useCenter();
 
     // Calculamos sceneId directamente desde selectedCenter, sin depender de la URL
     // Así evitamos problemas de timing cuando la URL todavía no fue actualizada

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import '@/assets/Login.css';
 import { useAuth } from '@/hooks/useAuth.js';
@@ -8,7 +8,7 @@ export default function Login() {
 	const [errors, setErrors] = useState([]);
 	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
-	const [email, setEmail] = useState('');
+	const [email, setEmail] = useState(localStorage.getItem('rememberedEmail') || '');
 	const [password, setPassword] = useState('');
 	const [rememberMe, setRememberMe] = useState(false);
 	const { login } = useAuth();
@@ -16,21 +16,13 @@ export default function Login() {
 	const location = useLocation();
 	const origin = location.state?.from
 
-	const clearForm = () => {
-		setEmail('');
-		setPassword('');
-	};
-
-	useEffect(() => {
-		const rememberedEmail = localStorage.getItem('rememberedEmail');
-		if (rememberedEmail) {
-			setEmail(rememberedEmail);
-			setRememberMe(true);
-		}
-	}, []);
-
 	const handleSubmit = async (event) => {
 		event.preventDefault();
+		if (rememberMe && email) {
+			localStorage.setItem('rememberedEmail', email);
+		} else {
+			localStorage.removeItem('rememberedEmail');
+		}
 		setIsLoading(true);
 		setErrors([]);
 		const formData = new FormData(event.currentTarget);
@@ -52,7 +44,7 @@ export default function Login() {
 			let responseData = null;
 			try {
 				responseData = await response.json();
-			} catch (jsonError) {
+			} catch {
 				responseData = {};
 			}
 

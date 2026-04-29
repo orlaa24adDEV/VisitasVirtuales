@@ -1,15 +1,16 @@
  
 import '../assets/App.css';
 
-import { ChevronDown, LogOut, Menu, User, Home, MapPin, Compass, Settings } from 'lucide-react';
+import { ChevronDown, LogOut, Menu, Compass, Settings } from 'lucide-react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Link, useNavigate, useNavigation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 import Button from './Button.jsx';
 import CenterSelectButton from './CenterSelectButton.jsx';
 import ClickOutsideWrapper from './ClickOutsideWrapper.jsx';
 import DropdownItem from './DropdownItem.jsx';
+import { useCenter } from '../hooks/useCenter.js';
 
 
 TopHeader.propTypes = {
@@ -49,9 +50,9 @@ export default function TopHeader({
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
-    const { centerState, authState } = useAuth(); // Obtenemos el centro del contexto
-    const { selectedCenter } = centerState;
-    const { user } = authState;
+    const { user } = useAuth();
+    const { selectedCenter } = useCenter();
+
 
     const handleLogoutClick = () => {
         onLogout();
@@ -120,10 +121,12 @@ export default function TopHeader({
                                         <p className="text-xs text-slate-500 font-medium">Conectado</p>
                                         <p className="text-sm font-bold text-slate-700 truncate">{userEmail}</p>
                                     </div>
-                                    <DropdownItem onClick={() => navigate('/settings')}>
-                                        <Settings size={16} />
-                                        Configuración
-                                    </DropdownItem>
+                                    {role === 'admin' || role === 'teacher' ? (
+                                        <DropdownItem onClick={() => navigate('/settings')}>
+                                            <Settings size={16} />
+                                            Configuración
+                                        </DropdownItem>
+                                    ) : null}
                                     <DropdownItem onClick={handleLogoutClick} className='hover:bg-red-50! text-red-500!'>
                                         <LogOut size={16}/>
                                         Cerrar sesión

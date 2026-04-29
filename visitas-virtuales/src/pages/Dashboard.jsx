@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth.js';
+import { useCenter } from '../hooks/useCenter';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 import Button from '@/components/Button.jsx';
@@ -10,8 +10,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const { centerState, saveSelectedCenter } = useAuth();
-  const { allCenters } = centerState;
+  const { allCenters, saveSelectedCenter } = useCenter();
   const navigate = useNavigate();
 
   // Cargar todos los POIs al montar el componente

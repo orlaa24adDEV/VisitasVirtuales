@@ -18,9 +18,11 @@ export default function Settings() {
                         <SettingsItemWrapper title="Perfil de Usuario" icon={<User className="w-5 h-5" strokeWidth={2.5} />}>
                             <UserProfileForm />
                         </SettingsItemWrapper>
-                        <SettingsItemWrapper title="Gestión de centros" icon={<LayoutGrid className="w-5 h-5" strokeWidth={2.5} />}>
-                            <CenterImageForm />
-                        </SettingsItemWrapper>
+                        {isAdmin && (
+                            <SettingsItemWrapper title="Gestión de centros" icon={<LayoutGrid className="w-5 h-5" strokeWidth={2.5} />}>
+                                <CenterImageForm />
+                            </SettingsItemWrapper>
+                        )}
                     </div>
                 </div>
             </div>

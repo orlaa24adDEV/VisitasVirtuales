@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 import {
     Home,
@@ -9,13 +8,7 @@ import {
     MapPin,
     ClipboardCheck,
     X,
-    Rocket,
-    Move3D,
-    Orbit,
-    Footprints,
     Compass,
-    View,
-    Telescope,
 } from 'lucide-react';
 import logo1 from '@/assets/logo1.png';
 import SidebarItem from './SidebarItem';
@@ -28,16 +21,15 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 
     // Definimos todos los items y marcamos cuáles son solo para Admin
     const allMenuItems = [
-        { id: 'landing', name: 'Inicio', icon: <Home size={22} strokeWidth={1.75} />, path: '/' },
-        { id: 'viewer', name: 'Visita 360°', icon: <Compass size={22} strokeWidth={1.75} />, path: '/viewer' },
-        //{ id: 'mensajes', name: 'Mensajes', icon: <Mail size={20} />, path: 'mensajes' },
-        // Gestión de POIs incluye también /crud
+        { id: 'landing', name: 'Inicio', icon: <Home size={22} strokeWidth={1.75} />, path: '/', adminOnly: false },
+        { id: 'viewer', name: 'Visita 360°', icon: <Compass size={22} strokeWidth={1.75} />, path: '/viewer', adminOnly: false },
         (isAdmin || isTeacher) ? { 
             id: 'gestion-pois', 
             name: 'Gestión de POIs',
             icon: <MapPin size={22} strokeWidth={1.75} />, 
             path: 'listpois', 
             extraActivePaths: ['/crud'], // Para marcar activo también en /crud
+            adminOnly: false
         } : null,
         // Items solo para ADMIN
         { id: 'dashboard', name: 'Dashboard', icon: <LayoutDashboard size={22} strokeWidth={1.75} />, path: '/dashboard', adminOnly: true },
@@ -48,7 +40,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
     windowSize.width < 1024 ? allMenuItems.splice(2, 0, { id: 'seleccion-centro', name: 'Selección de Centro', icon: <Building2 size={22} strokeWidth={1.75} />, path: '/centros'}) : null;
 
     // Filtramos la lista: si no es admin, quitamos los que tengan adminOnly: true
-    const menuItems = allMenuItems.filter(item => !item.adminOnly || isAdmin);
+    const menuItems = allMenuItems.filter(item => item && (!item.adminOnly || isAdmin));
 
     return (
         <>

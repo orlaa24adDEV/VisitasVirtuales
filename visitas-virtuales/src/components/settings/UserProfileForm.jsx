@@ -1,14 +1,16 @@
-import { Pencil, RotateCcw, Save, Trash, User } from 'lucide-react';
+import { Pencil, RotateCcw, Save, Trash } from 'lucide-react';
 import Button from '../Button';
 import Input from '../Input';
 import Select from '../Select';
 import { useRef, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
+import { useCenter } from '../../hooks/useCenter';
 
 export default function UserProfileForm() {
-  const { authState, centerState, fetchProfile } = useAuth();
-      const { user } = authState;
-      const { allCenters } = centerState;
+  const { fetchProfile, user } = useAuth();
+  const { allCenters } = useCenter();
+      
       const userImageRef = useRef(null);
       const userFormInitialState = {
           username: user?.username || '',
@@ -22,9 +24,9 @@ export default function UserProfileForm() {
     const imageUrl = user?.imageUrl || defaultImageUrl;
     const [preview, setPreview] = useState(imageUrl);
     const hasImage = !!preview && !preview.startsWith('https://api.dicebear.com');
-    console.log(preview)
 
     const updateUserAction = async (formData) => {
+        
         // Eliminar el campo de centro si no se ha seleccionado ninguno
         if (formData.get('centerPreferenceId') === '') {
             formData.delete('centerPreferenceId');
@@ -46,22 +48,22 @@ export default function UserProfileForm() {
             if (response.ok) {
                 // Refrescar datos del perfil después de la actualización
                 fetchProfile(); 
-                alert('Perfil actualizado exitosamente');
+                toast.success('Perfil actualizado exitosamente');
             } else {
                 const errorData = await response.text();
                 console.error('Error del servidor al actualizar el perfil:', errorData);
-                alert(`Error: ${response.status} - No se pudo actualizar el perfil`);
+                toast.error('Error al actualizar el perfil. Por favor, inténtalo más tarde.');
             }
         } catch (error) {
             console.error('Error de red al actualizar el perfil:', error);
-            alert('Error de red al actualizar el perfil. Por favor, inténtalo más tarde.');
+            toast.error('Error de red al actualizar el perfil. Por favor, inténtalo más tarde.');
         }
     }
 
     const resetChanges = async () => {
-        console.log('Resetting to:', userFormInitialState)
         setUserFormState(userFormInitialState);
         setPreview(imageUrl);
+        toast.info('Cambios descartados');
     }
 
     const handleUserImageChange = (e) => {
@@ -116,7 +118,7 @@ export default function UserProfileForm() {
                                         <Select name='centerPreferenceId' options={allCenters} value={userFormState.centerPreferenceId} onChange={(e) => setUserFormState(prev => ({ ...prev, centerPreferenceId: e.target.value }))} />
                                     </div>
                                     <div className='flex w-full justify-end gap-2 mt-6'>
-                                        <Button type="button" variant="secondary" onClick={resetChanges}><RotateCcw className='w-5 h-5' />Olvidar cambios</Button>
+                                        <Button type="button" variant="secondary" onClick={resetChanges}><RotateCcw className='w-5 h-5' />Descartar</Button>
                                         <Button type="submit" variant="primary"><Save className='w-5 h-5' />Guardar cambios</Button>
                                     </div>
                                 </div>

@@ -9,15 +9,14 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
 import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom';
+import { useCenter } from '../hooks/useCenter';
 
 export default function ListPois({ centerId }) {
     const [pois, setPois] = useState([]);
     const [search, setSearch] = useState("");
-    const { centerState } = useAuth();
-    const { selectedCenter } = centerState;
+    const { selectedCenter } = useCenter();
     const navigate = useNavigate();
 
     const API_URL = import.meta.env.VITE_API_URL;
@@ -119,8 +118,8 @@ export default function ListPois({ centerId }) {
 
        
         <div className='p-4 shadow-sm rounded-2xl bg-white min-w-full'>
-          <div className="flex flex-row gap-2 h-10 border-2 border-gray-200 rounded-lg items-center focus-within:border-2 hover:border-blue-600 focus-within:border-blue-600 focus-within:border-solid">
-          <Search size={24} className="text-gray-300 ml-2" />
+          <div className="flex flex-row gap-2 h-10 border-2 border-slate-200 rounded-lg items-center focus-within:border-2 hover:border-blue-600 focus-within:border-blue-600 focus-within:border-solid">
+          <Search size={24} className="text-slate-300 ml-2" />
           <input
             type="text"
             placeholder="Buscador de POI"
@@ -131,21 +130,21 @@ export default function ListPois({ centerId }) {
           
         </div>
 
-        <div className="overflow-hidden rounded-xl border border-gray-200 shadow-sm mt-5">
+        <div className="overflow-hidden rounded-xl border border-slate-100 shadow-sm mt-5">
           <table className="w-full text-sm text-left">
-            <thead className="bg-gray-50 text-xs uppercase text-gray-600 font-semibold">
+            <thead className="bg-slate-100  text-xs uppercase text-slate-600 font-semibold">
               <tr>
                 <th className="px-6 py-4">Punto de interés</th>
                 <th className="px-6 py-4">Descripción</th>
                 <th className="px-6 py-4 text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-slate-200 bg-white">
               {currentPois.length === 0 ? (
                 <tr>
                   <td
                     colSpan="3"
-                    className="px-6 py-10 text-center text-gray-500 italic"
+                    className="px-6 py-10 text-center text-slate-500 italic"
                   >
                     No se encontraron puntos de interés
                   </td>
@@ -154,12 +153,12 @@ export default function ListPois({ centerId }) {
                 currentPois.map((poi) => (
                   <tr
                     key={poi.id}
-                    className="hover:bg-gray-50 transition-colors"
+                    className="hover:bg-slate-50 transition-colors"
                   >
-                    <td className="px-6 py-4 font-medium text-gray-900">
+                    <td className="px-6 py-4 font-medium text-slate-900">
                       {poi.name}
                     </td>
-                    <td className="px-6 py-4 text-gray-600">
+                    <td className="px-6 py-4 text-slate-600">
                       {poi.details.description}
                     </td>
                     <td className="px-6 py-4">
@@ -173,13 +172,13 @@ export default function ListPois({ centerId }) {
                             description: poi.details.description,
                             isEditing: true,
                           }}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                          className="p-2 text-blue-600 hover:bg-blue-100 rounded-xl transition-colors"
                         >
                           <Pencil size={18} />
                         </Link>
                         <button
                           onClick={() => deletePois(poi.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
+                          className="p-2 text-red-600 hover:bg-red-100 rounded-xl transition-colors cursor-pointer"
                         >
                           <Trash size={18} />
                         </button>
@@ -192,8 +191,8 @@ export default function ListPois({ centerId }) {
           </table>
 
           {filteredPois.length > 0 && (
-            <div className="bg-gray-50 px-6 py-3 border-t border-gray-200 flex items-center justify-between">
-              <p className="text-gray-500 text-xs">
+            <div className="bg-slate-50 px-6 py-3 border-t border-slate-200 flex items-center justify-between">
+              <p className="text-slate-500 text-xs">
                 Mostrando{" "}
                 <span className="font-semibold">{firstIndex + 1}</span> -{" "}
                 <span className="font-semibold">
@@ -201,21 +200,21 @@ export default function ListPois({ centerId }) {
                 </span>{" "}
                 de {filteredPois.length}
               </p>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.25">
                 <button
                   onClick={() => setCurrentPage((p) => p - 1)}
                   disabled={currentPage === 1}
-                  className="p-1.5 rounded-md border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  className="p-1.5 rounded-md border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 >
                   <ChevronLeft size={18} />
                 </button>
-                <span className="text-xs font-medium text-gray-700">
+                <span className="text-xs font-medium text-slate-700">
                   Página {currentPage} de {totalPages}
                 </span>
                 <button
                   onClick={() => setCurrentPage((p) => p + 1)}
                   disabled={currentPage === totalPages}
-                  className="p-1.5 rounded-md border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  className="p-1.5 rounded-md border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 >
                   <ChevronRight size={18} />
                 </button>
