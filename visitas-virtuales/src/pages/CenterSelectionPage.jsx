@@ -10,13 +10,14 @@ import Button from '@/components/Button.jsx';
 
 export default function CenterSelectionPage() {
   const navigate = useNavigate();
-  const { centerState, saveSelectedCenter, isAdmin, fetchCenters } = useAuth();
-  const { selectedCenter, allCenters, isCentersLoading, centersError } = centerState;
+
+  const { allCenters, selectedCenter, 
+    isCentersLoading, centersError, saveSelectedCenter, fetchCenters, isAdmin, isTeacher } = useAuth();
   
+    console.log(selectedCenter);
+
   // Iniciamos el local con lo que haya en el contexto (por si vuelve para cambiar)
   const [localSelectedCenter, setLocalSelectedCenter] = useState(selectedCenter || null);
-  const [hasShownToast, setHasShownToast] = useState(false);
-  const hasMounted = useRef(false);
 
   useEffect(() => {
 
@@ -31,17 +32,13 @@ export default function CenterSelectionPage() {
      // Si no hay centros, no hacemos nada (el toast se muestra en la Landing)
     if (!allCenters || allCenters.length === 0) return;
 
-    if (hasMounted.current) {
-      if (!selectedCenter && !hasShownToast) {
-        toast.info('Selecciona un centro para continuar', { 
-          description: 'Es necesario elegir un centro educativo para acceder al tour' 
-        });
-        setHasShownToast(true);
-      }
-    } else {
-      hasMounted.current = true;
+    if (!selectedCenter) {
+      toast.info('Selecciona un centro para continuar', { 
+        description: `Es necesario elegir un centro educativo para ${isAdmin || isTeacher ? 'configurar sus POIs y acceder a su tour virtual' : 'acceder al tour virtual'}`
+      });
     }
-  }, [isCentersLoading, centersError, allCenters, selectedCenter, hasShownToast]);
+
+  }, [isCentersLoading, centersError, allCenters, selectedCenter, isAdmin, isTeacher]);
 
   const handleConfirm = () => {
     if (localSelectedCenter) {
@@ -52,8 +49,8 @@ export default function CenterSelectionPage() {
         description: `Preparando tour virtual...` 
       });
       
-      // Redirigimos a la escena de Unity
-      navigate('/viewer');
+      // Redirigimos a la escena de Unity o al gestor de POIs según el rol
+      navigate(isAdmin || isTeacher ? '/listpois' : '/viewer');
     }
   };
 

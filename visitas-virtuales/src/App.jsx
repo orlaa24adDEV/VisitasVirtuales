@@ -16,13 +16,11 @@ import { Toaster } from 'sonner';
 import LandingPage from './pages/LandingPage.jsx';
 import Settings from './pages/Settings.jsx';
 
-
 function App() {
-    const { authState, centerState, logout } = useAuth();
+    const { user, selectedCenter, logout } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { user } = authState;
-    const { selectedCenter } = centerState;
     const location = useLocation();
+    console.log(selectedCenter, user);
 
     // Detectamos si es la Landing para limpiar el diseño
     const isLanding = location.pathname === '/' || location.pathname === '/login' || location.pathname === '/centros';
@@ -72,14 +70,14 @@ function App() {
                         {/* 5. RUTAS SOLO PARA ADMIN/PROFE */}
                         <Route 
                             path="/listpois" 
-                            element={selectedCenter ? <ProtectedRoute requiredRoles={['admin', 'teacher']}><ListPois centerId={centerState.selectedCenter.id} /></ProtectedRoute> : <Navigate to="/centros" replace />}
+                            element={selectedCenter ? <ProtectedRoute requiredRoles={['admin', 'teacher']}><ListPois centerId={selectedCenter.id} /></ProtectedRoute> : <Navigate to="/centros" replace />}
                         />
                         <Route path="/crud" element={selectedCenter ? <ProtectedRoute requiredRoles={['admin', 'teacher']}><Crud /></ProtectedRoute> : <Navigate to="/centros" replace />} />
                         <Route path="/dashboard" element={<ProtectedRoute requiredRoles={['admin']}><Dashboard /></ProtectedRoute>} />
 
                         <Route 
                             path="/settings" 
-                            element={<ProtectedRoute requiredRoles={["admin"]}><Settings /></ProtectedRoute>}
+                            element={<ProtectedRoute requiredRoles={["admin", 'teacher']}><Settings /></ProtectedRoute>}
                         />
 
                         <Route 
@@ -95,10 +93,9 @@ function App() {
             <Toaster 
                 richColors 
                 position='bottom-right' 
-                expand={true} 
                 visibleToasts={6} 
-                closeButton 
                 offset={24} 
+                closeButton={true}
             />
         </div>
     );

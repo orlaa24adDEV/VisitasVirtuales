@@ -4,7 +4,10 @@ import {
   getLocalStorageAccessToken,
   removeLocalStorageAccessToken,
   isTokenExpired,
+  getLocalStorageUser,
+  setLocalStorageUser,
 } from '../helpers/authLocalStorage.js'
+import { getLocalStorageSelectedCenter, setLocalStorageSelectedCenter, getLocalStorageAllCenters, setLocalStorageAllCenters, removeLocalStorageAllCenters, removeLocalStorageSelectedCenter } from '../helpers/centerLocalStorage.js'
 import { sleep } from '../helpers/sleep.js'
 import { AuthContext } from '@/context/AuthContext.js'
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js'
@@ -31,13 +34,13 @@ export const AuthProvider = ({ children }) => {
     let allCenters = [];
     let selectedCenter = null;
     try {
-      const storedCenters = localStorage.getItem('allCenters');
+      const storedCenters = getLocalStorageAllCenters();
       if (storedCenters) allCenters = JSON.parse(storedCenters);
-      const storedSelected = localStorage.getItem('selectedCenter');
+      const storedSelected = getLocalStorageSelectedCenter();
       if (storedSelected) selectedCenter = JSON.parse(storedSelected);
     } catch {
-      localStorage.removeItem('allCenters');
-      localStorage.removeItem('selectedCenter');
+      removeLocalStorageAllCenters();
+      removeLocalStorageSelectedCenter();
     }
     return {
       allCenters,
@@ -104,8 +107,10 @@ export const AuthProvider = ({ children }) => {
         if (!res.ok) throw new Error('Session invalid');
         const data = await res.json();
         setAuthState((prev) => ({ ...prev, user: data.profile }));
+        setLocalStorageUser(data.profile);
       } else {
         setAuthState((prev) => ({ ...prev, user: null }));
+        removeLocalStorageAccessToken();
       }
     } catch {
       removeLocalStorageAccessToken();
@@ -142,6 +147,7 @@ export const AuthProvider = ({ children }) => {
         }
         return { ...prev };
       });
+      setLocalStorageAllCenters(data.centers);
     } catch {
       setCenterState((prev) => ({ ...prev, centersError: 'Error de red' }));
     } finally {
@@ -187,7 +193,7 @@ export const AuthProvider = ({ children }) => {
 
   const saveSelectedCenter = useCallback((center) => {
     setCenterState((prev) => ({ ...prev, selectedCenter: center }))
-    localStorage.setItem('selectedCenter', JSON.stringify(center))
+    setLocalStorageSelectedCenter(center);
   }, []);
 
   const saveAllCenters = useCallback((allCenters) => {
@@ -238,13 +244,16 @@ export const AuthProvider = ({ children }) => {
     init();
   }, []);
 
-  const isAdmin = authState.user?.role === 'admin'
-  const isTeacher = authState.user?.role === 'teacher'
 
   // Evitar re-renders innecesarios usando useMemo
   const value = useMemo(() => ({
-    authState,
-    centerState,
+    user: authState.user || getLocalStorageUser() || null,
+    allCenters: centerState.allCenters || getLocalStorageAllCenters() || [],
+    selectedCenter: centerState.selectedCenter || getLocalStorageSelectedCenter() || null,
+    isCentersLoading: centerState.isCentersLoading,
+    centersError: centerState.centersError,
+    isAdmin: authState.user?.role === 'admin',
+    isTeacher: authState.user?.role === 'teacher',
     login,
     logout,
     fetchProfile,
@@ -253,9 +262,21 @@ export const AuthProvider = ({ children }) => {
     saveSelectedCenter,
     updateCenterImage,
     isInitialLoading,
-    isAdmin,
-    isTeacher,
-  }), [authState, centerState, login, logout, fetchProfile, fetchCenters, saveAllCenters, saveSelectedCenter, updateCenterImage, isInitialLoading, isAdmin, isTeacher]);
+  }), [
+    authState.user,
+    centerState.allCenters,
+    centerState.selectedCenter,
+    centerState.isCentersLoading,
+    centerState.centersError,
+    login,
+    logout,
+    fetchProfile,
+    fetchCenters,
+    saveAllCenters,
+    saveSelectedCenter,
+    updateCenterImage,
+    isInitialLoading,
+  ]);
 
   return (
     <AuthContext.Provider value={value}>

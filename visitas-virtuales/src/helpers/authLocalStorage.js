@@ -23,3 +23,13 @@ export const isTokenExpired = (token) => {
     return true;
   }
 };
+
+export const getLocalStorageUser = () => {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+};
+
+export const setLocalStorageUser = (user) => {
+    localStorage.setItem('user', JSON.stringify(user));
+};
+

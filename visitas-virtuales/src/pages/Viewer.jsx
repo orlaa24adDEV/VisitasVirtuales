@@ -2,15 +2,9 @@ import { useAuth } from '@/hooks/useAuth.js';
 import { useCenterQuery } from '@/hooks/useCenterQuery.js';
 import { UserCheck, ShieldCheck, GraduationCap } from 'lucide-react'; // Iconos para darle estilo
 import UnityViewer from '../components/UnityViewer';
-import { useNavigate } from 'react-router-dom';
-import { MapPin } from 'lucide-react';
-import Button from '../components/Button';
 
 export default function Viewer() {
-    const { authState, isAdmin, isTeacher, centerState } = useAuth();
-    const { user } = authState;
-    const { selectedCenter } = centerState;
-    const navigate = useNavigate();
+    const { user, isAdmin, isTeacher, selectedCenter } = useAuth();
 
     // Si el context no contiene un centro, utilizar el query param "center" de la URL, 
     // proporcionado por la página de selección de centro. Esto es un fallback y además

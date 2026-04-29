@@ -10,10 +10,8 @@ export default function CenterImageForm() {
 
     const [file, setFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
-    const { updateCenterImage, centerState, authState } = useAuth();
-    const { user } = authState;
+    const { updateCenterImage, allCenters, user } = useAuth();
     const [selectedId, setSelectedId] = useState(user?.centerPreferenceId || '');
-    const { allCenters } = centerState;
     const currentImage = allCenters.find(c => c.id == selectedId)?.imageUrl
     const [preview, setPreview] = useState(currentImage || null);
     const fileInputRef = useRef(null);

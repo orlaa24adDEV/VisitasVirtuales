@@ -18,12 +18,18 @@ export default defineConfig(({ mode }) => {
         server: {
             proxy: {
                 '/api': {
-                    // Usamos la variable del .env aquí
-                    target: env.VITE_API_URL, 
+                    target: env.VITE_API_URL,
                     changeOrigin: true,
-                    secure: false, 
+                    secure: false,
                     rewrite: (path) => path.replace(/^\/api/, '/api/v1'),
-                },
+                    configure: (proxy) => {
+                        proxy.on('proxyReq', (proxyReq, req) => {
+                            if (req.headers['authorization']) {
+                                proxyReq.setHeader('Authorization', req.headers['authorization']);
+                            }
+                        });
+                    }
+                }
             },
             allowedHosts: ['app.visitasvirtuales.dedyn.io'],
         },

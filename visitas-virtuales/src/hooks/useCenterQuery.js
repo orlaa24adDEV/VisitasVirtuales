@@ -7,8 +7,7 @@ import { ESCENAS_POR_CENTRO } from '@/helpers/escenas.js';
 
 /** Hook encargado de sincronizar el centro seleccionado en el context con el query param "center" de la URL. */
 export const useCenterQuery = () => {
-    const { centerState } = useAuth();
-    const { selectedCenter, allCenters, saveSelectedCenter } = centerState;
+    const { selectedCenter, allCenters, saveSelectedCenter } = useAuth();
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
 

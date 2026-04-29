@@ -7,8 +7,7 @@ import { toast } from 'sonner';
 import { MapPinIcon } from 'lucide-react';
 
 function Crud() {
-    const { centerState } = useAuth();
-    const { selectedCenter } = centerState;
+    const { selectedCenter } = useAuth();
     const [formData, setFormData] = useState({
         id: '',
         centerId: '',
