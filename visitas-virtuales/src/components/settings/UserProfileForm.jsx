@@ -5,9 +5,11 @@ import Select from '../Select';
 import { useRef, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { useCenter } from '../../hooks/useCenter';
 
 export default function UserProfileForm() {
-  const { allCenters, fetchProfile, user } = useAuth();
+  const { fetchProfile, user } = useAuth();
+  const { allCenters } = useCenter();
       
       const userImageRef = useRef(null);
       const userFormInitialState = {
@@ -22,7 +24,6 @@ export default function UserProfileForm() {
     const imageUrl = user?.imageUrl || defaultImageUrl;
     const [preview, setPreview] = useState(imageUrl);
     const hasImage = !!preview && !preview.startsWith('https://api.dicebear.com');
-    console.log(preview)
 
     const updateUserAction = async (formData) => {
         
@@ -37,8 +38,6 @@ export default function UserProfileForm() {
         
         try {
             const token = localStorage.getItem('accessToken');
-            console.log('token being sent:', token)
-console.log('headers:', { 'Authorization': `Bearer ${token}` })
             const response = await fetch('/api/me', {
                 method: 'PATCH',
                 body: formData,

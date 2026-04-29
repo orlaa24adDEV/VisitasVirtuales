@@ -15,12 +15,13 @@ import './assets/App.css';
 import { Toaster } from 'sonner';
 import LandingPage from './pages/LandingPage.jsx';
 import Settings from './pages/Settings.jsx';
+import { useCenter } from './hooks/useCenter.js';
 
 function App() {
-    const { user, selectedCenter, logout } = useAuth();
+    const { user, logout } = useAuth();
+    const { selectedCenter } = useCenter();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const location = useLocation();
-    console.log(selectedCenter, user);
 
     // Detectamos si es la Landing para limpiar el diseño
     const isLanding = location.pathname === '/' || location.pathname === '/login' || location.pathname === '/centros';

@@ -6,7 +6,7 @@ export default function LoadingPage({ isExiting }) {
           className={`
             fixed inset-0 z-50 /* This ensures it covers the content during the fade */
             flex flex-col gap-4 items-center justify-center bg-white
-            transition-all duration-700 ease-in-out
+            transition-all duration-1000 ease-in-out
             ${isExiting ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}
           `}
         >

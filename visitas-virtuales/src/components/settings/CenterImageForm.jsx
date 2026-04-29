@@ -1,16 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
-import { Upload, Trash2, ImageUp, Image, ChevronDown, Save, LoaderCircle } from 'lucide-react';
+import { Upload, Trash2, Image, Save, LoaderCircle } from 'lucide-react';
 import {useAuth} from '@/hooks/useAuth.js';
 import { ImageIcon } from 'lucide-react';
 import { getLocalStorageAccessToken } from '../../helpers/authLocalStorage';
 import Button from '../Button';
 import Select from '../Select';
+import { useCenter } from '../../hooks/useCenter';
 
 export default function CenterImageForm() {
 
     const [file, setFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
-    const { updateCenterImage, allCenters, user } = useAuth();
+    const { user } = useAuth();
+    const { updateCenterImage, allCenters } = useCenter();
     const [selectedId, setSelectedId] = useState(user?.centerPreferenceId || '');
     const currentImage = allCenters.find(c => c.id == selectedId)?.imageUrl
     const [preview, setPreview] = useState(currentImage || null);

@@ -9,14 +9,14 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
 import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom';
+import { useCenter } from '../hooks/useCenter';
 
 export default function ListPois({ centerId }) {
     const [pois, setPois] = useState([]);
     const [search, setSearch] = useState("");
-    const { selectedCenter } = useAuth();
+    const { selectedCenter } = useCenter();
     const navigate = useNavigate();
 
     const API_URL = import.meta.env.VITE_API_URL;

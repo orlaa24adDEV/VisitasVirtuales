@@ -10,6 +10,7 @@ import Button from './Button.jsx';
 import CenterSelectButton from './CenterSelectButton.jsx';
 import ClickOutsideWrapper from './ClickOutsideWrapper.jsx';
 import DropdownItem from './DropdownItem.jsx';
+import { useCenter } from '../hooks/useCenter.js';
 
 
 TopHeader.propTypes = {
@@ -49,7 +50,9 @@ export default function TopHeader({
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
-    const { selectedCenter, user } = useAuth(); // Obtenemos el centro del contexto
+    const { user } = useAuth();
+    const { selectedCenter } = useCenter();
+
 
     const handleLogoutClick = () => {
         onLogout();

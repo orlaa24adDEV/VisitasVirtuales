@@ -7,8 +7,6 @@ export const ProtectedRoute = ({ requiredRoles, children }) => {
     const location = useLocation();
     const requiresAdmin = requiredRoles?.includes('admin');
     const requiresTeacher = requiredRoles?.includes('teacher');
-    console.log(user, isAdmin, isTeacher, isInitialLoading);
-    console.log('requiresAdmin:', requiresAdmin, 'requiresTeacher:', requiresTeacher, 'requiredRoles at derive time:', requiredRoles)
 
     if (!requiredRoles) return null; 
     if (isInitialLoading) return <LoadingPage />;

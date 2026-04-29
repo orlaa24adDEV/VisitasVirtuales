@@ -7,8 +7,6 @@ import {
   getLocalStorageUser,
   setLocalStorageUser,
 } from '../helpers/authLocalStorage.js'
-import { getLocalStorageSelectedCenter, setLocalStorageSelectedCenter, getLocalStorageAllCenters, setLocalStorageAllCenters, removeLocalStorageAllCenters, removeLocalStorageSelectedCenter } from '../helpers/centerLocalStorage.js'
-import { sleep } from '../helpers/sleep.js'
 import { AuthContext } from '@/context/AuthContext.js'
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js'
 import LoadingPage from '../components/LoadingPage.jsx'
@@ -18,9 +16,12 @@ import { useNavigate } from 'react-router-dom';
 export const AuthProvider = ({ children }) => {
   // Estado de carga inicial (espera a cargar perfil y centros antes de mostrar la app)
   const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [isExiting, setIsExiting] = useState(false) // Para manejar transición al cargar página
+  const [showLoading, setShowLoading] = useState(true); // Controla el montaje de LoadingPage
   const CHECK_INTERVAL = 5 * 60 * 1000;
   const lastCheckRef = useRef(Date.now());
-  const [isExiting, setIsExiting] = useState(false) // Para manejar transición al cargar página
+  const loadingStartRef = useRef(Date.now());
+  const MIN_LOADING_DURATION = 600;
   const navigate = useNavigate();
   // Perfil del usuario autenticado y token de acceso
   const [authState, setAuthState] = useState({
@@ -28,29 +29,6 @@ export const AuthProvider = ({ children }) => {
     isUserLoading: false,
     userError: null,
   })
-
-  // Carga inicial de centros desde localStorage al montar el proveedor, para evitar parpadeos y llamadas innecesarias
-  const getInitialCenters = () => {
-    let allCenters = [];
-    let selectedCenter = null;
-    try {
-      const storedCenters = getLocalStorageAllCenters();
-      if (storedCenters) allCenters = JSON.parse(storedCenters);
-      const storedSelected = getLocalStorageSelectedCenter();
-      if (storedSelected) selectedCenter = JSON.parse(storedSelected);
-    } catch {
-      removeLocalStorageAllCenters();
-      removeLocalStorageSelectedCenter();
-    }
-    return {
-      allCenters,
-      isCentersLoading: false,
-      centersError: null,
-      selectedCenter,
-    };
-  };
-
-  const [centerState, setCenterState] = useState(getInitialCenters);
 
   /* =========================================== */
   /* ==== Autenticación y gestión de tokens ==== */
@@ -118,93 +96,27 @@ export const AuthProvider = ({ children }) => {
     }
   }, [getValidAccessToken]);
 
-  /* ============================ */
-  /* ==== Gestión de centros ==== */
-  /* ============================ */
-
-  // Carga la lista de centros, renovando tokens si es necesario
-  const fetchCenters = useCallback(async (providedToken = null) => {
-    setCenterState((prev) => ({ ...prev, isCentersLoading: true, centersError: null }));
-    try {
-      const token = providedToken || (await getValidAccessToken());
-      const response = await fetchWithTimeout(
-        '/api/centers',
-        { headers: { Authorization: `Bearer ${token}` } },
-        5000
-      );
-
-      if (!response.ok) throw new Error('Error al cargar centros');
-
-      const data = await response.json();
-      lastCheckRef.current = Date.now();
-      
-      setCenterState((prev) => {
-        const prevStr = JSON.stringify(prev.allCenters);
-        const newStr = JSON.stringify(data.centers);
-        if (prevStr !== newStr) {
-          localStorage.setItem('allCenters', newStr);
-          return { ...prev, allCenters: data.centers };
-        }
-        return { ...prev };
-      });
-      setLocalStorageAllCenters(data.centers);
-    } catch {
-      setCenterState((prev) => ({ ...prev, centersError: 'Error de red' }));
-    } finally {
-      setCenterState((prev) => ({ ...prev, isCentersLoading: false }));
-    }
-  }, [getValidAccessToken]);
-
-  // Actualizar la imagen de un centro específico en estado local después de subirla
-  const updateCenterImage = useCallback((centerId, imageUrl) => {
-      const id = Number(centerId);
-      setCenterState((prev) => {
-          const updatedCenters = prev.allCenters.map(c =>
-              c.id === id ? { ...c, imageUrl } : c
-          );
-          const updatedSelected = prev.selectedCenter?.id === id
-              ? { ...prev.selectedCenter, imageUrl }
-              : prev.selectedCenter;
-
-          localStorage.setItem('allCenters', JSON.stringify(updatedCenters));
-          localStorage.setItem('selectedCenter', JSON.stringify(updatedSelected));
-
-          return { ...prev, allCenters: updatedCenters, selectedCenter: updatedSelected };
-      });
-  }, []);
-
   // Al hacer login, se guarda el token y se cargan perfil y centros solo si no están cargados
   const login = useCallback(async (accessToken) => {
     setIsInitialLoading(true);
     setIsExiting(false);
-    
+    setShowLoading(true);
+    loadingStartRef.current = Date.now();
     setLocalStorageAccessToken(accessToken);
     setAuthState((prev) => ({ ...prev, accessToken }));
-
     // Evitar re-renders innecesarios cargando perfil y centros en paralelo
-    await Promise.all([
-      fetchProfile(accessToken),
-      fetchCenters(accessToken),
-    ]);
-
-    setIsExiting(true);
+    await fetchProfile(accessToken);
     setIsInitialLoading(false);
-  }, [fetchProfile, fetchCenters]);
-
-  const saveSelectedCenter = useCallback((center) => {
-    setCenterState((prev) => ({ ...prev, selectedCenter: center }))
-    setLocalStorageSelectedCenter(center);
-  }, []);
-
-  const saveAllCenters = useCallback((allCenters) => {
-    setCenterState((prev) => ({ ...prev, allCenters }))
-    localStorage.setItem('allCenters', JSON.stringify(allCenters))
-  }, []);
+    // Forzar duración mínima de carga para mostrar animación
+    const elapsed = Date.now() - loadingStartRef.current;
+    const remaining = Math.max(0, MIN_LOADING_DURATION - elapsed);
+    setTimeout(() => setIsExiting(true), remaining);
+    setTimeout(() => setShowLoading(false), remaining + 1000);
+  }, [fetchProfile]);
 
   const logout = useCallback(async () => {
     const token = getLocalStorageAccessToken();
     setAuthState({ user: null, accessToken: null, isUserLoading: false })
-    setCenterState({ allCenters: [], isCentersLoading: false, centersError: null, selectedCenter: null })
     removeLocalStorageAccessToken();
     localStorage.clear();
 
@@ -223,71 +135,53 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error('Error al cerrar sesión:', err);
     }
-  }, [navigate, setAuthState, setCenterState]);
+  }, [navigate, setAuthState]);
 
   // Cargar perfil y centros al montar solo si no están ya cargados ni en localStorage
   useEffect(() => {
+    const now = Date.now();
     const init = async () => {
-      const needsCenters = !centerState.allCenters || centerState.allCenters.length === 0;
-      const expired = lastCheckRef.current + CHECK_INTERVAL < Date.now();
-
-      await Promise.all([
-        fetchProfile(),
-        (needsCenters || expired) ? fetchCenters() : Promise.resolve(),
-        sleep(1200)
-      ]);
-
-      setIsExiting(true);
-      await sleep(1000);
+      setIsInitialLoading(true);
+      setShowLoading(true);
+      setIsExiting(false);
+      loadingStartRef.current = Date.now();
+      if (now - lastCheckRef.current > CHECK_INTERVAL) {
+        await fetchProfile();
+      }
       setIsInitialLoading(false);
-    }
+      // Forzar duración mínima de carga
+      const elapsed = Date.now() - loadingStartRef.current;
+      const remaining = Math.max(0, MIN_LOADING_DURATION - elapsed);
+      setTimeout(() => setIsExiting(true), remaining);
+      setTimeout(() => setShowLoading(false), remaining + 1000);
+    };
     init();
   }, []);
 
+  const user = authState.user || getLocalStorageUser() || null;
 
   // Evitar re-renders innecesarios usando useMemo
   const value = useMemo(() => ({
-    user: authState.user || getLocalStorageUser() || null,
-    allCenters: centerState.allCenters || getLocalStorageAllCenters() || [],
-    selectedCenter: centerState.selectedCenter || getLocalStorageSelectedCenter() || null,
-    isCentersLoading: centerState.isCentersLoading,
-    centersError: centerState.centersError,
-    isAdmin: authState.user?.role === 'admin',
-    isTeacher: authState.user?.role === 'teacher',
+    user,
+    isAdmin: user?.role === 'admin',
+    isTeacher: user?.role === 'teacher',
     login,
     logout,
     fetchProfile,
-    fetchCenters,
-    saveAllCenters,
-    saveSelectedCenter,
-    updateCenterImage,
     isInitialLoading,
-  }), [
-    authState.user,
-    centerState.allCenters,
-    centerState.selectedCenter,
-    centerState.isCentersLoading,
-    centerState.centersError,
-    login,
-    logout,
-    fetchProfile,
-    fetchCenters,
-    saveAllCenters,
-    saveSelectedCenter,
-    updateCenterImage,
-    isInitialLoading,
-  ]);
+  }), [user, login, logout, fetchProfile, isInitialLoading]);
 
   return (
     <AuthContext.Provider value={value}>
-      {isInitialLoading && <LoadingPage isExiting={isExiting} />}
-
-      <div 
+      {showLoading && (
+        <LoadingPage isExiting={isExiting} />
+      )}
+      <div
         className={`
           w-full min-h-screen
           transition-opacity duration-1000 ease-in-out
           ${isExiting ? 'opacity-100' : 'opacity-0'}
-          ${isInitialLoading ? 'pointer-events-none' : ''}
+          ${(isInitialLoading && !isExiting) ? 'pointer-events-none' : ''}
         `}
       >
         {children}

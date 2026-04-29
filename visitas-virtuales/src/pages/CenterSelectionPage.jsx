@@ -1,7 +1,8 @@
 // CenterSelectionPage — tarjetas con imagen superior, info centrada y línea azul inferior
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
+import { useCenter } from '@/hooks/useCenter.js';
 // eslint-disable-next-line no-unused-vars
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 import { toast } from 'sonner';
@@ -11,11 +12,10 @@ import Button from '@/components/Button.jsx';
 export default function CenterSelectionPage() {
   const navigate = useNavigate();
 
-  const { allCenters, selectedCenter, 
-    isCentersLoading, centersError, saveSelectedCenter, fetchCenters, isAdmin, isTeacher } = useAuth();
+  const { isAdmin, isTeacher } = useAuth();
+  const {allCenters, selectedCenter, 
+    isCentersLoading, centersError, saveSelectedCenter, fetchCenters} = useCenter();
   
-    console.log(selectedCenter);
-
   // Iniciamos el local con lo que haya en el contexto (por si vuelve para cambiar)
   const [localSelectedCenter, setLocalSelectedCenter] = useState(selectedCenter || null);
 

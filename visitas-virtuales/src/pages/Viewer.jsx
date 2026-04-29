@@ -2,9 +2,11 @@ import { useAuth } from '@/hooks/useAuth.js';
 import { useCenterQuery } from '@/hooks/useCenterQuery.js';
 import { UserCheck, ShieldCheck, GraduationCap } from 'lucide-react'; // Iconos para darle estilo
 import UnityViewer from '../components/UnityViewer';
+import { useCenter } from '../hooks/useCenter';
 
 export default function Viewer() {
-    const { user, isAdmin, isTeacher, selectedCenter } = useAuth();
+    const { user, isAdmin, isTeacher } = useAuth();
+    const { selectedCenter } = useCenter();
 
     // Si el context no contiene un centro, utilizar el query param "center" de la URL, 
     // proporcionado por la página de selección de centro. Esto es un fallback y además
