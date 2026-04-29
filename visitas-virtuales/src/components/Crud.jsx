@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import CenterIndicator from './CenterIndicator.jsx';
 import Button from './Button.jsx';
 
 import { useAuth } from '@/hooks/useAuth.js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
+import { MapPinIcon } from 'lucide-react';
 
 function Crud() {
     const { centerState } = useAuth();
@@ -120,11 +120,18 @@ function Crud() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-full w-full p-6">
-            <section className="flex flex-col gap-2 w-full max-w-4xl p-5 shadow-sm rounded-2xl bg-white min-h-125">
-            
-            <h2 className="text-2xl flex w-full justify-between items-center font-bold my-2">{isEditing ? 'Editar POI' : 'Crear Nuevo POI'}<CenterIndicator centerName={selectedCenter.name} /></h2>
+            <div className='flex flex-col gap-3 w-full justify-center min-h-125 mb-60 max-w-2xl'>
+                <div className='flex flex-col gap-px'>
+                <p className="text-sm flex items-center gap-1 font-medium text-blue-600">
+                <MapPinIcon className='w-4 h-4' /><span className="">{selectedCenter.name}</span>
+                </p>
+                <h2 className='text-xl font-semibold text-slate-800'>
+                    {isEditing ? 'Editar punto de interés' : 'Crear nuevo punto de interés'}
+                </h2>
+            </div>
+            <section className="flex flex-col gap-2 w-full p-5 shadow-sm rounded-2xl bg-white min-h-full">
             {/* Formulario */}
-            <form action={handleSubmit} onSubmit={handleSubmit} className="mb-8 p-4 outline outline-slate-200 rounded-lg bg-slate-50 shadow-sm/8">
+            <form action={handleSubmit} onSubmit={handleSubmit} className="p-4 outline outline-slate-200 rounded-lg bg-slate-50 shadow-sm/8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
                         <label className="block text-sm font-medium mb-1">Nombre:</label>
@@ -144,7 +151,8 @@ function Crud() {
                             name="description"
                             value={formData.description || ''}
                             onChange={handleInputChange}
-                            className="w-full p-2 outline outline-slate-200 rounded-lg h-24 bg-white"
+                            rows="6"
+                            className="w-full p-2 outline outline-slate-200 rounded-lg bg-white"
                             placeholder="Descripción del punto de interés"
                             required
                         />
@@ -167,6 +175,7 @@ function Crud() {
                 </div>
             </form>
         </section>
+            </div>
         </div>
     )
 }

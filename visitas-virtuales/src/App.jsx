@@ -94,15 +94,11 @@ function App() {
             </div>
             <Toaster 
                 richColors 
-                position='top-right' 
+                position='bottom-right' 
                 expand={true} 
                 visibleToasts={6} 
                 closeButton 
-                offset={
-                    isLanding 
-                        ? 16
-                        : { top: 80, right: 20 }
-                } 
+                offset={24} 
             />
         </div>
     );

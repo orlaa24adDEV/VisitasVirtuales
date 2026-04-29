@@ -5,17 +5,20 @@ import {
   Trash,
   ChevronLeft,
   ChevronRight,
+  MapPin,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import CenterIndicator from '../components/CenterIndicator';
+import Button from '../components/Button';
+import { useNavigate } from 'react-router-dom';
 
 export default function ListPois({ centerId }) {
     const [pois, setPois] = useState([]);
     const [search, setSearch] = useState("");
     const { centerState } = useAuth();
     const { selectedCenter } = centerState;
+    const navigate = useNavigate();
 
     const API_URL = import.meta.env.VITE_API_URL;
     const GET_PATH = `api/v1/centers/${centerId}/pois`
@@ -91,13 +94,32 @@ export default function ListPois({ centerId }) {
 
   //He metido todo el section dentro de un div para centrarlo.
   return (
-    <div className="flex flex-col items-center justify-center min-h-full w-full gap-4">
-      <div className='p-2 flex w-full justify-center'>
-          <CenterIndicator centerName={centerState.selectedCenter.name} size="lg" />
+    <div className="flex flex-col items-center justify-center min-h-full w-full">
+      <section className="flex flex-col gap-3 w-full justify-center min-h-125 max-w-4xl mb-20">
+        <div className='flex w-full justify-between items-center'>
+          <div className='flex flex-col gap-px w-full'>
+            <p className="text-sm flex items-center gap-1 font-medium text-blue-600">
+            <MapPin className='w-4 h-4' /><span className="">{selectedCenter.name}</span>
+            </p>
+            <h2 className='text-xl font-semibold text-slate-800'>
+              Gestión de puntos de interés
+            </h2>
+          </div>
+            <Button size='small' onClick={() => navigate("/crud", {
+              state: {
+                centerId: selectedCenter.name,
+                name: "",
+                description: "",
+                isEditing: false,
+              }
+            })}>
+              <Plus size={18} strokeWidth={3} /> Nuevo POI
+            </Button>
         </div>
-      <section className="flex flex-col gap-2 w-full max-w-4xl p-2 shadow-sm rounded-2xl bg-white min-h-125">
-        
-        <div className="flex flex-row gap-2 h-10 border-2 border-gray-200 rounded-lg items-center focus-within:border-2 hover:border-blue-600 focus-within:border-blue-600 focus-within:border-solid">
+
+       
+        <div className='p-4 shadow-sm rounded-2xl bg-white min-w-full'>
+          <div className="flex flex-row gap-2 h-10 border-2 border-gray-200 rounded-lg items-center focus-within:border-2 hover:border-blue-600 focus-within:border-blue-600 focus-within:border-solid">
           <Search size={24} className="text-gray-300 ml-2" />
           <input
             type="text"
@@ -106,18 +128,7 @@ export default function ListPois({ centerId }) {
             onChange={(e) => setSearch(e.target.value)}
             className="w-full p-1 focus:outline-hidden"
           />
-          <Link
-            to="/crud"
-            state={{
-              centerId: selectedCenter.name,
-              name: "",
-              description: "",
-              isEditing: false,
-            }}
-            className="flex items-center w-38 gap-1 px-3 h-full py-1.5 justify-center text-white text-sm font-medium bg-blue-600 border border-transparent hover:bg-blue-800 rounded-r-md cursor-pointer transition-all"
-          >
-            <Plus size={18} strokeWidth={3} /> Nuevo POI
-          </Link>
+          
         </div>
 
         <div className="overflow-hidden rounded-xl border border-gray-200 shadow-sm mt-5">
@@ -211,6 +222,7 @@ export default function ListPois({ centerId }) {
               </div>
             </div>
           )}
+        </div>
         </div>
       </section>
     </div>
