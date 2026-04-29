@@ -19,6 +19,21 @@ export default function UnityViewer() {
     // Es como un "puntero" para que Unity sepa dónde pintarse
     const canvasRef = useRef(null);
     const unityInstanceRef = useRef(null);
+    const containerRef = useRef(null);
+
+    // Alterna entre pantalla completa y modo normal
+    // Si no estamos en fullscreen lo activa, si ya estamos lo desactiva
+    const handleFullscreen = () => {
+        if (!document.fullscreenElement) {
+            // Si no estamos en fullscreen, activarlo
+            containerRef.current?.requestFullscreen().catch((err) => {
+                console.warn('Error al activar fullscreen:', err);
+            });
+        } else {
+            // Si estamos en fullscreen, salir
+            document.exitFullscreen();
+        }
+    };
 
     // Se ejecuta una sola vez cuando el componente aparece en pantalla
     useEffect(() => {
@@ -119,15 +134,27 @@ export default function UnityViewer() {
                 <p className="text-xl italic text-gray-500">Inicio</p>
             </div>
 
-            {/* Canvas de Unity — solo se muestra cuando el build está listo */}
+            {/* Contenedor del canvas con botón de fullscreen */}
             {UNITY_BUILD_LISTO ? (
-                <canvas
-                    ref={canvasRef}
-                    id="unity-canvas"
-                    className="flex-1 w-full"
-                    style={{ display: 'block' }}
-                />
-            ) : (
+                <div ref={containerRef} className="relative flex-1 w-full">
+                    <canvas
+                        ref={canvasRef}
+                        id="unity-canvas"
+                        className="w-full h-full"
+                        style={{ display: 'block' }}
+                    />
+                    {/* Botón de fullscreen — esquina inferior derecha */}
+                    <button
+                        onClick={handleFullscreen}
+                        title="Pantalla completa"
+                        className="absolute z-10 p-2 text-white transition-colors duration-200 rounded-lg cursor-pointer bottom-3 right-3 bg-black/50 hover:bg-black/80"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                        </svg>
+                    </button>
+                </div>
+                ) : (
                 <div className="flex flex-col items-center justify-center flex-1 text-gray-400">
                     <p className="text-sm italic">Vista de Unity no disponible aún</p>
                 </div>
