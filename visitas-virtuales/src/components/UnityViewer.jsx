@@ -21,11 +21,17 @@ export default function UnityViewer() {
     const unityInstanceRef = useRef(null);
     const containerRef = useRef(null);
 
+    // Alterna entre pantalla completa y modo normal
+    // Si no estamos en fullscreen lo activa, si ya estamos lo desactiva
     const handleFullscreen = () => {
-        if (containerRef.current) {
-            containerRef.current.requestFullscreen().catch((err) => {
+        if (!document.fullscreenElement) {
+            // Si no estamos en fullscreen, activarlo
+            containerRef.current?.requestFullscreen().catch((err) => {
                 console.warn('Error al activar fullscreen:', err);
             });
+        } else {
+            // Si estamos en fullscreen, salir
+            document.exitFullscreen();
         }
     };
 
