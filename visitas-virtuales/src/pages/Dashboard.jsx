@@ -198,7 +198,7 @@ const Dashboard = () => {
     <div className="flex flex-col min-h-screen gap-4 p-10 pb-16">
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div className="flex-1">
-          <h1 className="text-4xl font-black bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">DASHBOARD</h1>
+          <h1 className="text-4xl font-black bg-linear-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">DASHBOARD</h1>
           <p className="text-slate-600 mt-2 text-sm font-medium">Resumen completo de puntos de interés y actividad reciente</p>
         </div>
           <Link
@@ -217,7 +217,7 @@ const Dashboard = () => {
       ) : (
         <>
           <section className="grid gap-4 lg:grid-cols-4">
-            <button type="button" onClick={() => navigate('/centros')} className="cursor-pointer group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md text-left">
+            <button type="button" onClick={() => navigate('/centros')} className="cursor-pointer group overflow-hidden rounded-3xl border border-slate-200 bg-linear-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md text-left">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-slate-500">Total de POIs</p>
@@ -228,7 +228,7 @@ const Dashboard = () => {
               <p className="mt-4 text-sm text-slate-500">Todo el inventario de puntos de interés.</p>
             </button>
 
-            <button type="button" onClick={() => handleCenterCardClick(lastActiveCenterName)} className="cursor-pointer group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md text-left">
+            <button type="button" onClick={() => handleCenterCardClick(lastActiveCenterName)} className="cursor-pointer group overflow-hidden rounded-3xl border border-slate-200 bg-linear-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md text-left">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-slate-500">Centros activos</p>
@@ -239,7 +239,7 @@ const Dashboard = () => {
               <p className="mt-4 text-sm text-slate-500">Centros con al menos un POI asignado.</p>
             </button>
 
-            <button type="button" onClick={() => handleCenterCardClick(lastPoiTodayCenterName)} className="cursor-pointer group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md text-left">
+            <button type="button" onClick={() => handleCenterCardClick(lastPoiTodayCenterName)} className="cursor-pointer group overflow-hidden rounded-3xl border border-slate-200 bg-linear-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md text-left">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-slate-500">POIs hoy</p>
@@ -250,7 +250,7 @@ const Dashboard = () => {
               <p className="mt-4 text-sm text-slate-500">{hasPoiDates ? 'Registros con fecha de hoy' : 'Basado en últimos cambios'}</p>
             </button>
 
-            <button type="button" onClick={() => handleCenterCardClick(lastPoi7DaysCenterName)} className="cursor-pointer group overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md text-left">
+            <button type="button" onClick={() => handleCenterCardClick(lastPoi7DaysCenterName)} className="cursor-pointer group overflow-hidden rounded-3xl border border-slate-200 bg-linear-to-br from-slate-50 via-white to-slate-100 p-6 shadow-sm transition hover:shadow-md text-left">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-slate-500">Actividad 7 días</p>
