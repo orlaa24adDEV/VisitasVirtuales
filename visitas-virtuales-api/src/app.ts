@@ -7,14 +7,13 @@ import swaggerUi from 'swagger-ui-express'
 import userRoutes from './routes/userRoutes.ts'
 import centerRoutes from './routes/centerRoutes.ts'
 import poiRoutes from './routes/poiRoutes.ts'
+import storageRoutes from './routes/storageRoutes.ts'
 import errorHandler from './middlewares/errorHandler.ts'
 import cors from 'cors'
 import helmet from 'helmet'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import minioService from './services/minioService.ts'
-import appBootstrap from './helpers/appBootstrap.ts'
 
 const app = express()
 
@@ -25,8 +24,8 @@ morgan.token(
 )
 app.use(morgan('dev') as RequestHandler)
 
-// Middleware para establecer headers de seguridad en las respuestas
-app.use(helmet())
+// Middleware para establecer headers de seguridad en las respuestas (permitiendo embedding de imágenes desde React)
+app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
 
 // Middleware para extraer JSON de las solicitudes
 app.use(express.json())
@@ -59,6 +58,9 @@ app.use(
 		exposedHeaders: ['ETag'], // Permitir acceso a header ETag (subida multipart)
 	}) as RequestHandler,
 )
+
+// Montar rutas de MinIO (subida multipart)
+app.use('/api/v1/', storageRoutes)
 
 // Montar rutas de usuarios
 app.use('/api/v1/', userRoutes)

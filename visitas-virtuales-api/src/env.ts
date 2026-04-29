@@ -19,6 +19,7 @@ const envSchema = z.object({
 	NODE_ENV: z.enum(['development', 'test', 'production']),
 	APP_STAGE: z.enum(['dev', 'stage', 'prod']).default('dev'),
 	APP_PORT: z.coerce.number().default(8000),
+	API_VERSION: z.string().regex(new RegExp('^v\\d+$')).default('v1'),
 	POSTGRES_USER: z.string().min(1),
 	POSTGRES_PASSWORD: z.string().min(32),
 	POSTGRES_DB: z.string().min(1),

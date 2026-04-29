@@ -25,26 +25,31 @@ async function main() {
 				name: 'Instituto Madrid',
 				description: 'Centro educativo principal en Madrid',
 				location: 'Madrid, España',
+				imageUrl: 'https://img.rtve.es/v/16750785/'
 			},
 			{
 				name: 'Instituto Barcelona',
 				description: 'Centro educativo principal en Barcelona',
 				location: 'Barcelona, España',
+				imageUrl: 'https://lh5.googleusercontent.com/p/AF1QipOVda7MkDwx6FVuBGp2PVJkbC9Eghc9eR5kW8x5=w397-h298-k-no',
 			},
 			{
 				name: 'Instituto Sevilla',
 				description: 'Centro educativo principal en Sevilla',
 				location: 'Sevilla, España',
+				imageUrl: 'https://fotografias.larazon.es/clipping/cmsimages02/2019/08/22/086363F8-58F0-4ECA-A93A-E50E7E6F5142/98.jpg?crop=512,288,x0,y26&width=1900&height=1069&optimize=low&format=webply'
 			},
 			{
 				name: 'Instituto Valencia',
 				description: 'Centro educativo principal en Valencia',
 				location: 'Valencia, España',
+				imageUrl: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fvalenciatop.info%2Fwp-content%2Fuploads%2F2023%2F09%2FAF1QipOLVGShMredqoaMUxjwHbnzgh72NWsgfpyDwImo.jpeg&f=1&nofb=1&ipt=6f5b55397900700c65d317ae796329772a10ccbbe4dd4e81a0c8655fb709d396',
 			},
 			{
 				name: 'Instituto Córdoba',
 				description: 'Centro educativo principal en Córdoba',
 				location: 'Córdoba, España',
+				imageUrl: 'https://s1.ppllstatics.com/leonoticias/www/multimedia/2025/01/24/giner-kLOI-U230657693664b3D-1200x840@Leonoticias.jpg'
 			},
 		]
 		const insertedCenters = await db
@@ -62,60 +67,80 @@ async function main() {
 				username: 'admin_mad',
 				password: adminPassword,
 				role: 'admin',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_mad',
+				centerPreferenceId: insertedCenters[0]?.id
 			},
 			{
 				email: 'admin_bar@instituto.es',
 				username: 'admin_bar',
 				password: adminPassword,
 				role: 'admin',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_bar',
+				centerPreferenceId: insertedCenters[1]?.id
 			},
 			{
 				email: 'admin_sev@instituto.es',
 				username: 'admin_sev',
 				password: adminPassword,
 				role: 'admin',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_sev',
+				centerPreferenceId: insertedCenters[2]?.id
 			},
 			{
 				email: 'admin_val@instituto.es',
 				username: 'admin_val',
 				password: adminPassword,
 				role: 'admin',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_val',
+				centerPreferenceId: insertedCenters[3]?.id
 			},
 			{
 				email: 'admin_cor@instituto.es',
 				username: 'admin_cor',
 				password: adminPassword,
 				role: 'admin',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=admin_cor',
+				centerPreferenceId: insertedCenters[4]?.id
 			},
 			{
 				email: 'profesor_mad@instituto.es',
 				username: 'prof_mad',
 				password: teacherPassword,
 				role: 'teacher',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_mad',
+				centerPreferenceId: insertedCenters[0]?.id
 			},
 			{
 				email: 'profesor_bar@instituto.es',
 				username: 'prof_bar',
 				password: teacherPassword,
 				role: 'teacher',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_bar',
+				centerPreferenceId: insertedCenters[1]?.id
 			},
 			{
 				email: 'profesor_sev@instituto.es',
 				username: 'prof_sev',
 				password: teacherPassword,
 				role: 'teacher',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_sev',
+				centerPreferenceId: insertedCenters[2]?.id
 			},
 			{
 				email: 'profesor_val@instituto.es',
 				username: 'prof_val',
 				password: teacherPassword,
 				role: 'teacher',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_val',
+				centerPreferenceId: insertedCenters[3]?.id
 			},
 			{
 				email: 'profesor_cor@instituto.es',
 				username: 'prof_cor',
 				password: teacherPassword,
 				role: 'teacher',
+				imageUrl: 'https://api.dicebear.com/9.x/identicon/svg?seed=prof_cor',
+				centerPreferenceId: insertedCenters[4]?.id
 			},
 		]
 		const insertedUsers: { id: number; username: string }[] = await db

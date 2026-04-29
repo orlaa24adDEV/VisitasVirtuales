@@ -88,6 +88,8 @@ const getUserProfile = async (sub: number): Promise<UserProfileType> => {
 			email: users.email,
 			username: users.username,
 			role: users.role,
+			imageUrl: users.imageUrl,
+			centerPreferenceId: users.centerPreferenceId,
 		})
 		.from(users)
 		.where(eq(users.id, sub))
@@ -106,6 +108,7 @@ const updateUser = async (
 ): Promise<UserProfileType> => {
 	const { currentPassword, newPassword, ...dataToUpdate } = updateData
 	let newPasswordHash: string | undefined
+	console.log(currentPassword, newPassword)
 
 	// Si se proporciona una nueva contraseña sin la contraseña actual, se lanza un error de validación
 	if (newPassword && !currentPassword) {
@@ -144,6 +147,8 @@ const updateUser = async (
 			email: users.email,
 			username: users.username,
 			role: users.role,
+			imageUrl: users.imageUrl,
+			centerPreferenceId: users.centerPreferenceId,
 		})
 
 	if (!updatedUser) {
@@ -152,6 +157,7 @@ const updateUser = async (
 
 	return updatedUser
 }
+	
 
 export default {
 	register,

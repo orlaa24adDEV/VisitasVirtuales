@@ -17,6 +17,9 @@ export const centers = pgTable('centers', {
 	name: text('name').notNull().unique(),
 	description: text('description'),
 	location: text('location').notNull(),
+	imageUrl: text('image_url'),
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 })
 
 export const userRolesArray = ['admin', 'teacher', 'guest'] as const
@@ -28,6 +31,11 @@ export const users = pgTable('users', {
 	username: text('username').notNull().unique(),
 	password: text('password').notNull(),
 	role: userRoles('role').notNull().default('guest'),
+	imageUrl: text('image_url'),
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+	centerPreferenceId: integer('center_preference_id')
+		.references(() => centers.id, { onDelete: 'set null' })
 })
 
 export const pois = pgTable(
@@ -181,7 +189,7 @@ const userLoginBaseSchema = createSelectSchema(users)
 	.omit({ id: true, role: true })
 
 export const userLoginSchema = z.object({
-	body: userLoginBaseSchema.refine((data) => data.email || data.username),
+	body: userLoginBaseSchema.omit({imageUrl: true, createdAt: true, updatedAt: true, centerPreferenceId: true}).refine((data) => data.email || data.username),
 })
 
 const userUpdateBaseSchema = createInsertSchema(users).omit({ password: true })
@@ -199,6 +207,7 @@ export const updateCurrUserProfileSchema = z.object({
 				.regex(PASSWORD_PATTERN)
 				.optional(),
 			newPassword: z.string().min(8).max(32).regex(PASSWORD_PATTERN).optional(),
+			centerPreferenceId: z.coerce.number().int().positive().optional(),
 		})
 		.partial()
 		.refine((data) => !(data.newPassword && !data.currentPassword), {
@@ -228,6 +237,8 @@ export type TokenResponseType = z.infer<typeof TokenResponseSchema>
 
 export const UserProfileSchema = createSelectSchema(users).omit({
 	password: true,
+	createdAt: true,
+	updatedAt: true,
 })
 export type UserProfileType = z.infer<typeof UserProfileSchema>
 
@@ -243,6 +254,12 @@ export const UserRoleEditSchema = z.object({
 })
 
 export type UserRoleEditType = z.infer<typeof UserRoleEditSchema>
+
+export const userImageUpdateSchema = z.object({
+	params: z.object({
+		id: z.coerce.number().int().positive(),
+	}),
+})
 
 export const poiInsertSchema = createInsertSchema(pois)
 export type PoiInsertType = z.infer<typeof poiInsertSchema>
@@ -286,3 +303,23 @@ export const deletePoiSchema = z.object({
 		id: z.coerce.number().int().positive(),
 	}),
 })
+
+export const centerUpdateSchema = z.object({
+	params: z.object({
+		id: z.coerce.number().int().positive(),
+	}),
+	body: z.object({
+		name: z.string().min(1).optional(),
+		description: z.string().optional(),
+		location: z.string().optional(),
+		imageUrl: z.string().url().optional(),
+	}),
+})
+
+export const centerImageUpdateSchema = z.object({
+	params: z.object({
+		id: z.coerce.number().int().positive(),
+	}),
+})
+
+export type CenterUpdateType = z.infer<typeof centerUpdateSchema>

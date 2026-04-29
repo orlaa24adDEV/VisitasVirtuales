@@ -52,7 +52,7 @@ const errorHandler = (
 	res.status(status).json({
 		message: message,
 		...(details && { details }),
-		...(env.APP_STAGE !== 'prod' && { stack: err.stack }),
+		...(env.APP_STAGE === 'dev' && { stack: err.stack }),
 	})
 }
 

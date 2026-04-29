@@ -6,39 +6,11 @@ public class WebBridge : MonoBehaviour
     // Variables estáticas: persisten entre cambios de escena (son de clase, no de instancia)
     // Cualquier otro script puede leerlas con WebBridge.IdCentroActual
     public static string IdCentroActual { get; private set; } = "";
-    public static string IdEscenaActual { get; private set; } = "";
+    public static string IdEscenaActual  { get; private set; } = "";
 
-    // Flags para saber qué IDs ya llegaron
+    // Flags para saber qué IDs ya llegaron desde React
     private bool _centroRecibido = false;
     private bool _escenaRecibida = false;
-
-    // Control de pantalla completa
-    // Guarda el estado actual de la pantalla completa
-    private bool isFullScreen = false;
-
-    // Enlace con la función JavaScript del archivo Fullscreen.jslib
-    // Solo se usa en WebGL, en el Editor se usa Screen.fullScreen
-    [System.Runtime.InteropServices.DllImport("__Internal")]
-    private static extern void ToggleFullscreenJS();
-
-    public void toggleFullScreen()
-{
-    isFullScreen = !isFullScreen;
-    Debug.Log("[WebBridge] toggleFullScreen llamado: " + isFullScreen);
-
-    #if UNITY_WEBGL && !UNITY_EDITOR
-        Debug.Log("[WebBridge] Llamando a ToggleFullscreenJS...");
-        ToggleFullscreenJS();
-    #else
-        Screen.fullScreen = isFullScreen;
-    #endif
-}
-
-    // Activa la pantalla completa directamente
-    public void fullScreen()
-    {
-        Screen.fullScreen = true;
-    }
 
     // JavaScript llama a este método primero
     public void RecibirIdCentro(string idCentro)
@@ -46,7 +18,6 @@ public class WebBridge : MonoBehaviour
         IdCentroActual = idCentro;
         _centroRecibido = true;
         Debug.Log("[WebBridge] ID de centro recibido: " + idCentro);
-
         TryLoadScene();
     }
 
@@ -56,7 +27,6 @@ public class WebBridge : MonoBehaviour
         IdEscenaActual = idEscena;
         _escenaRecibida = true;
         Debug.Log("[WebBridge] ID de escena recibido: " + idEscena);
-
         TryLoadScene();
     }
 
