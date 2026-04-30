@@ -40,6 +40,7 @@ const limiter = rateLimit({
 })
 
 app.use(limiter as RequestHandler)
+// Rutas de autenticación utilizan un rate limit más estricto
 
 // Middleware para extraer JSON de las solicitudes
 app.use(express.json())
