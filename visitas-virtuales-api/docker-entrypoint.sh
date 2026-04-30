@@ -31,7 +31,7 @@ if [ "$APP_STAGE" = "stage" ]; then
   fi
 
   echo "Base de datos recreada correctamente. Ejecutando migraciones e insertando datos de prueba..."
-  npm run db:migrate && npm run stage:db:seed
+  npm run db:migrate && npm run stage:db:seed && npm run openapi:generate
   if [ $? -ne 0 ]; then
     echo "Error al ejecutar migraciones o insertar datos de prueba."
     exit 1
@@ -41,6 +41,7 @@ if [ "$APP_STAGE" = "stage" ]; then
 else
   npm run db:migrate
 fi
+
 
 echo "Iniciando la aplicación con PM2..."
 pm2-runtime start ecosystem.config.cjs

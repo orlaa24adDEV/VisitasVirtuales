@@ -20,6 +20,15 @@ const envSchema = z.object({
 	APP_STAGE: z.enum(['dev', 'stage', 'prod']).default('dev'),
 	APP_PORT: z.coerce.number().default(8000),
 	API_VERSION: z.string().regex(new RegExp('^v\\d+$')).default('v1'),
+	RATE_LIMIT_WINDOW: z
+		.string()
+		.default('15m')
+		.refine((val) => /^\d+m$/.test(val), {
+			message:
+				'Debe ser un string con formato: número seguido de "m", por ejemplo "15m"',
+		})
+		.transform((val) => parseInt(val) * 60 * 1000), // Convertir minutos a milisegundos
+	RATE_LIMIT_MAX: z.coerce.number().default(100),
 	POSTGRES_USER: z.string().min(1),
 	POSTGRES_PASSWORD: z.string().min(32),
 	POSTGRES_DB: z.string().min(1),

@@ -14,18 +14,32 @@ import helmet from 'helmet'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import rateLimit from 'express-rate-limit'
 
 const app = express()
 
 // Logger para solicitudes HTTP
-morgan.token(
-	'status-message',
-	(req: Request, res: Response) => res.statusMessage || '',
-)
 app.use(morgan('dev') as RequestHandler)
 
 // Middleware para establecer headers de seguridad en las respuestas (permitiendo embedding de imágenes desde React)
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
+
+// Middleware para rate limiting (100 solicitudes cada 15 minutos por IP por defecto)
+const limiter = rateLimit({
+	windowMs: env.RATE_LIMIT_WINDOW,
+	max: env.RATE_LIMIT_MAX,
+	message: {
+		error: 'Demasiadas solicitudes. Por favor, inténtalo de nuevo más tarde.',
+		// Tiempo en minutos para el header Retry-After
+		retryAfter: env.RATE_LIMIT_WINDOW / 60000,
+	},
+	// Enviar información de rate limit en headers
+	standardHeaders: true,
+	// No enviar headers obsoletos
+	legacyHeaders: false,
+})
+
+app.use(limiter as RequestHandler)
 
 // Middleware para extraer JSON de las solicitudes
 app.use(express.json())
