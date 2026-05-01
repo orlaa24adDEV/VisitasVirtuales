@@ -12,6 +12,8 @@ import { Link } from "react-router-dom";
 import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { useCenter } from '../hooks/useCenter';
+import { useAuth } from '@/hooks/useAuth.js';
+import Input from '../components/Input';
 
 export default function ListPois({ centerId }) {
     const [pois, setPois] = useState([]);
@@ -93,7 +95,7 @@ export default function ListPois({ centerId }) {
 
   //He metido todo el section dentro de un div para centrarlo.
   return (
-    <div className="flex flex-col items-center justify-center min-h-full w-full">
+    <div className="relative flex flex-col items-center justify-center min-h-full w-full">
       <section className="flex flex-col gap-3 w-full justify-center min-h-125 max-w-4xl mb-20">
         <div className='flex w-full justify-between items-center'>
           <div className='flex flex-col gap-px w-full'>
@@ -117,20 +119,11 @@ export default function ListPois({ centerId }) {
         </div>
 
        
-        <div className='p-4 shadow-sm rounded-2xl bg-white min-w-full'>
-          <div className="flex flex-row gap-2 h-10 border-2 border-slate-200 rounded-lg items-center focus-within:border-2 hover:border-blue-600 focus-within:border-blue-600 focus-within:border-solid">
-          <Search size={24} className="text-slate-300 ml-2" />
-          <input
-            type="text"
-            placeholder="Buscador de POI"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full p-1 focus:outline-hidden"
-          />
-          
-        </div>
-
-        <div className="overflow-hidden rounded-xl border border-slate-100 shadow-sm mt-5">
+        <div className='p-4 min-w-full bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden'>
+          <Input placeholder="Buscador de POI" value={search} onChange={(e) => setSearch(e.target.value)}>
+            <Search size={22} className="text-slate-300 ml-2" />
+          </Input>
+        <div className="overflow-hidden outline outline-slate-100 rounded-lg bg-slate-50 shadow-sm/8 mt-5">
           <table className="w-full text-sm text-left">
             <thead className="bg-slate-100  text-xs uppercase text-slate-600 font-semibold">
               <tr>
@@ -153,7 +146,7 @@ export default function ListPois({ centerId }) {
                 currentPois.map((poi) => (
                   <tr
                     key={poi.id}
-                    className="hover:bg-slate-50 transition-colors"
+                    className="hover:bg-slate-50/86 transition-colors"
                   >
                     <td className="px-6 py-4 font-medium text-slate-900">
                       {poi.name}

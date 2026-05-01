@@ -125,14 +125,6 @@ export default function UnityViewer() {
     return (
         <div className="flex flex-col w-200 h-200">
 
-            {/* Texto de bienvenida */}
-            <div className="flex flex-col items-center justify-center py-4 space-y-2">
-                <h1 className="text-3xl font-bold text-center text-gray-800">
-                    Bienvenido a {selectedCenter.name}
-                </h1>
-                <p className="text-xl italic text-gray-500">Inicio</p>
-            </div>
-
             {/* Contenedor del canvas con botón de fullscreen */}
             {UNITY_BUILD_LISTO ? (
                 <div ref={containerRef} className="relative flex-1 w-full">

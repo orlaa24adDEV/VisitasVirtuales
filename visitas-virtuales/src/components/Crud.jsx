@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { MapPinIcon } from 'lucide-react';
 import { useCenter } from '../hooks/useCenter.js';
+import Input from './Input.jsx';
 
 function Crud() {
     const { selectedCenter } = useCenter();
@@ -119,7 +120,7 @@ function Crud() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-full w-full p-6">
-            <div className='flex flex-col gap-3 w-full justify-center min-h-125 mb-60 max-w-2xl'>
+            <div className='flex flex-col gap-3 w-full justify-center min-h-125 mb-50 max-w-2xl'>
                 <div className='flex flex-col gap-px'>
                 <p className="text-sm flex items-center gap-1 font-medium text-blue-600">
                 <MapPinIcon className='w-4 h-4' /><span className="">{selectedCenter.name}</span>
@@ -128,30 +129,28 @@ function Crud() {
                     {isEditing ? 'Editar punto de interés' : 'Crear nuevo punto de interés'}
                 </h2>
             </div>
-            <section className="flex flex-col gap-2 w-full p-5 shadow-sm rounded-2xl bg-white min-h-full">
+            <section className="flex flex-col gap-2 w-full shadow-sm rounded-2xl bg-white min-h-full">
             {/* Formulario */}
-            <form action={handleSubmit} onSubmit={handleSubmit} className="p-4 outline outline-slate-200 rounded-lg bg-slate-50 shadow-sm/8">
+            <form action={handleSubmit} onSubmit={handleSubmit} className="py-6 px-4 outline outline-slate-100 rounded-lg bg-slate-50 shadow-sm/8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
-                        <label className="block text-sm font-medium mb-1">Nombre:</label>
-                        <input
-                            type="text"
+                    <div className="md:col-span-2 space-y-2">
+                        <label className="block text-slate-600 text-sm font-medium mb-1">Nombre:</label>
+                        <Input type="text"
                             name="name"
                             value={formData.name || ''}
                             onChange={handleInputChange}
-                            className="w-full p-2 outline outline-slate-200 rounded-lg bg-white"
                             placeholder="Nombre del POI"
                             required
-                        />
+                         />
                     </div>
-                    <div className="md:col-span-2">
-                        <label className="block text-sm font-medium mb-1">Descripción:</label>
+                    <div className="md:col-span-2 space-y-2">
+                        <label className="block text-slate-600  text-sm font-medium">Descripción:</label>
                         <textarea
                             name="description"
                             value={formData.description || ''}
                             onChange={handleInputChange}
                             rows="6"
-                            className="w-full p-2 outline outline-slate-200 rounded-lg bg-white"
+                            className="group flex w-full flex-row p-2 gap-2 items-center bg-white outline-1! outline-slate-200 rounded-lg shadow-sm transition-all focus-within:ring-4 focus-within:ring-blue-600/10 focus-within:outline-blue-600"
                             placeholder="Descripción del punto de interés"
                             required
                         />

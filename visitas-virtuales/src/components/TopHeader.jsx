@@ -97,8 +97,11 @@ export default function TopHeader({
                             >
                                 <div className="flex flex-col items-end leading-tight">
                                     <h2 className="text-sm font-bold text-slate-800">{userName}</h2>
-                                    <span className="text-[10px] font-semibold uppercase tracking-wider text-black/50">
-                                        {role}
+                                    <span className={`px-1.75 py-0.75 rounded text-[11px] font-semibold uppercase ${
+                                        role === 'admin' ? 'bg-blue-100/50 text-blue-600' : 
+                                        role === 'teacher' ? 'bg-amber-50 text-amber-700' : 
+                                        'bg-transparent text-zinc-400 border-zinc-200'
+                                    }`}> {role === 'admin' ? 'Administrador' : role === 'teacher' ? 'Profesor' : 'Invitado'}
                                     </span>
                                 </div>
                                 <div className="flex justify-center items-center gap-2">
