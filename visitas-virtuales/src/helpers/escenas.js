@@ -4,8 +4,7 @@
 // Los centros sin escena propia apuntan a la escena 1 como fallback por ahora
 export const ESCENAS_POR_CENTRO = {
     1: 1, // Instituto Madrid → Escena 1
-    2: 1, // Instituto Barcelona → fallback Madrid (sin escena propia aún)
-    3: 1, // Instituto Sevilla → fallback Madrid (sin escena propia aún)
-    4: 1, // Instituto Valencia → fallback Madrid (sin escena propia aún)
-    5: 2, // Instituto Córdoba → Escena 2
+    2: 4, // Instituto Pacífico → Escena 4
+    3: 3, // Instituto Jerez → Escena 3
+    4: 2, // Instituto Córdoba → Escena 2
 };
