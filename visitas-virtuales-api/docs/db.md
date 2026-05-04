@@ -1,6 +1,6 @@
 # Base de datos
 
-ORM: **Drizzle**. Esquema definido en [./src/db/schema.js](../src/db/schema.js).
+ORM: **Drizzle**. Esquema definido en [./src/db/schema.ts](../src/db/schema.ts).
 
 ## `centers`
 
@@ -117,7 +117,7 @@ Puedes explorar la base de datos con Drizzle Kit Studio:
 
 > Historial de migraciones: [./drizzle](../drizzle/)
 
-> Esquema: [./src/db/schema.js](../src/db/schema.js) (genera y aplica migraciones tras editarlo)
+> Esquema: [./src/db/schema.ts](../src/db/schema.ts) (genera y aplica migraciones tras editarlo)
 
 ### Usuarios de prueba
 

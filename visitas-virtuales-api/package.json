@@ -14,7 +14,7 @@
 		"db:logs": "docker compose logs -f postgres_service",
 		"storage:up": "docker compose up -d minio_service",
 		"storage:down": "docker compose down minio_service",
-		"sorage:logs": "docker compose logs -f minio_service",
+		"storage:logs": "docker compose logs -f minio_service",
 		"prod:up": "docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build",
 		"prod:down": "docker compose -f docker-compose.prod.yml --env-file .env.prod down",
 		"prod:restart": "npm run prod:down && npm run prod:up",
