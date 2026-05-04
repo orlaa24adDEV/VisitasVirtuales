@@ -33,3 +33,7 @@ export const setLocalStorageUser = (user) => {
     localStorage.setItem('user', JSON.stringify(user));
 };
 
+export const removeLocalStorageUser = () => {
+  localStorage.removeItem('user');
+};
+

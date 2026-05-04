@@ -18,7 +18,7 @@ import Settings from './pages/Settings.jsx';
 import { useCenter } from './hooks/useCenter.js';
 
 function App() {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const { selectedCenter } = useCenter();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const location = useLocation();
@@ -41,12 +41,6 @@ function App() {
                 {!isLanding && (
                     <TopHeader 
                         onMenuClick={() => setIsMobileMenuOpen(true)}
-                        isLog={!!user}
-                        onLogout={logout}
-                        userName={user?.username || 'Invitado'}
-                        userEmail={user?.email || ''}
-                        role={user?.role || 'guest'}
-                        userImg={user?.imageUrl || `https://api.dicebear.com/9.x/identicon/svg?seed=${user?.email}`}
                     />
                 )}
 

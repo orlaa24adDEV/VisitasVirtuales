@@ -119,7 +119,7 @@ function Crud() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-full w-full p-6">
+        <div className="flex flex-col items-center justify-center min-h-full w-full px-3 py-6 lg:px-12 md:px-10">
             <div className='flex flex-col gap-3 w-full justify-center min-h-125 mb-50 max-w-2xl'>
                 <div className='flex flex-col gap-px'>
                 <p className="text-sm flex items-center gap-1 font-medium text-blue-600">

@@ -12,7 +12,6 @@ import { Link } from "react-router-dom";
 import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { useCenter } from '../hooks/useCenter';
-import { useAuth } from '@/hooks/useAuth.js';
 import Input from '../components/Input';
 
 export default function ListPois({ centerId }) {
@@ -95,8 +94,8 @@ export default function ListPois({ centerId }) {
 
   //He metido todo el section dentro de un div para centrarlo.
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-full w-full">
-      <section className="flex flex-col gap-3 w-full justify-center min-h-125 max-w-4xl mb-20">
+    <div className="relative flex flex-col items-center justify-center min-h-full w-full py-6 lg:px-12 md:px-10 px-3">
+      <section className="flex flex-col gap-3 w-full justify-center min-h-125 max-w-4xl lg:mb-20">
         <div className='flex w-full justify-between items-center'>
           <div className='flex flex-col gap-px w-full'>
             <p className="text-sm flex items-center gap-1 font-medium text-blue-600">
@@ -123,13 +122,13 @@ export default function ListPois({ centerId }) {
           <Input placeholder="Buscador de POI" value={search} onChange={(e) => setSearch(e.target.value)}>
             <Search size={22} className="text-slate-300 ml-2" />
           </Input>
-        <div className="overflow-hidden outline outline-slate-100 rounded-lg bg-slate-50 shadow-sm/8 mt-5">
-          <table className="w-full text-sm text-left">
+        <div className="overflow-x-auto outline outline-slate-100 rounded-lg bg-slate-50 shadow-sm/8 mt-5">
+          <table className="w-full min-w-0 sm:min-w-130 text-sm text-left">
             <thead className="bg-slate-100  text-xs uppercase text-slate-600 font-semibold">
               <tr>
-                <th className="px-6 py-4">Punto de interés</th>
-                <th className="px-6 py-4">Descripción</th>
-                <th className="px-6 py-4 text-right">Acciones</th>
+                <th className="px-3 lg:px-6 py-3 lg:py-4">Punto de interés</th>
+                <th className="hidden sm:table-cell px-3 lg:px-6 py-3 lg:py-4 text-ellipsis">Descripción</th>
+                <th className="px-3 lg:px-6 py-3 lg:py-4 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 bg-white">
@@ -148,14 +147,14 @@ export default function ListPois({ centerId }) {
                     key={poi.id}
                     className="hover:bg-slate-50/86 transition-colors"
                   >
-                    <td className="px-6 py-4 font-medium text-slate-900">
+                    <td className="px-3 lg:px-6 py-3 lg:py-4 font-medium text-slate-900 whitespace-normal">
                       {poi.name}
                     </td>
-                    <td className="px-6 py-4 text-slate-600">
+                    <td className="hidden sm:table-cell px-3 lg:px-6 py-3 lg:py-4 text-slate-600">
                       {poi.details.description}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex justify-end gap-2">
+                    <td className="px-3 lg:px-6 py-3 lg:py-4 text-right">
+                      <div className="flex justify-end gap-2 whitespace-nowrap">
                         <Link
                           to="/crud"
                           state={{
@@ -184,7 +183,7 @@ export default function ListPois({ centerId }) {
           </table>
 
           {filteredPois.length > 0 && (
-            <div className="bg-slate-50 px-6 py-3 border-t border-slate-200 flex items-center justify-between">
+            <div className="bg-slate-50 px-3 lg:px-6 py-3 border-t border-slate-200 flex items-center justify-between">
               <p className="text-slate-500 text-xs">
                 Mostrando{" "}
                 <span className="font-semibold">{firstIndex + 1}</span> -{" "}

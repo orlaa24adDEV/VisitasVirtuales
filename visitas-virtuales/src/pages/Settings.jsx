@@ -8,7 +8,7 @@ export default function Settings() {
     const { isAdmin } = useAuth();
    
     return (
-        <div className="max-w-3xl mx-auto py-12 px-4">
+        <div className="max-w-3xl mx-auto py-6 sm:py-12 px-3 sm:px-4">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div className="bg-blue-600 p-8 text-white">
                     <h1 className="text-2xl font-bold">Configuración</h1>

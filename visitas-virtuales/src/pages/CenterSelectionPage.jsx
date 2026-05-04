@@ -8,11 +8,13 @@ import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 import { toast } from 'sonner';
 import { ArrowLeft, Settings } from 'lucide-react';
 import Button from '@/components/Button.jsx';
+import UserDropdown from '../components/UserDropdown';
 
 export default function CenterSelectionPage() {
   const navigate = useNavigate();
 
   const { isAdmin, isTeacher } = useAuth();
+  const isStaff = isAdmin || isTeacher;
   const {allCenters, selectedCenter, 
     isCentersLoading, centersError, saveSelectedCenter, fetchCenters} = useCenter();
   
@@ -55,15 +57,26 @@ export default function CenterSelectionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      {/* Botón flotante para volver a la Landing (útil para invitados) */}
-      <div className="w-full max-w-5xl mx-auto p-4 flex flex-col items-start">
+    <div className="min-h-screen bg-slate-50 flex flex-col gap-4">
+      {/* Botón flotante para volver a la Landing (útil para invitados) + dropdown de usuario para logueados */}
+      <div className="sticky top-0 z-40 h-16 w-full flex items-center justify-between p-4 lg:py-4 lg:px-8 border-b border-transparent
+                    bg-slate-50/80 backdrop-blur-xl
+                    transition-all pl-1.75!">
         <Link to="/">
-          <Button variant="ghost" size="normal" className="text-slate-500! items-center gap-2">
+          <Button variant="ghost" size="normal">
             <ArrowLeft size={20} />
             <span>Volver a inicio</span>
           </Button>
         </Link>
+        {isStaff ? (
+          <UserDropdown />
+        ) : (
+          <Link to="/login">
+            <Button variant="primary" size="normal" type="button">
+              Iniciar sesión
+            </Button>
+          </Link>
+        )}
       </div>
 
       <main className="flex-1 flex flex-col items-center justify-center p-6">

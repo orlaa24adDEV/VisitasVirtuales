@@ -91,12 +91,12 @@ export default function CenterImageForm() {
                 <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} accept="image/*" />
                 
                 {selectedId && (
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                      
                     <Button
                         onClick={() => fileInputRef.current.click()}
                         variant="secondary"
-                        className='w-full flex-2'
+                        className='w-full sm:flex-1'
                     >
                         {file ? (
                             <Image className="w-4 h-4" />
@@ -107,10 +107,10 @@ export default function CenterImageForm() {
                     </Button>
                     {file && (
                         <>
-                        <Button variant='danger' onClick={handleClearImage} className='w-full flex-2'>
+                        <Button variant='danger' onClick={handleClearImage} className='w-full sm:flex-1'>
                             <Trash2 className="w-4 h-4" /> Eliminar
                         </Button>
-                        <Button onClick={handleUpload} variant="primary" className='w-full flex-2' disabled={isUploading}>
+                        <Button onClick={handleUpload} variant="primary" className='w-full sm:flex-1' disabled={isUploading}>
                             {isUploading ? <LoaderCircle className="animate-spin w-4 h-4" /> : <Save className="w-4 h-4" />}
                             {isUploading ? 'Subiendo...' : 'Guardar'}
                         </Button>

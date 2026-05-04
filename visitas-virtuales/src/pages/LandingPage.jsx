@@ -3,21 +3,35 @@ import tourImg from "../assets/tour360.jpg";
 import proyectoImg from "../assets/proyecto360.jpg";
 import informationImg from "../assets/information.jpg";
 import accessImg from "../assets/access.jpg";
+import UserDropdown from '../components/UserDropdown';
+import { useAuth } from "@/hooks/useAuth.js";
+import Button from "@/components/Button.jsx";
 
 const LandingPage = () => {
+  const { isAdmin, isTeacher } = useAuth();
+  const isStaff = isAdmin || isTeacher;
+
   return (
     // Navbar
     <div className="flex flex-col">
-      <nav className="flex flex-row w-full h-25 p-5 justify-between items-center border border-gray-300 shadow-xl">
-        <h1 className="font-bold uppercase text-2xl ">PROYECTO 360</h1>
-
+      <nav className="sticky top-0 z-40 h-16 w-full flex items-center justify-between p-4 lg:py-4 lg:px-8 border-b border-transparent
+                    bg-slate-50/80 backdrop-blur-xl
+                    transition-all">
+        <Link to="/">
+            <h1 className=" lg:flex gap-2 text-lg font-semibold text-slate-800 justify-center items-center uppercase">
+            Proyecto 360
+            </h1>
+        </Link>
         <div className="flex flex-row gap-4">
-          <Link
-            to="/login"
-            className="w-35 p-2 text-center bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Iniciar Sesión
-          </Link>
+          {isStaff ? (
+            <UserDropdown />
+          ) : (
+            <Link to="/login">
+              <Button variant="primary" size="normal" type="button">
+                Iniciar sesión
+              </Button>
+            </Link>
+          )}
         </div>
       </nav>
 

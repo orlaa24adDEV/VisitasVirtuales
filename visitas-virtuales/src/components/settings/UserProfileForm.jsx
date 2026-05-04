@@ -78,8 +78,8 @@ export default function UserProfileForm() {
     }
 
     return (
-      <form action={updateUserAction} className="grid grid-cols-3 gap-10">
-                                <div className='col-span-1 flex flex-col justify-center items-center gap-4'>
+      <form action={updateUserAction} className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+                                <div className='md:col-span-1 flex flex-col justify-center items-center gap-4'>
                                     <h3 className="text-sm text-slate-600 mb-2 font-medium self-start">Foto de perfil:</h3>
                                     <div className='relative'>
                                         <figure className="w-32 h-32 rounded-full overflow-hidden mb-4">
@@ -104,7 +104,7 @@ export default function UserProfileForm() {
                                         <input name="file" type='file' onChange={handleUserImageChange} ref={userImageRef} className='hidden'/>
                                     </div>
                                 </div>
-                                <div className='col-span-2 flex flex-col'>
+                                <div className='md:col-span-2 flex flex-col'>
                                     <div>
                                         <p className="text-sm text-slate-600 mb-2 font-medium">Nombre de usuario</p>
                                     <Input type="text" name="username" value={userFormState.username} onChange={(e) => setUserFormState(prev => ({ ...prev, username: e.target.value }))} placeholder="Tu nombre de usuario" className="mb-4" />
@@ -117,7 +117,7 @@ export default function UserProfileForm() {
                                         <p className="text-sm text-slate-600 mb-2 font-medium">Centro educativo predeterminado</p>
                                         <Select name='centerPreferenceId' options={allCenters} value={userFormState.centerPreferenceId} onChange={(e) => setUserFormState(prev => ({ ...prev, centerPreferenceId: e.target.value }))} />
                                     </div>
-                                    <div className='flex w-full justify-end gap-2 mt-6'>
+                                    <div className='flex flex-col sm:flex-row w-full sm:justify-end gap-2 mt-6'>
                                         <Button type="button" variant="secondary" onClick={resetChanges}><RotateCcw className='w-5 h-5' />Descartar</Button>
                                         <Button type="submit" variant="primary"><Save className='w-5 h-5' />Guardar cambios</Button>
                                     </div>

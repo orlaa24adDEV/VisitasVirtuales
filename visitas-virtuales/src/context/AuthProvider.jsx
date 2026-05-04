@@ -6,6 +6,7 @@ import {
   isTokenExpired,
   getLocalStorageUser,
   setLocalStorageUser,
+  removeLocalStorageUser,
 } from '../helpers/authLocalStorage.js'
 import { AuthContext } from '@/context/AuthContext.js'
 import fetchWithTimeout from '@/helpers/fetchWithTimeout.js'
@@ -48,6 +49,8 @@ export const AuthProvider = ({ children }) => {
       return data.accessToken
     } catch {
       setAuthState((prev) => ({ ...prev, user: null, accessToken: null }))
+      removeLocalStorageAccessToken()
+      removeLocalStorageUser()
       return null
     }
   }, []);
@@ -89,9 +92,11 @@ export const AuthProvider = ({ children }) => {
       } else {
         setAuthState((prev) => ({ ...prev, user: null }));
         removeLocalStorageAccessToken();
+        removeLocalStorageUser();
       }
     } catch {
       removeLocalStorageAccessToken();
+      removeLocalStorageUser();
       setAuthState((prev) => ({ ...prev, user: null }));
     }
   }, [getValidAccessToken]);
@@ -139,14 +144,16 @@ export const AuthProvider = ({ children }) => {
 
   // Cargar perfil y centros al montar solo si no están ya cargados ni en localStorage
   useEffect(() => {
-    const now = Date.now();
     const init = async () => {
+      const now = Date.now();
       setIsInitialLoading(true);
       setShowLoading(true);
       setIsExiting(false);
       loadingStartRef.current = Date.now();
-      if (now - lastCheckRef.current > CHECK_INTERVAL) {
+      const hasStoredToken = Boolean(getLocalStorageAccessToken());
+      if (hasStoredToken || now - lastCheckRef.current > CHECK_INTERVAL) {
         await fetchProfile();
+        lastCheckRef.current = now;
       }
       setIsInitialLoading(false);
       // Forzar duración mínima de carga
@@ -156,9 +163,11 @@ export const AuthProvider = ({ children }) => {
       setTimeout(() => setShowLoading(false), remaining + 1000);
     };
     init();
-  }, []);
+  }, [CHECK_INTERVAL, fetchProfile]);
 
-  const user = authState.user || getLocalStorageUser() || null;
+  const storedToken = getLocalStorageAccessToken();
+  const storedUser = storedToken && !isTokenExpired(storedToken) ? getLocalStorageUser() : null;
+  const user = authState.user || storedUser || null;
 
   // Evitar re-renders innecesarios usando useMemo
   const value = useMemo(() => ({
