@@ -7,7 +7,7 @@ import {
 	ChevronRight,
 	MapPin,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Button from '../components/Button'
 import { useNavigate } from 'react-router-dom'
@@ -31,24 +31,11 @@ export default function ListPois({ centerId }) {
 	const itemsPerPage = 5
 
 	const totalPages = Math.ceil(filteredPois.length / itemsPerPage)
-	const lastIndex = currentPage * itemsPerPage
+	const safeTotalPages = Math.max(1, totalPages)
+	const safeCurrentPage = Math.min(Math.max(currentPage, 1), safeTotalPages)
+	const lastIndex = safeCurrentPage * itemsPerPage
 	const firstIndex = lastIndex - itemsPerPage
 	const currentPois = filteredPois.slice(firstIndex, lastIndex)
-
-	useEffect(() => {
-		const maxPage = Math.max(1, totalPages)
-
-		if (currentPage > maxPage) {
-			// eslint-disable-next-line react-hooks/set-state-in-effect
-			setCurrentPage(maxPage)
-		} else if (currentPage < 1) {
-			setCurrentPage(1)
-		}
-	}, [currentPage, totalPages])
-
-	useEffect(() => {
-		setCurrentPage(1)
-	}, [search])
 
 	const deletePois = async (id) => {
 		try {
@@ -70,7 +57,7 @@ export default function ListPois({ centerId }) {
 		}
 	}
 
-	async function getPois() {
+	const getPois = useCallback(async () => {
 		try {
 			const response = await fetch(API_URL + GET_PATH, {
 				headers: {
@@ -85,11 +72,11 @@ export default function ListPois({ centerId }) {
 			setPois([])
 			console.error('Error al obtener POIs:', error)
 		}
-	}
+	}, [API_URL, GET_PATH])
 
 	useEffect(() => {
 		getPois()
-	}, [centerId])
+	}, [getPois])
 
 	//He metido todo el section dentro de un div para centrarlo.
 	return (
@@ -126,7 +113,10 @@ export default function ListPois({ centerId }) {
 					<Input
 						placeholder="Buscador de POI"
 						value={search}
-						onChange={(e) => setSearch(e.target.value)}
+						onChange={(e) => {
+							setSearch(e.target.value)
+							setCurrentPage(1)
+						}}
 					>
 						<Search size={22} className="text-slate-300 ml-2" />
 					</Input>
@@ -208,18 +198,18 @@ export default function ListPois({ centerId }) {
 								</p>
 								<div className="flex items-center gap-2.25">
 									<button
-										onClick={() => setCurrentPage((p) => p - 1)}
-										disabled={currentPage === 1}
+										onClick={() => setCurrentPage(Math.max(1, safeCurrentPage - 1))}
+										disabled={safeCurrentPage === 1}
 										className="p-1.5 rounded-md border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
 									>
 										<ChevronLeft size={18} />
 									</button>
 									<span className="text-xs font-medium text-slate-700">
-										Página {currentPage} de {totalPages}
+										Página {safeCurrentPage} de {safeTotalPages}
 									</span>
 									<button
-										onClick={() => setCurrentPage((p) => p + 1)}
-										disabled={currentPage === totalPages}
+										onClick={() => setCurrentPage(Math.min(safeTotalPages, safeCurrentPage + 1))}
+										disabled={safeCurrentPage === safeTotalPages}
 										className="p-1.5 rounded-md border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
 									>
 										<ChevronRight size={18} />

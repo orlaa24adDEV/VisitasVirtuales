@@ -9,12 +9,11 @@ const UNITY_BUILD_LISTO = true
 export default function UnityViewer() {
 	// Obtenemos el centro seleccionado del contexto global
 	const { selectedCenter } = useCenter()
+	const selectedCenterId = selectedCenter?.id ?? null
 
 	// Calculamos sceneId directamente desde selectedCenter, sin depender de la URL
 	// Así evitamos problemas de timing cuando la URL todavía no fue actualizada
-	const sceneId = selectedCenter
-		? (ESCENAS_POR_CENTRO[selectedCenter.id] ?? 0)
-		: null
+	const sceneId = selectedCenterId !== null ? (ESCENAS_POR_CENTRO[selectedCenterId] ?? 0) : null
 
 	// Referencia directa al canvas del DOM
 	// Es como un "puntero" para que Unity sepa dónde pintarse
@@ -38,6 +37,8 @@ export default function UnityViewer() {
 
 	// Se ejecuta una sola vez cuando el componente aparece en pantalla
 	useEffect(() => {
+		if (selectedCenterId === null) return
+
 		// Si el build no está listo todavía no se hace nada
 		if (!UNITY_BUILD_LISTO) {
 			console.log('Unity build no disponible aún')
@@ -74,10 +75,10 @@ export default function UnityViewer() {
 						unityInstance.SendMessage(
 							'WebBridge',
 							'RecibirIdCentro',
-							selectedCenter.id.toString(),
+							selectedCenterId.toString(),
 						)
 
-						console.log('ID enviado a Unity:', selectedCenter.id)
+						console.log('ID enviado a Unity:', selectedCenterId)
 
 						if (sceneId !== null) {
 							unityInstance.SendMessage(
@@ -124,7 +125,7 @@ export default function UnityViewer() {
 				}
 			}
 		}
-	}, []) // <-- [] ejecutar solo una vez al montar el componente
+	}, [sceneId, selectedCenterId])
 
 	// Lo que se muestra en pantalla
 	return (

@@ -40,7 +40,7 @@ function App() {
 			)}
 
 			<div className="flex-col flex w-full h-screen relative">
-				{/* Header: Se oculta en Landing. Muestra 'Invitado' si no hay user */}
+				{/* Header: Se oculta en Landing. Landing y CenterSelectionPage tienen su propio header */}
 				{!isLanding && (
 					<TopHeader onMenuClick={() => setIsMobileMenuOpen(true)} />
 				)}

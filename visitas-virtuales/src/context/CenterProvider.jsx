@@ -112,7 +112,7 @@ export const CenterProvider = ({ children }) => {
 		if (now - lastCheckRef.current > CHECK_INTERVAL) {
 			fetchCenters()
 		}
-	}, [])
+	}, [CHECK_INTERVAL, fetchCenters])
 
 	const value = useMemo(
 		() => ({

@@ -1,6 +1,6 @@
 import '../assets/App.css'
 
-import { Menu, Compass } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth.js'
 import Button from './Button.jsx'
