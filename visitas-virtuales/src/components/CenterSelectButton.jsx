@@ -1,5 +1,5 @@
-import Button from './Button'
-import { MapPin } from 'lucide-react'
+import Button from './Button';
+import { MapPin } from 'lucide-react';
 
 export default function CenterSelectButton({ centerName, onClick }) {
 	return (
@@ -22,5 +22,5 @@ export default function CenterSelectButton({ centerName, onClick }) {
 				</span>
 			</div>
 		</Button>
-	)
+	);
 }

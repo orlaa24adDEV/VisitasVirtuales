@@ -1,11 +1,11 @@
-import { useAuth } from '@/hooks/useAuth'
-import CenterImageForm from '@/components/settings/CenterImageForm.jsx'
-import { LayoutGrid, User } from 'lucide-react'
-import UserProfileForm from '../components/settings/UserProfileForm'
-import SettingsItemWrapper from '../components/settings/SettingsItemWrapper.jsx'
+import { useAuth } from '@/hooks/useAuth';
+import CenterImageForm from '@/components/settings/CenterImageForm.jsx';
+import { LayoutGrid, User } from 'lucide-react';
+import UserProfileForm from '../components/settings/UserProfileForm';
+import SettingsItemWrapper from '../components/settings/SettingsItemWrapper.jsx';
 
 export default function Settings() {
-	const { isAdmin } = useAuth()
+	const { isAdmin } = useAuth();
 
 	return (
 		<div className="max-w-3xl mx-auto py-6 sm:py-12 px-3 sm:px-4">
@@ -33,5 +33,5 @@ export default function Settings() {
 				</div>
 			</div>
 		</div>
-	)
+	);
 }

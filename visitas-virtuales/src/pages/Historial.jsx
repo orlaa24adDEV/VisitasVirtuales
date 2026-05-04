@@ -1,25 +1,25 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
 const Historial = () => {
-	const [commits, setCommits] = useState([])
-	const [loading, setLoading] = useState(true)
+	const [commits, setCommits] = useState([]);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const fetchCommits = async () => {
 			try {
 				const response = await fetch(
 					'https://api.github.com/repos/jaimemoya-bit/VisitasVirtualesZaitec/commits?sha=Web_Zaitec',
-				)
-				const data = await response.json()
-				setCommits(Array.isArray(data) ? data : [])
+				);
+				const data = await response.json();
+				setCommits(Array.isArray(data) ? data : []);
 			} catch (error) {
-				console.error('Error al cargar el historial:', error)
+				console.error('Error al cargar el historial:', error);
 			} finally {
-				setLoading(false)
+				setLoading(false);
 			}
-		}
-		fetchCommits()
-	}, [])
+		};
+		fetchCommits();
+	}, []);
 
 	if (loading)
 		return (
@@ -31,7 +31,7 @@ const Historial = () => {
 					</p>
 				</div>
 			</div>
-		)
+		);
 
 	return (
 		<div className="p-6 h-full overflow-y-auto bg-slate-50">
@@ -126,7 +126,7 @@ const Historial = () => {
 				</p>
 			</div>
 		</div>
-	)
-}
+	);
+};
 
-export default Historial
+export default Historial;

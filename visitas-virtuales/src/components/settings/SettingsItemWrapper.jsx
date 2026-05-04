@@ -10,5 +10,5 @@ export default function SettingsItemWrapper({ title, icon, children }) {
 				{children}
 			</div>
 		</div>
-	)
+	);
 }

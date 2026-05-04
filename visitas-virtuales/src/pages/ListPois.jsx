@@ -6,36 +6,36 @@ import {
 	ChevronLeft,
 	ChevronRight,
 	MapPin,
-} from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import Button from '../components/Button'
-import { useNavigate } from 'react-router-dom'
-import { useCenter } from '../hooks/useCenter'
-import Input from '../components/Input'
+} from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import Button from '../components/Button';
+import { useNavigate } from 'react-router-dom';
+import { useCenter } from '../hooks/useCenter';
+import Input from '../components/Input';
 
 export default function ListPois({ centerId }) {
-	const [pois, setPois] = useState([])
-	const [search, setSearch] = useState('')
-	const { selectedCenter } = useCenter()
-	const navigate = useNavigate()
+	const [pois, setPois] = useState([]);
+	const [search, setSearch] = useState('');
+	const { selectedCenter } = useCenter();
+	const navigate = useNavigate();
 
-	const API_URL = import.meta.env.VITE_API_URL
-	const GET_PATH = `api/v1/centers/${centerId}/pois`
+	const API_URL = import.meta.env.VITE_API_URL;
+	const GET_PATH = `api/v1/centers/${centerId}/pois`;
 
 	const filteredPois = pois.filter((poi) =>
 		poi.name.toLowerCase().includes(search.toLowerCase()),
-	)
+	);
 
-	const [currentPage, setCurrentPage] = useState(1)
-	const itemsPerPage = 5
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 5;
 
-	const totalPages = Math.ceil(filteredPois.length / itemsPerPage)
-	const safeTotalPages = Math.max(1, totalPages)
-	const safeCurrentPage = Math.min(Math.max(currentPage, 1), safeTotalPages)
-	const lastIndex = safeCurrentPage * itemsPerPage
-	const firstIndex = lastIndex - itemsPerPage
-	const currentPois = filteredPois.slice(firstIndex, lastIndex)
+	const totalPages = Math.ceil(filteredPois.length / itemsPerPage);
+	const safeTotalPages = Math.max(1, totalPages);
+	const safeCurrentPage = Math.min(Math.max(currentPage, 1), safeTotalPages);
+	const lastIndex = safeCurrentPage * itemsPerPage;
+	const firstIndex = lastIndex - itemsPerPage;
+	const currentPois = filteredPois.slice(firstIndex, lastIndex);
 
 	const deletePois = async (id) => {
 		try {
@@ -47,15 +47,15 @@ export default function ListPois({ centerId }) {
 						Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
 					},
 				},
-			)
+			);
 
 			if (response.ok) {
-				getPois()
+				getPois();
 			}
 		} catch (error) {
-			console.error('Error al eliminar:', error)
+			console.error('Error al eliminar:', error);
 		}
-	}
+	};
 
 	const getPois = useCallback(async () => {
 		try {
@@ -63,20 +63,20 @@ export default function ListPois({ centerId }) {
 				headers: {
 					Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
 				},
-			})
-			const data = await response.json()
+			});
+			const data = await response.json();
 			if (response.ok && !!data) {
-				setPois(Array.isArray(data.pois) ? data.pois : [])
+				setPois(Array.isArray(data.pois) ? data.pois : []);
 			}
 		} catch (error) {
-			setPois([])
-			console.error('Error al obtener POIs:', error)
+			setPois([]);
+			console.error('Error al obtener POIs:', error);
 		}
-	}, [API_URL, GET_PATH])
+	}, [API_URL, GET_PATH]);
 
 	useEffect(() => {
-		getPois()
-	}, [getPois])
+		getPois();
+	}, [getPois]);
 
 	//He metido todo el section dentro de un div para centrarlo.
 	return (
@@ -114,8 +114,8 @@ export default function ListPois({ centerId }) {
 						placeholder="Buscador de POI"
 						value={search}
 						onChange={(e) => {
-							setSearch(e.target.value)
-							setCurrentPage(1)
+							setSearch(e.target.value);
+							setCurrentPage(1);
 						}}
 					>
 						<Search size={22} className="text-slate-300 ml-2" />
@@ -198,7 +198,9 @@ export default function ListPois({ centerId }) {
 								</p>
 								<div className="flex items-center gap-2.25">
 									<button
-										onClick={() => setCurrentPage(Math.max(1, safeCurrentPage - 1))}
+										onClick={() =>
+											setCurrentPage(Math.max(1, safeCurrentPage - 1))
+										}
 										disabled={safeCurrentPage === 1}
 										className="p-1.5 rounded-md border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
 									>
@@ -208,7 +210,11 @@ export default function ListPois({ centerId }) {
 										Página {safeCurrentPage} de {safeTotalPages}
 									</span>
 									<button
-										onClick={() => setCurrentPage(Math.min(safeTotalPages, safeCurrentPage + 1))}
+										onClick={() =>
+											setCurrentPage(
+												Math.min(safeTotalPages, safeCurrentPage + 1),
+											)
+										}
 										disabled={safeCurrentPage === safeTotalPages}
 										className="p-1.5 rounded-md border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
 									>
@@ -221,5 +227,5 @@ export default function ListPois({ centerId }) {
 				</div>
 			</section>
 		</div>
-	)
+	);
 }

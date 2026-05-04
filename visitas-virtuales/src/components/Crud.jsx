@@ -1,31 +1,31 @@
-import React, { useState, useEffect } from 'react'
-import Button from './Button.jsx'
+import React, { useState, useEffect } from 'react';
+import Button from './Button.jsx';
 
-import { useNavigate, useLocation } from 'react-router-dom'
-import { toast } from 'sonner'
-import { MapPinIcon } from 'lucide-react'
-import { useCenter } from '../hooks/useCenter.js'
-import Input from './Input.jsx'
+import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'sonner';
+import { MapPinIcon } from 'lucide-react';
+import { useCenter } from '../hooks/useCenter.js';
+import Input from './Input.jsx';
 
 function Crud() {
-	const { selectedCenter } = useCenter()
+	const { selectedCenter } = useCenter();
 	const [formData, setFormData] = useState({
 		id: '',
 		centerId: '',
 		name: '',
 		description: '',
-	})
+	});
 
-	const location = useLocation()
+	const location = useLocation();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const state = location.state || {}
-	const isEditing = !!state.isEditing
+	const state = location.state || {};
+	const isEditing = !!state.isEditing;
 
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
-	const API_URL = import.meta.env.VITE_API_URL
-	const UPDATE_PATH = `api/v1/centers/${selectedCenter.id}/pois/${location.state.id}`
-	const CREATE_PATH = `api/v1/centers/${selectedCenter.id}/pois`
+	const API_URL = import.meta.env.VITE_API_URL;
+	const UPDATE_PATH = `api/v1/centers/${selectedCenter.id}/pois/${location.state.id}`;
+	const CREATE_PATH = `api/v1/centers/${selectedCenter.id}/pois`;
 
 	// Cargar POIs al montar el componente
 	useEffect(() => {
@@ -35,9 +35,9 @@ function Crud() {
 				centerId: state.centerId || '',
 				name: state.name || '',
 				description: state.description || state.details?.description || '',
-			})
+			});
 		}
-	}, [isEditing, state])
+	}, [isEditing, state]);
 
 	const createPois = async () => {
 		try {
@@ -51,27 +51,27 @@ function Crud() {
 					name: formData.name,
 					details: { description: formData.description },
 				}),
-			})
+			});
 
 			if (response.ok) {
 				toast.success('POI creado con éxito', {
 					description: 'Redirigiendo a la lista de POIs...',
-				})
-				navigate('/listpois')
-				resetForm()
+				});
+				navigate('/listpois');
+				resetForm();
 			} else {
 				toast.error('Error al crear el POI', {
 					description: 'Inténtalo de nuevo más tarde',
-				})
+				});
 			}
 		} catch (error) {
 			toast.error('Error de red', {
 				description:
 					'No se pudo conectar con el servidor, inténtalo de nuevo más tarde',
-			})
-			console.error('Error:', error)
+			});
+			console.error('Error:', error);
 		}
-	}
+	};
 
 	const updatePois = async () => {
 		try {
@@ -85,25 +85,25 @@ function Crud() {
 					name: formData.name,
 					details: { description: formData.description },
 				}),
-			})
+			});
 			if (response.ok) {
 				toast.success('POI actualizado con éxito', {
 					description: 'Redirigiendo a la lista de POIs...',
-				})
-				navigate('/listpois')
-				resetForm()
+				});
+				navigate('/listpois');
+				resetForm();
 			} else {
 				toast.error('Error al actualizar el POI', {
 					description: 'Inténtalo de nuevo más tarde',
-				})
+				});
 			}
 		} catch (error) {
 			toast.error(
 				'Error de red, { description: "No se pudo conectar con el servidor" }',
-			)
-			console.error('Error:', error)
+			);
+			console.error('Error:', error);
 		}
-	}
+	};
 
 	const resetForm = () => {
 		setFormData({
@@ -111,25 +111,25 @@ function Crud() {
 			centerId: '',
 			name: '',
 			description: '',
-		})
-	}
+		});
+	};
 
 	const handleInputChange = (e) => {
-		const { name, value } = e.target
+		const { name, value } = e.target;
 		setFormData({
 			...formData,
 			[name]: value,
-		})
-	}
+		});
+	};
 
 	const handleSubmit = (e) => {
-		e.preventDefault()
+		e.preventDefault();
 		if (isEditing) {
-			updatePois()
+			updatePois();
 		} else {
-			createPois()
+			createPois();
 		}
-	}
+	};
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-full w-full px-3 py-6 lg:px-12 md:px-10">
@@ -186,8 +186,8 @@ function Crud() {
 								type="button"
 								variant="secondary"
 								onClick={(e) => {
-									e.preventDefault()
-									navigate('/listpois')
+									e.preventDefault();
+									navigate('/listpois');
 								}}
 							>
 								Cancelar
@@ -200,7 +200,7 @@ function Crud() {
 				</section>
 			</div>
 		</div>
-	)
+	);
 }
 
-export default Crud
+export default Crud;
