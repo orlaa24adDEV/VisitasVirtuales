@@ -11,6 +11,12 @@
 - Detener base de datos: `npm run db:down`
 - Ver logs: `npm run db:logs`
 
+#### Almacén de blobs (MinIO)
+
+- Iniciar MinIO: `npm run storage:up`
+- Detener MinIO: `npm run storage:down`
+- Ver logs: `npm run storage:logs`
+
 #### Aplicación
 
 - Iniciar en desarrollo: `npm run dev`
@@ -35,7 +41,7 @@
 
 ### Producción
 
-- Desplegar y e iniciar todo (API, DB, etc): `npm run prod:up`
+- Desplegar e iniciar todo (API, DB, etc): `npm run prod:up`
 - Detener: `npm run prod:down`
 - Reiniciar: `npm run prod:restart`
 - Ver logs: `npm run prod:logs`
