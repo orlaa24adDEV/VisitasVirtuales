@@ -49,7 +49,7 @@ La plataforma funciona mejor con conexión de banda ancha, aunque también opera
 
 ### Paso 1: Acceso
 
-    Accede a la plataforma mediante el enlace que te proporcionaremos. Introduce tus credenciales de usuario. Si eres usuario invitado, simplemente accede al enlace público desde la landing page ("explorar centros" -> seleccinar centro -> disfrutar de la visita).
+Accede a la plataforma mediante el enlace que te proporcionaremos. Introduce tus credenciales de usuario. Si eres usuario invitado, simplemente accede al enlace público desde la landing page ("explorar centros" -> seleccinar centro -> disfrutar de la visita).
 
 ### Paso 2: Seleccionar un centro
 
