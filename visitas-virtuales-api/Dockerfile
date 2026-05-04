@@ -30,6 +30,7 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/docs/openapi.json ./docs/openapi.json
+COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/drizzle.config.js ./drizzle.config.js
 COPY --from=builder /app/ecosystem.config.cjs ./ecosystem.config.cjs

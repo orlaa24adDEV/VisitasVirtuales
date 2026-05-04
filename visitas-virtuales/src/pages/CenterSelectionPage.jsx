@@ -45,8 +45,8 @@ export default function CenterSelectionPage() {
       // Actualizamos el contexto global (esto permitirá entrar a /viewer)
       saveSelectedCenter(localSelectedCenter);
       
-      toast.success(`Cargando ${localSelectedCenter.name}`, { 
-        description: `Preparando tour virtual...` 
+      toast.success(`${isAdmin || isTeacher ? `Seleccionado ${localSelectedCenter.name}` : `Cargando ${localSelectedCenter.name}`}`, {
+        description: `${isAdmin || isTeacher ? 'Ahora puedes configurar los POIs o acceder al tour virtual' : 'Preparando tour virtual'}`
       });
       
       // Redirigimos a la escena de Unity o al gestor de POIs según el rol
