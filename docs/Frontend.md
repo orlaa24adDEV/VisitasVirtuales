@@ -51,7 +51,6 @@ Este proyecto es el frontend de una aplicación de visitas virtuales educativas 
 |------------|---------|-------------|
 | ESLint | 9.0.0 | Linter para JavaScript/JSX |
 | Prettier | 3.8.3 | Formateador de código |
-| MSW | 2.12.14 | Mock Service Worker para pruebas |
 | PostCSS | - | Procesador de CSS |
 
 ---
