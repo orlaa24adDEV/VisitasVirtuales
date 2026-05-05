@@ -178,6 +178,8 @@ Authorization: Bearer {accessToken}
   ]
 }
 ```
+
+> **Nota sobre CORS:** Para que Unity WebGL pueda hacer peticiones a la API desde el navegador, el servidor debe permitir el origen del frontend en su configuración CORS. Sin esta configuración el navegador bloquea las peticiones aunque el código sea correcto.
  
 --
  
