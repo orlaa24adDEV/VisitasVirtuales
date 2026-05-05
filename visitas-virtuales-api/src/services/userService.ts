@@ -108,7 +108,6 @@ const updateUser = async (
 ): Promise<UserProfileType> => {
 	const { currentPassword, newPassword, ...dataToUpdate } = updateData
 	let newPasswordHash: string | undefined
-	console.log(currentPassword, newPassword)
 
 	if (dataToUpdate.imageUrl === '') {
 		dataToUpdate.imageUrl = null
@@ -161,7 +160,6 @@ const updateUser = async (
 
 	return updatedUser
 }
-	
 
 export default {
 	register,
