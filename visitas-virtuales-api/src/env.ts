@@ -15,11 +15,24 @@ if (process.env.APP_STAGE === 'dev' || !process.env.APP_STAGE) {
 
 // Usar schema de zod para validar las variables de entorno de forma estricta, evitando
 // que la app se ejecute con configuraciones incorrectas o faltantes.
+const rateLimitWindowSchema = (defaultVal: string) =>
+	z
+		.string()
+		.default(defaultVal)
+		.refine((val) => /^\d+m$/.test(val), {
+			message:
+				'Debe ser un string con formato: número seguido de "m", por ejemplo "15m"',
+		})
+		.transform((val) => parseInt(val) * 60 * 1000)
 const envSchema = z.object({
 	NODE_ENV: z.enum(['development', 'test', 'production']),
 	APP_STAGE: z.enum(['dev', 'stage', 'prod']).default('dev'),
 	APP_PORT: z.coerce.number().default(8000),
 	API_VERSION: z.string().regex(new RegExp('^v\\d+$')).default('v1'),
+	RATE_LIMIT_WINDOW: rateLimitWindowSchema('5m'),
+	AUTH_RATE_LIMIT_WINDOW: rateLimitWindowSchema('15m'),
+	RATE_LIMIT_MAX: z.coerce.number().default(100),
+	AUTH_RATE_LIMIT_MAX: z.coerce.number().default(20),
 	POSTGRES_USER: z.string().min(1),
 	POSTGRES_PASSWORD: z.string().min(32),
 	POSTGRES_DB: z.string().min(1),

@@ -1,6 +1,6 @@
 # Base de datos
 
-ORM: **Drizzle**. Esquema definido en [./src/db/schema.js](../src/db/schema.js).
+ORM: **Drizzle**. Esquema definido en [./src/db/schema.ts](../src/db/schema.ts).
 
 ## `centers`
 
@@ -117,15 +117,17 @@ Puedes explorar la base de datos con Drizzle Kit Studio:
 
 > Historial de migraciones: [./drizzle](../drizzle/)
 
-> Esquema: [./src/db/schema.js](../src/db/schema.js) (genera y aplica migraciones tras editarlo)
+> Esquema: [./src/db/schema.ts](../src/db/schema.ts) (genera y aplica migraciones tras editarlo)
 
 ### Usuarios de prueba
 
 | email                         | username  | password  | role        |
 | :---------------------------- | :-------- | :-------- | :---------- |
 | **admin_mad@instituto.es**    | admin_mad | Admin123! | **admin**   |
-| **admin_bar@instituto.es**    | admin_bar | Admin123! | **admin**   |
-| **admin_sev@instituto.es**    | admin_sev | Admin123! | **admin**   |
+| **admin_pac@instituto.es**    | admin_pac | Admin123! | **admin**   |
+| **admin_jer@instituto.es**    | admin_jer | Admin123! | **admin**   |
+| **admin_cor@instituto.es**    | admin_cor | Admin123! | **admin**   |
 | **profesor_mad@instituto.es** | prof_mad  | Profe123! | **teacher** |
-| **profesor_bar@instituto.es** | prof_bar  | Profe123! | **teacher** |
-| **profesor_sev@instituto.es** | prof_sev  | Profe123! | **teacher** |
+| **profesor_pac@instituto.es** | prof_pac  | Profe123! | **teacher** |
+| **profesor_jer@instituto.es** | prof_jer  | Profe123! | **teacher** |
+| **profesor_cor@instituto.es** | prof_cor  | Profe123! | **teacher** |

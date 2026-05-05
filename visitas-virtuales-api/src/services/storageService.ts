@@ -20,6 +20,16 @@ class MinioService {
 		this.bucketName = env.MINIO_BUCKET_NAME
 	}
 
+	async verifyConnection() {
+		try {
+			await minioClient.bucketExists(this.bucketName)
+		} catch (error) {
+			throw new Error(
+				`Error de conexión al almacenamiento (MinIO)`,
+			)
+		}
+	}
+
 	async init() {
 		console.log('Inicializando MinIO blob storage...')
 		await this.ensureBucketExists()
