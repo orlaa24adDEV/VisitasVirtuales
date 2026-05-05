@@ -1,10 +1,7 @@
-// CenterSelectionPage — tarjetas con imagen superior, info centrada y línea azul inferior
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 import { useCenter } from '@/hooks/useCenter.js';
-// eslint-disable-next-line no-unused-vars
-import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
 import { toast } from 'sonner';
 import { ArrowLeft, Settings } from 'lucide-react';
 import Button from '@/components/Button.jsx';
@@ -12,6 +9,7 @@ import UserDropdown from '../components/UserDropdown';
 
 export default function CenterSelectionPage() {
 	const navigate = useNavigate();
+	const hasFetchedRef = useRef(false);
 
 	const { isAdmin, isTeacher } = useAuth();
 	const isStaff = isAdmin || isTeacher;
@@ -30,10 +28,15 @@ export default function CenterSelectionPage() {
 	);
 
 	useEffect(() => {
-		if (!isCentersLoading && (!allCenters || allCenters.length === 0)) {
+		if (
+			!hasFetchedRef.current &&
+			!isCentersLoading &&
+			(!allCenters || allCenters.length === 0)
+		) {
+			hasFetchedRef.current = true;
 			fetchCenters();
 		}
-	}, [allCenters, isCentersLoading, fetchCenters]);
+	}, [fetchCenters, isCentersLoading, allCenters]);
 
 	useEffect(() => {
 		if (isCentersLoading || centersError) return;

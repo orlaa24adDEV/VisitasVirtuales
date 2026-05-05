@@ -6,6 +6,8 @@ import { toast } from 'sonner';
 import { MapPinIcon } from 'lucide-react';
 import { useCenter } from '../hooks/useCenter.js';
 import Input from './Input.jsx';
+import fetchWithAuth from '../helpers/fetchWithAuth.js';
+import { useAuth } from '../hooks/useAuth.js';
 
 function Crud() {
 	const { selectedCenter } = useCenter();
@@ -22,10 +24,11 @@ function Crud() {
 	const isEditing = !!state.isEditing;
 
 	const navigate = useNavigate();
+	const { logout } = useAuth();
 
 	const API_URL = import.meta.env.VITE_API_URL;
-	const UPDATE_PATH = `api/v1/centers/${selectedCenter.id}/pois/${location.state.id}`;
-	const CREATE_PATH = `api/v1/centers/${selectedCenter.id}/pois`;
+	const UPDATE_PATH = `api/v1/centers/${selectedCenter?.id}/pois/${location.state?.id}`;
+	const CREATE_PATH = `api/v1/centers/${selectedCenter?.id}/pois`;
 
 	// Cargar POIs al montar el componente
 	useEffect(() => {
@@ -39,35 +42,42 @@ function Crud() {
 		}
 	}, [isEditing, state]);
 
+	if (!selectedCenter) {
+		navigate('/centros');
+		return null;
+	}
+
 	const createPois = async () => {
 		try {
-			const response = await fetch(`${API_URL}${CREATE_PATH}`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+			const response = await fetchWithAuth(
+				`${API_URL}${CREATE_PATH}`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						name: formData.name,
+						details: { description: formData.description },
+					}),
 				},
-				body: JSON.stringify({
-					name: formData.name,
-					details: { description: formData.description },
-				}),
-			});
+				logout,
+			);
 
-			if (response.ok) {
+			if (response && response.ok) {
 				toast.success('POI creado con éxito', {
 					description: 'Redirigiendo a la lista de POIs...',
 				});
 				navigate('/listpois');
 				resetForm();
-			} else {
+			} else if (response && response.status !== 401) {
 				toast.error('Error al crear el POI', {
 					description: 'Inténtalo de nuevo más tarde',
 				});
 			}
 		} catch (error) {
 			toast.error('Error de red', {
-				description:
-					'No se pudo conectar con el servidor, inténtalo de nuevo más tarde',
+				description: 'No se pudo conectar con el servidor',
 			});
 			console.error('Error:', error);
 		}
@@ -75,32 +85,36 @@ function Crud() {
 
 	const updatePois = async () => {
 		try {
-			const response = await fetch(`${API_URL}${UPDATE_PATH}`, {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+			const response = await fetchWithAuth(
+				`${API_URL}${UPDATE_PATH}`,
+				{
+					method: 'PATCH',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						name: formData.name,
+						details: { description: formData.description },
+					}),
 				},
-				body: JSON.stringify({
-					name: formData.name,
-					details: { description: formData.description },
-				}),
-			});
-			if (response.ok) {
+				logout,
+			);
+
+			if (response && response.ok) {
 				toast.success('POI actualizado con éxito', {
 					description: 'Redirigiendo a la lista de POIs...',
 				});
 				navigate('/listpois');
 				resetForm();
-			} else {
+			} else if (response && response.status !== 401) {
 				toast.error('Error al actualizar el POI', {
 					description: 'Inténtalo de nuevo más tarde',
 				});
 			}
 		} catch (error) {
-			toast.error(
-				'Error de red, { description: "No se pudo conectar con el servidor" }',
-			);
+			toast.error('Error de red', {
+				description: 'No se pudo conectar con el servidor',
+			});
 			console.error('Error:', error);
 		}
 	};
@@ -148,7 +162,6 @@ function Crud() {
 				<section className="flex flex-col gap-2 w-full shadow-sm rounded-2xl bg-white min-h-full">
 					{/* Formulario */}
 					<form
-						action={handleSubmit}
 						onSubmit={handleSubmit}
 						className="py-6 px-4 outline outline-slate-100 rounded-lg bg-slate-50 shadow-sm/8"
 					>
@@ -192,7 +205,7 @@ function Crud() {
 							>
 								Cancelar
 							</Button>
-							<Button type="submit" variant="primary" onClick={handleSubmit}>
+							<Button type="submit" variant="primary">
 								{isEditing ? 'Actualizar POI' : 'Crear POI'}
 							</Button>
 						</div>

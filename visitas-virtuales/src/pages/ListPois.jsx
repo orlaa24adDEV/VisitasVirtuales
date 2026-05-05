@@ -78,6 +78,11 @@ export default function ListPois({ centerId }) {
 		getPois();
 	}, [getPois]);
 
+	if (!selectedCenter) {
+		navigate('/centros');
+		return null;
+	}
+
 	//He metido todo el section dentro de un div para centrarlo.
 	return (
 		<div className="relative flex flex-col items-center justify-center min-h-full w-full py-6 lg:px-12 md:px-10 px-3">
@@ -97,6 +102,7 @@ export default function ListPois({ centerId }) {
 						onClick={() =>
 							navigate('/crud', {
 								state: {
+									id: '',
 									centerId: selectedCenter.name,
 									name: '',
 									description: '',
