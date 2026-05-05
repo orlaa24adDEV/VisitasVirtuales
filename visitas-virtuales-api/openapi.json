@@ -758,6 +758,15 @@
                                 "example": "Cafetería del centro"
                               }
                             }
+                          },
+                          "center": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "Instituto Madrid"
+                              }
+                            }
                           }
                         }
                       }

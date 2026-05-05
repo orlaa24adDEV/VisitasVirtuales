@@ -97,9 +97,7 @@ export type PoiDetails = {
 }
 export const poiHistory = pgTable('poi_history', {
 	id: serial('id').primaryKey(),
-	poiId: integer('poi_id')
-		.notNull()
-		.references(() => pois.id, { onDelete: 'cascade' }),
+	poiId: integer('poi_id').notNull(),
 	userId: integer('user_id')
 		.notNull()
 		.references(() => users.id, { onDelete: 'cascade' }),

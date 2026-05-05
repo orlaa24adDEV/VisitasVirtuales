@@ -70,6 +70,12 @@ export const router = Router()
  *                           name:
  *                             type: string
  *                             example: "Cafetería del centro"
+ *                       center:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                             example: "Instituto Madrid"
  *       401:
  *         description: Token de acceso no proporcionado
  *         content:

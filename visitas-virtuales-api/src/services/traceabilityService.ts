@@ -28,7 +28,7 @@ const logPoiAction = async (
 
 export type PoiHistoryWithRelations = PoiHistoryItemType & {
 	user: { username: string; imageUrl: string | null }
-	poi: { name: string }
+	poi: { name: string; center: { name: string } | null } | null
 }
 
 const getPoiHistory = async (
@@ -49,10 +49,32 @@ const getPoiHistory = async (
 					columns: {
 						name: true,
 					},
+					with: {
+						center: {
+							columns: {
+								name: true,
+							},
+						},
+					},
 				},
 			},
 		})
-		return (history as PoiHistoryWithRelations[]) ?? []
+		const normalizedHistory = history.map((entry) => {
+			if (entry.poi) return entry
+
+			const old = entry.details?.oldValue ?? {}
+
+			return {
+				...entry,
+				poi: {
+					name: old.name,
+					center: {
+						name: old.center?.name ?? 'Centro desconocido',
+					},
+				},
+			}
+		})
+		return (normalizedHistory as PoiHistoryWithRelations[]) ?? []
 	} catch (error) {
 		console.error('Error al obtener el historial de POI:', error)
 		throw new ApiError(500, 'Error al obtener el historial de POI')

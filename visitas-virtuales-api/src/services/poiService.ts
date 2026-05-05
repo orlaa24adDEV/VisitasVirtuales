@@ -5,6 +5,7 @@ import { pois, centers, poiHistory } from '../db/schema.ts'
 import type { Poi } from '../db/schema.ts'
 import traceabilityService from './traceabilityService.ts'
 import type { PoiDetails } from '../db/schema.ts'
+import { env } from 'node:process'
 
 const createPoi = async (
 	centerId: string,
@@ -86,14 +87,27 @@ const getPoisByCenter = async (validData: any): Promise<Poi[]> => {
 		.limit(limit ?? 10)
 }
 
+const getAllPois = async (): Promise<Poi[]> => {
+	const poiArr: Poi[] = await db
+		.select({
+			id: pois.id,
+			name: pois.name,
+			details: pois.details,
+			userId: pois.userId,
+			centerId: pois.centerId,
+		})
+		.from(pois)
+
+	return poiArr
+}
 const deletePoiByCenterAndId = async (
 	userId: number,
 	centerId: string,
 	poiId: string,
 ): Promise<Poi> => {
-	return await db.transaction(async (tx) => {
+	const { poi: deletedPoi, centerName } = await db.transaction(async (tx) => {
 		const [center] = await tx
-			.select({ id: centers.id })
+			.select({ id: centers.id, name: centers.name })
 			.from(centers)
 			.where(eq(centers.id, Number(centerId)))
 			.limit(1)
@@ -104,31 +118,41 @@ const deletePoiByCenterAndId = async (
 			.select()
 			.from(pois)
 			.where(
-				and(
-					eq(pois.centerId, Number(centerId)),
-					eq(pois.id, Number(poiId)),
-					eq(pois.userId, userId),
-				),
+				and(eq(pois.centerId, Number(centerId)), eq(pois.id, Number(poiId))),
 			)
 			.limit(1)
 
 		if (!poi) throw new ApiError(404, 'POI no encontrado en este centro')
 
-		await tx
+		const deleted = await tx
 			.delete(pois)
 			.where(
 				and(eq(pois.centerId, Number(centerId)), eq(pois.id, Number(poiId))),
 			)
+			.returning()
 
-		// Registrar la eliminación en el historial de trazabilidad
-		await traceabilityService.logPoiAction(userId, poi.id, 'delete', {
-			oldValue: poi,
-			newValue: null,
-			reason: 'Eliminación de POI',
-		} as PoiDetails)
+		if (deleted.length === 0) {
+			throw new ApiError(500, 'Error al eliminar el POI')
+		}
 
-		return poi
+		return {
+			poi,
+			centerName: center.name,
+		}
 	})
+
+	await traceabilityService.logPoiAction(userId, deletedPoi.id, 'delete', {
+		oldValue: {
+			...deletedPoi,
+			center: {
+				name: centerName,
+			},
+		},
+		newValue: null,
+		reason: 'Eliminación de POI',
+	})
+
+	return deletedPoi
 }
 
 const updatePoi = async (
@@ -201,6 +225,7 @@ export default {
 	createPoi,
 	getPoisByCenter,
 	deletePoiByCenterAndId,
+	getAllPois,
 	updatePoi,
 	getPoiHistory,
 }
