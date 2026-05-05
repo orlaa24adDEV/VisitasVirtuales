@@ -100,6 +100,72 @@ const getAllPois = async (): Promise<Poi[]> => {
 
 	return poiArr
 }
+
+export const getPoisByUserAndCenter = async (
+	userId: number,
+	centerId: string,
+): Promise<Poi[]> => {
+	const [center] = await db
+		.select({
+			id: centers.id,
+		})
+		.from(centers)
+		.where(eq(centers.id, Number(centerId)))
+		.limit(1)
+
+	if (!center) {
+		throw new ApiError(404, 'Centro no encontrado')
+	}
+
+	const poiArr: Poi[] = await db
+		.select({
+			id: pois.id,
+			name: pois.name,
+			details: pois.details,
+			userId: pois.userId,
+			centerId: pois.centerId,
+		})
+		.from(pois)
+		.where(and(eq(pois.centerId, Number(centerId)), eq(pois.userId, userId)))
+
+	return poiArr
+}
+
+const getPoisByCenterAndFuzzyName = async (
+	centerId: string,
+	partialName: string,
+): Promise<Poi[]> => {
+	const [center] = await db
+		.select({
+			id: centers.id,
+		})
+		.from(centers)
+		.where(eq(centers.id, Number(centerId)))
+		.limit(1)
+
+	if (!center) {
+		throw new ApiError(404, 'Centro no encontrado')
+	}
+
+	const poiArr: Poi[] = await db
+		.select({
+			id: pois.id,
+			name: pois.name,
+			details: pois.details,
+			userId: pois.userId,
+			centerId: pois.centerId,
+		})
+		.from(pois)
+		.where(
+			and(
+				eq(pois.centerId, Number(centerId)),
+				ilike(pois.name, `%${partialName}%`),
+			),
+		)
+
+	return poiArr
+}
+
 const deletePoiByCenterAndId = async (
 	userId: number,
 	centerId: string,
@@ -225,6 +291,8 @@ export default {
 	createPoi,
 	getPoisByCenter,
 	deletePoiByCenterAndId,
+	getPoisByUserAndCenter,
+	getPoisByCenterAndFuzzyName,
 	getAllPois,
 	updatePoi,
 	getPoiHistory,
