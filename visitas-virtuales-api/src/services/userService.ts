@@ -8,7 +8,6 @@ import type {
 	UserLoginType,
 	UserProfileType,
 	TokenResponseType,
-	UpdateUserType,
 	UpdateCurrUserProfileType,
 } from '../db/schema.ts'
 import { env } from '../env.ts'
