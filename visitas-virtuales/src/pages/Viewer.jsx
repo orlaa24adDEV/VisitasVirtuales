@@ -1,17 +1,17 @@
-import { useAuth } from '@/hooks/useAuth.js'
-import { useCenterQuery } from '@/hooks/useCenterQuery.js'
-import { UserCheck, ShieldCheck, GraduationCap } from 'lucide-react' // Iconos para darle estilo
-import UnityViewer from '../components/UnityViewer'
-import { useCenter } from '../hooks/useCenter'
+import { useAuth } from '@/hooks/useAuth.js';
+import { useCenterQuery } from '@/hooks/useCenterQuery.js';
+import { UserCheck, ShieldCheck, GraduationCap } from 'lucide-react'; // Iconos para darle estilo
+import UnityViewer from '../components/UnityViewer';
+import { useCenter } from '../hooks/useCenter';
 
 export default function Viewer() {
-	const { user, isAdmin, isTeacher } = useAuth()
-	const { selectedCenter } = useCenter()
+	const { user, isAdmin, isTeacher } = useAuth();
+	const { selectedCenter } = useCenter();
 
 	// Si el context no contiene un centro, utilizar el query param "center" de la URL,
 	// proporcionado por la página de selección de centro. Esto es un fallback y además
 	// permite compartir URLs directas a centros específicos.
-	useCenterQuery()
+	useCenterQuery();
 
 	return (
 		<div className={`p-8 mx-auto ${!user ? 'max-w-380' : ''}`}>
@@ -117,5 +117,5 @@ export default function Viewer() {
 				</div>
 			</div>
 		</div>
-	)
+	);
 }

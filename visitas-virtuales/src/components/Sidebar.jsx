@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useAuth } from '@/hooks/useAuth.js'
+import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth.js';
 import {
 	Home,
 	Menu,
@@ -9,15 +9,15 @@ import {
 	ClipboardCheck,
 	X,
 	Compass,
-} from 'lucide-react'
-import logo1 from '@/assets/logo1.png'
-import SidebarItem from './SidebarItem'
-import { useWindowSize } from '@/hooks/useWindowSize.js'
+} from 'lucide-react';
+import logo1 from '@/assets/logo1.png';
+import SidebarItem from './SidebarItem';
+import { useWindowSize } from '@/hooks/useWindowSize.js';
 
 const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
-	const [isExpanded, setIsExpanded] = useState(true)
-	const { isAdmin, isTeacher } = useAuth()
-	const windowSize = useWindowSize()
+	const [isExpanded, setIsExpanded] = useState(true);
+	const { isAdmin, isTeacher } = useAuth();
+	const windowSize = useWindowSize();
 
 	// Definimos todos los items y marcamos cuáles son solo para Admin
 	const allMenuItems = [
@@ -60,7 +60,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 			path: '/historial',
 			adminOnly: true,
 		},
-	]
+	];
 
 	// Mostrar botón "Selección de Centro" solo en móvil o tablet
 	windowSize.width < 1024
@@ -70,12 +70,12 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 				icon: <Building2 size={22} strokeWidth={1.75} />,
 				path: '/centros',
 			})
-		: null
+		: null;
 
 	// Filtramos la lista: si no es admin, quitamos los que tengan adminOnly: true
 	const menuItems = allMenuItems.filter(
 		(item) => item && (!item.adminOnly || isAdmin),
-	)
+	);
 
 	return (
 		<>
@@ -121,7 +121,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 							item={item}
 							isExpanded={isExpanded}
 							onClick={() => {
-								if (window.innerWidth < 1024) setIsMobileMenuOpen(false)
+								if (window.innerWidth < 1024) setIsMobileMenuOpen(false);
 							}}
 						/>
 					))}
@@ -140,7 +140,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 				</div>
 			</aside>
 		</>
-	)
-}
+	);
+};
 
-export default Sidebar
+export default Sidebar;

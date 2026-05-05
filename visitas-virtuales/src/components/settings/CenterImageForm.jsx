@@ -1,76 +1,76 @@
-import { useState, useRef, useEffect } from 'react'
-import { Upload, Trash2, Image, Save, LoaderCircle } from 'lucide-react'
-import { useAuth } from '@/hooks/useAuth.js'
-import { ImageIcon } from 'lucide-react'
-import { getLocalStorageAccessToken } from '../../helpers/authLocalStorage'
-import Button from '../Button'
-import Select from '../Select'
-import { useCenter } from '../../hooks/useCenter'
+import { useState, useRef, useEffect } from 'react';
+import { Upload, Trash2, Image, Save, LoaderCircle } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth.js';
+import { ImageIcon } from 'lucide-react';
+import { getLocalStorageAccessToken } from '../../helpers/authLocalStorage';
+import Button from '../Button';
+import Select from '../Select';
+import { useCenter } from '../../hooks/useCenter';
 
 export default function CenterImageForm() {
-	const [file, setFile] = useState(null)
-	const [isUploading, setIsUploading] = useState(false)
-	const { user } = useAuth()
-	const { updateCenterImage, allCenters } = useCenter()
-	const [selectedId, setSelectedId] = useState(user?.centerPreferenceId || '')
-	const currentImage = allCenters.find((c) => c.id == selectedId)?.imageUrl
-	const [preview, setPreview] = useState(currentImage || null)
-	const fileInputRef = useRef(null)
+	const [file, setFile] = useState(null);
+	const [isUploading, setIsUploading] = useState(false);
+	const { user } = useAuth();
+	const { updateCenterImage, allCenters } = useCenter();
+	const [selectedId, setSelectedId] = useState(user?.centerPreferenceId || '');
+	const currentImage = allCenters.find((c) => c.id == selectedId)?.imageUrl;
+	const [preview, setPreview] = useState(currentImage || null);
+	const fileInputRef = useRef(null);
 
 	useEffect(() => {
-		setPreview(currentImage || null)
-	}, [selectedId, currentImage])
+		setPreview(currentImage || null);
+	}, [selectedId, currentImage]);
 
 	const handleFileChange = (e) => {
-		const selectedFile = e.target.files[0]
+		const selectedFile = e.target.files[0];
 		if (selectedFile) {
-			setFile(selectedFile)
-			setPreview(URL.createObjectURL(selectedFile))
+			setFile(selectedFile);
+			setPreview(URL.createObjectURL(selectedFile));
 		}
-	}
+	};
 
 	const handleUpload = async () => {
-		if (!file) return
-		setIsUploading(true)
+		if (!file) return;
+		setIsUploading(true);
 
-		const formData = new FormData()
-		formData.append('file', file)
+		const formData = new FormData();
+		formData.append('file', file);
 
 		try {
-			const token = getLocalStorageAccessToken()
+			const token = getLocalStorageAccessToken();
 			const response = await fetch(`/api/centers/${selectedId}/image`, {
 				method: 'POST',
 				body: formData,
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},
-			})
+			});
 
 			if (response.ok) {
-				const data = await response.json()
-				const { imageUrl } = data.center
-				updateCenterImage(selectedId, imageUrl)
-				setFile(null)
-				alert('Imagen de centro actualizada exitosamente')
+				const data = await response.json();
+				const { imageUrl } = data.center;
+				updateCenterImage(selectedId, imageUrl);
+				setFile(null);
+				alert('Imagen de centro actualizada exitosamente');
 			} else {
-				const errorData = await response.text()
-				console.error('Error del servidor:', errorData)
+				const errorData = await response.text();
+				console.error('Error del servidor:', errorData);
 				alert(
 					`Error: ${response.status} - No se pudo actualizar la imagen del centro`,
-				)
+				);
 			}
 		} catch (error) {
-			console.error('Error al subir la imagen:', error)
-			alert('Error al subir la imagen: ' + error.message)
+			console.error('Error al subir la imagen:', error);
+			alert('Error al subir la imagen: ' + error.message);
 		} finally {
-			setIsUploading(false)
+			setIsUploading(false);
 		}
-	}
+	};
 
 	const handleClearImage = () => {
-		setFile(null)
-		setPreview(currentImage || null)
-	}
+		setFile(null);
+		setPreview(currentImage || null);
+	};
 
 	return (
 		<>
@@ -154,5 +154,5 @@ export default function CenterImageForm() {
 					null}
 			</div>
 		</>
-	)
+	);
 }

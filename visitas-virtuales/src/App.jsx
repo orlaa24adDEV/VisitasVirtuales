@@ -1,33 +1,33 @@
-import { useState } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom' // Añadimos Navigate
-import TopHeader from './components/TopHeader'
-import Sidebar from './components/Sidebar'
-import Login from './components/Login'
-import Crud from './components/Crud'
-import Dashboard from './pages/Dashboard.jsx'
-import Historial from './pages/Historial.jsx'
-import CenterSelectionPage from './pages/CenterSelectionPage.jsx'
-import ListPois from './pages/ListPois.jsx'
-import { useAuth } from '@/hooks/useAuth.js'
-import Viewer from './pages/Viewer.jsx'
-import { ProtectedRoute } from './components/ProtectedRoute.jsx'
-import './assets/App.css'
-import { Toaster } from 'sonner'
-import LandingPage from './pages/LandingPage.jsx'
-import Settings from './pages/Settings.jsx'
-import { useCenter } from './hooks/useCenter.js'
+import { useState } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'; // Añadimos Navigate
+import TopHeader from './components/TopHeader';
+import Sidebar from './components/Sidebar';
+import Login from './components/Login';
+import Crud from './components/Crud';
+import Dashboard from './pages/Dashboard.jsx';
+import Historial from './pages/Historial.jsx';
+import CenterSelectionPage from './pages/CenterSelectionPage.jsx';
+import ListPois from './pages/ListPois.jsx';
+import { useAuth } from '@/hooks/useAuth.js';
+import Viewer from './pages/Viewer.jsx';
+import { ProtectedRoute } from './components/ProtectedRoute.jsx';
+import './assets/App.css';
+import { Toaster } from 'sonner';
+import LandingPage from './pages/LandingPage.jsx';
+import Settings from './pages/Settings.jsx';
+import { useCenter } from './hooks/useCenter.js';
 
 function App() {
-	const { user } = useAuth()
-	const { selectedCenter } = useCenter()
-	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-	const location = useLocation()
+	const { user } = useAuth();
+	const { selectedCenter } = useCenter();
+	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+	const location = useLocation();
 
 	// Detectamos si es la Landing para limpiar el diseño
 	const isLanding =
 		location.pathname === '/' ||
 		location.pathname === '/login' ||
-		location.pathname === '/centros'
+		location.pathname === '/centros';
 
 	return (
 		<div className="w-full flex bg-white min-h-screen">
@@ -42,7 +42,18 @@ function App() {
 			<div className="flex-col flex w-full h-screen relative">
 				{/* Header: Se oculta en Landing. Landing y CenterSelectionPage tienen su propio header */}
 				{!isLanding && (
-					<TopHeader onMenuClick={() => setIsMobileMenuOpen(true)} />
+					<TopHeader
+						onMenuClick={() => setIsMobileMenuOpen(true)}
+						isLog={!!user}
+						onLogout={() => {}}
+						userName={user?.username}
+						userEmail={user?.email}
+						userImg={
+							user?.imageUrl ||
+							`https://api.dicebear.com/9.x/identicon/svg?seed=${user?.email}`
+						}
+						role={user?.role}
+					/>
 				)}
 
 				<main
@@ -132,6 +143,6 @@ function App() {
 				closeButton={true}
 			/>
 		</div>
-	)
+	);
 }
-export default App
+export default App;

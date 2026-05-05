@@ -1,84 +1,84 @@
-import { Pencil, RotateCcw, Save, Trash } from 'lucide-react'
-import Button from '../Button'
-import Input from '../Input'
-import Select from '../Select'
-import { useRef, useState } from 'react'
-import { useAuth } from '@/hooks/useAuth'
-import { toast } from 'sonner'
-import { useCenter } from '../../hooks/useCenter'
+import { Pencil, RotateCcw, Save, Trash } from 'lucide-react';
+import Button from '../Button';
+import Input from '../Input';
+import Select from '../Select';
+import { useRef, useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
+import { useCenter } from '../../hooks/useCenter';
 
 export default function UserProfileForm() {
-	const { fetchProfile, user } = useAuth()
-	const { allCenters } = useCenter()
+	const { fetchProfile, user } = useAuth();
+	const { allCenters } = useCenter();
 
-	const userImageRef = useRef(null)
+	const userImageRef = useRef(null);
 	const userFormInitialState = {
 		username: user?.username || '',
 		email: user?.email || '',
 		centerPreferenceId: String(user.centerPreferenceId) || '',
 		imageUrl: user?.imageUrl || '',
-	}
+	};
 
-	const [userFormState, setUserFormState] = useState(userFormInitialState)
-	const defaultImageUrl = `https://api.dicebear.com/9.x/identicon/svg?seed=${user?.email}`
-	const imageUrl = user?.imageUrl || defaultImageUrl
-	const [preview, setPreview] = useState(imageUrl)
-	const hasImage = !!preview && !preview.startsWith('https://api.dicebear.com')
+	const [userFormState, setUserFormState] = useState(userFormInitialState);
+	const defaultImageUrl = `https://api.dicebear.com/9.x/identicon/svg?seed=${user?.email}`;
+	const imageUrl = user?.imageUrl || defaultImageUrl;
+	const [preview, setPreview] = useState(imageUrl);
+	const hasImage = !!preview && !preview.startsWith('https://api.dicebear.com');
 
 	const updateUserAction = async (formData) => {
 		// Eliminar el campo de centro si no se ha seleccionado ninguno
 		if (formData.get('centerPreferenceId') === '') {
-			formData.delete('centerPreferenceId')
+			formData.delete('centerPreferenceId');
 		}
 		if (preview === defaultImageUrl) {
-			formData.set('imageUrl', '')
-			formData.delete('file')
+			formData.set('imageUrl', '');
+			formData.delete('file');
 		}
 
 		try {
-			const token = localStorage.getItem('accessToken')
+			const token = localStorage.getItem('accessToken');
 			const response = await fetch('/api/me', {
 				method: 'PATCH',
 				body: formData,
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},
-			})
+			});
 			if (response.ok) {
 				// Refrescar datos del perfil después de la actualización
-				fetchProfile()
-				toast.success('Perfil actualizado exitosamente')
+				fetchProfile();
+				toast.success('Perfil actualizado exitosamente');
 			} else {
-				const errorData = await response.text()
-				console.error('Error del servidor al actualizar el perfil:', errorData)
+				const errorData = await response.text();
+				console.error('Error del servidor al actualizar el perfil:', errorData);
 				toast.error(
 					'Error al actualizar el perfil. Por favor, inténtalo más tarde.',
-				)
+				);
 			}
 		} catch (error) {
-			console.error('Error de red al actualizar el perfil:', error)
+			console.error('Error de red al actualizar el perfil:', error);
 			toast.error(
 				'Error de red al actualizar el perfil. Por favor, inténtalo más tarde.',
-			)
+			);
 		}
-	}
+	};
 
 	const resetChanges = async () => {
-		setUserFormState(userFormInitialState)
-		setPreview(imageUrl)
-		toast.info('Cambios descartados')
-	}
+		setUserFormState(userFormInitialState);
+		setPreview(imageUrl);
+		toast.info('Cambios descartados');
+	};
 
 	const handleUserImageChange = (e) => {
-		const selectedFile = e.target.files[0]
+		const selectedFile = e.target.files[0];
 		if (selectedFile) {
-			setPreview(URL.createObjectURL(selectedFile))
+			setPreview(URL.createObjectURL(selectedFile));
 		}
-	}
+	};
 
 	const handleClearImage = () => {
-		setPreview(defaultImageUrl)
-	}
+		setPreview(defaultImageUrl);
+	};
 
 	return (
 		<form
@@ -182,5 +182,5 @@ export default function UserProfileForm() {
 				</div>
 			</div>
 		</form>
-	)
+	);
 }

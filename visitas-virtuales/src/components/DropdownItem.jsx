@@ -1,4 +1,4 @@
-import Button from './Button'
+import Button from './Button';
 
 export default function DropdownItem({ children, className, onClick }) {
 	return (
@@ -10,5 +10,5 @@ export default function DropdownItem({ children, className, onClick }) {
 		>
 			{children}
 		</Button>
-	)
+	);
 }

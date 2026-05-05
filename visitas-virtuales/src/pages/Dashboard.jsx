@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useCenter } from '../hooks/useCenter'
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useCenter } from '../hooks/useCenter';
 import {
 	BarChart,
 	Bar,
@@ -11,17 +11,17 @@ import {
 	Legend,
 	ResponsiveContainer,
 	LabelList,
-} from 'recharts'
-import fetchWithTimeout from '@/helpers/fetchWithTimeout.js'
-import Button from '@/components/Button.jsx'
+} from 'recharts';
+import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
+import Button from '@/components/Button.jsx';
 
 const Dashboard = () => {
-	const [pois, setPois] = useState([])
-	const [loading, setLoading] = useState(true)
-	const [error, setError] = useState('')
-	const [searchQuery, setSearchQuery] = useState('')
-	const { allCenters, saveSelectedCenter } = useCenter()
-	const navigate = useNavigate()
+	const [pois, setPois] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState('');
+	const [searchQuery, setSearchQuery] = useState('');
+	const { allCenters, saveSelectedCenter } = useCenter();
+	const navigate = useNavigate();
 
 	// Cargar todos los POIs al montar el componente
 	useEffect(() => {
@@ -34,76 +34,76 @@ const Dashboard = () => {
 					},
 				},
 				5000,
-			)
+			);
 			try {
-				const response = await fetchPois
-				const data = await response.json()
+				const response = await fetchPois;
+				const data = await response.json();
 				if (!response.ok)
 					throw new Error(
 						'No se pudo cargar el listado de POIs: ' + data.message,
-					)
+					);
 				setPois(
 					Array.isArray(data)
 						? data
 						: Array.isArray(data.pois)
 							? data.pois
 							: [],
-				)
+				);
 			} catch (err) {
-				setError(err.message || 'Error desconocido')
+				setError(err.message || 'Error desconocido');
 			} finally {
-				setLoading(false)
+				setLoading(false);
 			}
-		}
-		fetchData()
-	}, [])
+		};
+		fetchData();
+	}, []);
 
-	const totalPois = pois.length
-	const uniqueCenters = [...new Set(pois.map((p) => p.centerId))].length
+	const totalPois = pois.length;
+	const uniqueCenters = [...new Set(pois.map((p) => p.centerId))].length;
 	const lastChanges = [...pois]
 		.sort((a, b) => Number(b.id) - Number(a.id))
-		.slice(0, 5)
+		.slice(0, 5);
 
 	const getPoiTimestamp = (poi) => {
 		const rawTimestamp =
-			poi.timestamp ?? poi.updatedAt ?? poi.createdAt ?? poi.date
-		const date = rawTimestamp ? new Date(rawTimestamp) : null
-		return date instanceof Date && !Number.isNaN(date.getTime()) ? date : null
-	}
+			poi.timestamp ?? poi.updatedAt ?? poi.createdAt ?? poi.date;
+		const date = rawTimestamp ? new Date(rawTimestamp) : null;
+		return date instanceof Date && !Number.isNaN(date.getTime()) ? date : null;
+	};
 
-	const hasPoiDates = pois.some((poi) => getPoiTimestamp(poi))
-	const now = new Date()
-	const startOfToday = new Date(now)
-	startOfToday.setHours(0, 0, 0, 0)
+	const hasPoiDates = pois.some((poi) => getPoiTimestamp(poi));
+	const now = new Date();
+	const startOfToday = new Date(now);
+	startOfToday.setHours(0, 0, 0, 0);
 
-	const startOfLast7Days = new Date(startOfToday)
-	startOfLast7Days.setDate(startOfLast7Days.getDate() - 6)
+	const startOfLast7Days = new Date(startOfToday);
+	startOfLast7Days.setDate(startOfLast7Days.getDate() - 6);
 
-	const startOfPrevious7Days = new Date(startOfLast7Days)
-	startOfPrevious7Days.setDate(startOfPrevious7Days.getDate() - 7)
+	const startOfPrevious7Days = new Date(startOfLast7Days);
+	startOfPrevious7Days.setDate(startOfPrevious7Days.getDate() - 7);
 
 	const poisToday = hasPoiDates
 		? pois.reduce((sum, poi) => {
-				const date = getPoiTimestamp(poi)
-				return date && date >= startOfToday ? sum + 1 : sum
+				const date = getPoiTimestamp(poi);
+				return date && date >= startOfToday ? sum + 1 : sum;
 			}, 0)
-		: lastChanges.length
+		: lastChanges.length;
 
 	const poisLast7Days = hasPoiDates
 		? pois.reduce((sum, poi) => {
-				const date = getPoiTimestamp(poi)
-				return date && date >= startOfLast7Days ? sum + 1 : sum
+				const date = getPoiTimestamp(poi);
+				return date && date >= startOfLast7Days ? sum + 1 : sum;
 			}, 0)
-		: lastChanges.length
+		: lastChanges.length;
 
 	const poisPrevious7Days = hasPoiDates
 		? pois.reduce((sum, poi) => {
-				const date = getPoiTimestamp(poi)
+				const date = getPoiTimestamp(poi);
 				return date && date >= startOfPrevious7Days && date < startOfLast7Days
 					? sum + 1
-					: sum
+					: sum;
 			}, 0)
-		: 0
+		: 0;
 
 	const weeklyChange =
 		poisPrevious7Days === 0
@@ -115,136 +115,136 @@ const Dashboard = () => {
 						((poisLast7Days - poisPrevious7Days) / poisPrevious7Days) *
 						100
 					).toFixed(0),
-				)
+				);
 
 	const weeklyChangeTrend =
-		weeklyChange > 0 ? 'up' : weeklyChange < 0 ? 'down' : 'neutral'
+		weeklyChange > 0 ? 'up' : weeklyChange < 0 ? 'down' : 'neutral';
 	const weeklyChangeLabel = hasPoiDates
 		? `${weeklyChange > 0 ? '+' : ''}${weeklyChange}%`
-		: 'Últimos 5 cambios'
+		: 'Últimos 5 cambios';
 
 	const weeklyChangeCaption = hasPoiDates
 		? 'vs semana anterior'
-		: 'Sin fechas exactas'
+		: 'Sin fechas exactas';
 
 	// Helper para obtener el nombre del centro por ID
 	const getCenterName = (centerId) => {
-		if (!allCenters || allCenters.length === 0) return null
-		const center = allCenters.find((c) => Number(c.id) === Number(centerId))
-		return center ? center.name : null
-	}
+		if (!allCenters || allCenters.length === 0) return null;
+		const center = allCenters.find((c) => Number(c.id) === Number(centerId));
+		return center ? center.name : null;
+	};
 
 	// Calcular distribución de POIs por centro
 	const poisByCenter =
 		allCenters && allCenters.length > 0
 			? pois.reduce((acc, poi) => {
-					const centerName = getCenterName(poi.centerId)
-					if (!centerName) return acc // Ignorar POIs sin centro válido
-					const existingCenter = acc.find((c) => c.name === centerName)
+					const centerName = getCenterName(poi.centerId);
+					if (!centerName) return acc; // Ignorar POIs sin centro válido
+					const existingCenter = acc.find((c) => c.name === centerName);
 					if (existingCenter) {
-						existingCenter.value++
+						existingCenter.value++;
 					} else {
-						acc.push({ name: centerName, value: 1 })
+						acc.push({ name: centerName, value: 1 });
 					}
-					return acc
+					return acc;
 				}, [])
-			: []
+			: [];
 
 	// Ordenar por mayor cantidad para resaltar los centros más activos
-	poisByCenter.sort((a, b) => b.value - a.value)
+	poisByCenter.sort((a, b) => b.value - a.value);
 
 	const recentCountsByCenter = lastChanges.reduce((acc, poi) => {
-		const centerName = getCenterName(poi.centerId)
-		if (!centerName) return acc
-		acc[centerName] = (acc[centerName] || 0) + 1
-		return acc
-	}, {})
+		const centerName = getCenterName(poi.centerId);
+		if (!centerName) return acc;
+		acc[centerName] = (acc[centerName] || 0) + 1;
+		return acc;
+	}, {});
 
 	const poisByCenterWithPercent = poisByCenter.map((item) => ({
 		...item,
 		percentage:
 			totalPois > 0 ? Number(((item.value / totalPois) * 100).toFixed(1)) : 0,
 		recentCount: recentCountsByCenter[item.name] || 0,
-	}))
+	}));
 
-	const mostActiveCenter = poisByCenterWithPercent[0] || null
-	const topCenters = poisByCenterWithPercent.slice(0, 3)
+	const mostActiveCenter = poisByCenterWithPercent[0] || null;
+	const topCenters = poisByCenterWithPercent.slice(0, 3);
 
 	const [mostRecentCenterName, mostRecentCenterCount] = Object.entries(
 		recentCountsByCenter,
-	).sort(([, a], [, b]) => b - a)[0] || [null, 0]
+	).sort(([, a], [, b]) => b - a)[0] || [null, 0];
 
 	// Obtener el último centro activo (el último en el array de allCenters)
 	const lastActiveCenterName =
 		allCenters && allCenters.length > 0
 			? allCenters[allCenters.length - 1].name
-			: null
+			: null;
 
 	// Obtener el centro con POIs de hoy más reciente
 	const poiTodayByCenter = pois
 		.filter((poi) => {
-			const date = getPoiTimestamp(poi)
-			return date && date >= startOfToday
+			const date = getPoiTimestamp(poi);
+			return date && date >= startOfToday;
 		})
 		.sort((a, b) => {
-			const dateA = getPoiTimestamp(a)
-			const dateB = getPoiTimestamp(b)
-			return dateB - dateA
-		})[0]
+			const dateA = getPoiTimestamp(a);
+			const dateB = getPoiTimestamp(b);
+			return dateB - dateA;
+		})[0];
 	const lastPoiTodayCenterName = poiTodayByCenter
 		? getCenterName(poiTodayByCenter.centerId)
-		: mostRecentCenterName
+		: mostRecentCenterName;
 
 	// Obtener el centro con POIs de los últimos 7 días más reciente
 	const poiLast7DaysByCenter = pois
 		.filter((poi) => {
-			const date = getPoiTimestamp(poi)
-			return date && date >= startOfLast7Days
+			const date = getPoiTimestamp(poi);
+			return date && date >= startOfLast7Days;
 		})
 		.sort((a, b) => {
-			const dateA = getPoiTimestamp(a)
-			const dateB = getPoiTimestamp(b)
-			return dateB - dateA
-		})[0]
+			const dateA = getPoiTimestamp(a);
+			const dateB = getPoiTimestamp(b);
+			return dateB - dateA;
+		})[0];
 	const lastPoi7DaysCenterName = poiLast7DaysByCenter
 		? getCenterName(poiLast7DaysByCenter.centerId)
-		: mostRecentCenterName
+		: mostRecentCenterName;
 
 	const filteredPoisByCenter = searchQuery
 		? poisByCenterWithPercent.filter((item) =>
 				item.name.toLowerCase().includes(searchQuery.toLowerCase()),
 			)
-		: poisByCenterWithPercent
+		: poisByCenterWithPercent;
 
 	const handleCenterCardClick = (centerName) => {
 		if (!centerName || !allCenters) {
-			navigate('/centros')
-			return
+			navigate('/centros');
+			return;
 		}
-		const center = allCenters.find((c) => c.name === centerName)
+		const center = allCenters.find((c) => c.name === centerName);
 		if (center) {
-			saveSelectedCenter(center)
-			navigate('/viewer')
+			saveSelectedCenter(center);
+			navigate('/viewer');
 		} else {
-			navigate('/centros')
+			navigate('/centros');
 		}
-	}
+	};
 
 	// Handler para click en las barras del gráfico
 	const handleBarClick = (data) => {
-		const centerName = data.name
+		const centerName = data.name;
 		if (!centerName || !allCenters) {
-			navigate('/centros')
-			return
+			navigate('/centros');
+			return;
 		}
-		const center = allCenters.find((c) => c.name === centerName)
+		const center = allCenters.find((c) => c.name === centerName);
 		if (center) {
-			saveSelectedCenter(center)
-			navigate('/viewer')
+			saveSelectedCenter(center);
+			navigate('/viewer');
 		} else {
-			navigate('/centros')
+			navigate('/centros');
 		}
-	}
+	};
 
 	return (
 		<div className="flex flex-col min-h-screen gap-4 p-10 pb-16">
@@ -461,7 +461,8 @@ const Dashboard = () => {
 						) : (
 							<ul className="space-y-3">
 								{lastChanges.map((poi) => {
-									const centerName = getCenterName(poi.centerId) || 'Sin centro'
+									const centerName =
+										getCenterName(poi.centerId) || 'Sin centro';
 									return (
 										<button
 											key={poi.id}
@@ -477,7 +478,7 @@ const Dashboard = () => {
 												{poi.description}
 											</p>
 										</button>
-									)
+									);
 								})}
 							</ul>
 						)}
@@ -539,9 +540,9 @@ const Dashboard = () => {
 											}}
 											formatter={(value, name) => {
 												if (name === 'recentCount')
-													return [`${value} recientes`, 'Últimos cambios']
-												if (name === 'value') return [`${value} POIs`, 'Total']
-												return [value, name]
+													return [`${value} recientes`, 'Últimos cambios'];
+												if (name === 'value') return [`${value} POIs`, 'Total'];
+												return [value, name];
 											}}
 											labelFormatter={(label) => `Centro: ${label}`}
 										/>
@@ -585,7 +586,7 @@ const Dashboard = () => {
 				</>
 			)}
 		</div>
-	)
-}
+	);
+};
 
-export default Dashboard
+export default Dashboard;
