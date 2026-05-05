@@ -1,16 +1,16 @@
 # Visitas Virtuales
 
-Plataforma web que permite explorar espacios de forma inmersiva a través de tours virtuales 360°. Ya no es necesario desplazarse físicamente para conocer un museo, una propiedad inmobiliaria, un campus universitario o cualquier espacio: recorre todo desde cualquier dispositivo con conexión a internet.
+Plataforma web que permite explorar espacios de forma inmersiva a través de tours virtuales 360°. Ya no es necesario desplazarse físicamente para conocer cualquier espacio: recorre todo desde cualquier dispositivo con conexión a internet.
 
 ## Qué es una visita virtual 360°?
 
-Una visita virtual 360° es una experiencia interactiva que permite explorar un espacio como si estuvieras ahí. Puedes moverte libremente, acercar detalles y navegar entre diferentes ubicaciones dentro del mismo recorrido. Es similar a usar Google Street View, pero personalizado para tu negocio.
+Una visita virtual 360° es una experiencia interactiva que permite explorar un espacio como si estuvieras ahí. Puedes moverte libremente, acercar detalles y navegar entre diferentes ubicaciones dentro del mismo recorrido. Es similar a usar Google Street View.
 
 ## Tipos de usuario
 
 ### Administrador
 
-Accede al panel de control completo donde puede gestionar centros, escenas, puntos de interés, ver historial de visitas y configurar cada espacio. Este perfil es para quienes gestionan los contenidos.
+Accede al panel de control completo donde puede gestionar centros, puntos de interés, ver historial de visitas y configurar cada espacio. Este perfil es para quienes gestionan los contenidos.
 
 ### Usuario invitado
 
@@ -24,11 +24,7 @@ Navega por los espacios libremente, girando en cualquier dirección y moviéndot
 
 ### Administración de contenido
 
-El panel de administración te permite gestionar los centros, las escenas y los puntos de interés de cada espacio. Puedes agregar nuevas ubicaciones, actualizar imágenes y configurar cómo se navega entre las diferentes áreas.
-
-### Historial de visitas
-
-Lleva un registro de quién ha visitado cada espacio virtual. Esta funcionalidad es útil para seguimiento comercial y para conocer el interés de tus clientes en diferentes propiedades o áreas.
+El panel de administración te permite gestionar los centros y los puntos de interés de cada espacio. Puedes agregar nuevas ubicaciones, actualizar imágenes y configurar cómo se navega entre las diferentes áreas.
 
 ### Perfiles por centro
 
