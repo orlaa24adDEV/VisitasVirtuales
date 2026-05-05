@@ -10,7 +10,7 @@
 6. [Arquitectura y Roles](#6-arquitectura-y-roles)
 7. [Gestión de Base de Datos](#7-gestión-de-base-de-datos)
 8. [Almacenamiento de Objetos](#8-almacenamiento-de-objetos)
-9. [Despliegue y Docker](#9-despliegue-y-docker)
+9. [Despliegue](#9-despliegue-y-docker)
 10. [Documentación de la API](#10-documentación-de-la-api)
 11. [Solución de Problemas](#11-solución-de-problemas)
 
@@ -89,8 +89,6 @@ Configura:
 ---
 
 ## 5. Ejecutar el Proyecto
-
-Esta sección está **adaptada completamente** a tu guía original, sin recortes.
 
 ### 5.1 Iniciar la base de datos
 
@@ -293,7 +291,7 @@ MinIO se utiliza para almacenar:
 
 ---
 
-## 9. Despliegue y Docker
+## 9. Despliegue
 
 ### Archivos relevantes para despliegue
 
