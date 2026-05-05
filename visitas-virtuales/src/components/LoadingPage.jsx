@@ -1,4 +1,4 @@
-import { LoaderCircle } from 'lucide-react'
+import { LoaderCircle } from 'lucide-react';
 
 export default function LoadingPage({ isExiting }) {
 	return (
@@ -24,5 +24,5 @@ export default function LoadingPage({ isExiting }) {
 				</p>
 			</div>
 		</main>
-	)
+	);
 }

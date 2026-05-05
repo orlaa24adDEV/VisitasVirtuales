@@ -1,25 +1,28 @@
-import { useEffect, useRef } from 'react'
-import { ESCENAS_POR_CENTRO } from '@/helpers/escenas.js'
-import { useCenter } from '../hooks/useCenter'
+import { useEffect, useRef } from 'react';
+import { ESCENAS_POR_CENTRO } from '@/helpers/escenas.js';
+import { useCenter } from '../hooks/useCenter';
 
 // TODO: cambiar a "true" cuando los archivos del build de Unity estén en el folder de Built_Unity
 //Ver instrucciones en public/Build_Unity/.gitkeep
-const UNITY_BUILD_LISTO = true
+const UNITY_BUILD_LISTO = true;
 
 export default function UnityViewer() {
 	// Obtenemos el centro seleccionado del contexto global
-	const { selectedCenter } = useCenter()
-	const selectedCenterId = selectedCenter?.id ?? null
+	const { selectedCenter } = useCenter();
+	const selectedCenterId = selectedCenter?.id ?? null;
 
 	// Calculamos sceneId directamente desde selectedCenter, sin depender de la URL
 	// Así evitamos problemas de timing cuando la URL todavía no fue actualizada
-	const sceneId = selectedCenterId !== null ? (ESCENAS_POR_CENTRO[selectedCenterId] ?? 0) : null
+	const sceneId =
+		selectedCenterId !== null
+			? (ESCENAS_POR_CENTRO[selectedCenterId] ?? 0)
+			: null;
 
 	// Referencia directa al canvas del DOM
 	// Es como un "puntero" para que Unity sepa dónde pintarse
-	const canvasRef = useRef(null)
-	const unityInstanceRef = useRef(null)
-	const containerRef = useRef(null)
+	const canvasRef = useRef(null);
+	const unityInstanceRef = useRef(null);
+	const containerRef = useRef(null);
 
 	// Alterna entre pantalla completa y modo normal
 	// Si no estamos en fullscreen lo activa, si ya estamos lo desactiva
@@ -27,27 +30,27 @@ export default function UnityViewer() {
 		if (!document.fullscreenElement) {
 			// Si no estamos en fullscreen, activarlo
 			containerRef.current?.requestFullscreen().catch((err) => {
-				console.warn('Error al activar fullscreen:', err)
-			})
+				console.warn('Error al activar fullscreen:', err);
+			});
 		} else {
 			// Si estamos en fullscreen, salir
-			document.exitFullscreen()
+			document.exitFullscreen();
 		}
-	}
+	};
 
 	// Se ejecuta una sola vez cuando el componente aparece en pantalla
 	useEffect(() => {
-		if (selectedCenterId === null) return
+		if (selectedCenterId === null) return;
 
 		// Si el build no está listo todavía no se hace nada
 		if (!UNITY_BUILD_LISTO) {
-			console.log('Unity build no disponible aún')
-			return
+			console.log('Unity build no disponible aún');
+			return;
 		}
 
 		// Crear el script del loader de Unity dinámicamente
-		const script = document.createElement('script')
-		script.src = '/Build_Unity/Build/Build_Unity.loader.js'
+		const script = document.createElement('script');
+		script.src = '/Build_Unity/Build/Build_Unity.loader.js';
 
 		// Cuando el script termina de cargar, arrancamos Unity
 		script.onload = () => {
@@ -62,12 +65,12 @@ export default function UnityViewer() {
 					codeUrl: '/Build_Unity/Build/Build_Unity.wasm',
 				},
 				(progress) => {
-					console.log('Cargando Unity... ' + Math.round(progress * 100) + '%')
+					console.log('Cargando Unity... ' + Math.round(progress * 100) + '%');
 				},
 			)
 				//Cuando Unity termino de cargar correctamente
 				.then((unityInstance) => {
-					unityInstanceRef.current = unityInstance
+					unityInstanceRef.current = unityInstance;
 
 					//Delay de 1.5seg para que encuente el gameobject antes
 					setTimeout(() => {
@@ -76,33 +79,33 @@ export default function UnityViewer() {
 							'WebBridge',
 							'RecibirIdCentro',
 							selectedCenterId.toString(),
-						)
+						);
 
-						console.log('ID enviado a Unity:', selectedCenterId)
+						console.log('ID enviado a Unity:', selectedCenterId);
 
 						if (sceneId !== null) {
 							unityInstance.SendMessage(
 								'WebBridge',
 								'RecibirIdEscena',
 								sceneId.toString(),
-							)
-							console.log('ID de escena enviado a Unity:', sceneId)
+							);
+							console.log('ID de escena enviado a Unity:', sceneId);
 						} else {
 							console.log(
 								'No se especificó escena en la URL, Unity usará la escena por defecto',
-							)
+							);
 						}
-					}, 1500) // 1.5 seg de espera
+					}, 1500); // 1.5 seg de espera
 				})
 
 				// Si Unity falla al cargar
 				.catch((error) => {
-					console.warn('Error al cargar Unity:', error)
-				})
-		}
+					console.warn('Error al cargar Unity:', error);
+				});
+		};
 
 		// Agregar el script al documento para que empiece a descargarse
-		document.body.appendChild(script)
+		document.body.appendChild(script);
 
 		// Limpieza cuando el usuario salga de esta página, y que no quede unity en segundo plano
 		return () => {
@@ -111,21 +114,21 @@ export default function UnityViewer() {
 					.Quit()
 					.then(() => {
 						if (document.body.contains(script)) {
-							document.body.removeChild(script)
+							document.body.removeChild(script);
 						}
 					})
 					.catch(() => {
 						if (document.body.contains(script)) {
-							document.body.removeChild(script)
+							document.body.removeChild(script);
 						}
-					})
+					});
 			} else {
 				if (document.body.contains(script)) {
-					document.body.removeChild(script)
+					document.body.removeChild(script);
 				}
 			}
-		}
-	}, [sceneId, selectedCenterId])
+		};
+	}, [sceneId, selectedCenterId]);
 
 	// Lo que se muestra en pantalla
 	return (
@@ -172,5 +175,5 @@ export default function UnityViewer() {
 				</div>
 			)}
 		</div>
-	)
+	);
 }

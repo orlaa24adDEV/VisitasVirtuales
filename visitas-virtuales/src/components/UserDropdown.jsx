@@ -1,27 +1,27 @@
-import DropdownItem from './DropdownItem.jsx'
-import { ChevronDown, LogOut, Settings } from 'lucide-react'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/hooks/useAuth.js'
-import ClickOutsideWrapper from './ClickOutsideWrapper.jsx'
+import DropdownItem from './DropdownItem.jsx';
+import { ChevronDown, LogOut, Settings } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth.js';
+import ClickOutsideWrapper from './ClickOutsideWrapper.jsx';
 
 export default function UserDropdown() {
-	const { user, logout } = useAuth()
-	const navigate = useNavigate()
-	const [isOpen, setIsOpen] = useState(false)
-	if (!user) return null
-	const { email, role, imageUrl, username } = user
+	const { user, logout } = useAuth();
+	const navigate = useNavigate();
+	const [isOpen, setIsOpen] = useState(false);
+	if (!user) return null;
+	const { email, role, imageUrl, username } = user;
 
 	const handleLogoutClick = () => {
-		logout()
-		setIsOpen(false)
-		navigate('/')
-	}
+		logout();
+		setIsOpen(false);
+		navigate('/');
+	};
 
 	const handleMenuItemClick = (path) => {
-		setIsOpen(false)
-		navigate(path)
-	}
+		setIsOpen(false);
+		navigate(path);
+	};
 
 	return (
 		<ClickOutsideWrapper onClickOutside={() => setIsOpen(false)}>
@@ -93,5 +93,5 @@ export default function UserDropdown() {
 				)}
 			</div>
 		</ClickOutsideWrapper>
-	)
+	);
 }

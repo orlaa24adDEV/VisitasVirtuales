@@ -1,20 +1,20 @@
 // CenterSelectionPage — tarjetas con imagen superior, info centrada y línea azul inferior
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '@/hooks/useAuth.js'
-import { useCenter } from '@/hooks/useCenter.js'
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth.js';
+import { useCenter } from '@/hooks/useCenter.js';
 // eslint-disable-next-line no-unused-vars
-import fetchWithTimeout from '@/helpers/fetchWithTimeout.js'
-import { toast } from 'sonner'
-import { ArrowLeft, Settings } from 'lucide-react'
-import Button from '@/components/Button.jsx'
-import UserDropdown from '../components/UserDropdown'
+import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
+import { toast } from 'sonner';
+import { ArrowLeft, Settings } from 'lucide-react';
+import Button from '@/components/Button.jsx';
+import UserDropdown from '../components/UserDropdown';
 
 export default function CenterSelectionPage() {
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
-	const { isAdmin, isTeacher } = useAuth()
-	const isStaff = isAdmin || isTeacher
+	const { isAdmin, isTeacher } = useAuth();
+	const isStaff = isAdmin || isTeacher;
 	const {
 		allCenters,
 		selectedCenter,
@@ -22,29 +22,29 @@ export default function CenterSelectionPage() {
 		centersError,
 		saveSelectedCenter,
 		fetchCenters,
-	} = useCenter()
+	} = useCenter();
 
 	// Iniciamos el local con lo que haya en el contexto (por si vuelve para cambiar)
 	const [localSelectedCenter, setLocalSelectedCenter] = useState(
 		selectedCenter || null,
-	)
+	);
 
 	useEffect(() => {
 		if (!isCentersLoading && (!allCenters || allCenters.length === 0)) {
-			fetchCenters()
+			fetchCenters();
 		}
-	}, [allCenters, isCentersLoading, fetchCenters])
+	}, [allCenters, isCentersLoading, fetchCenters]);
 
 	useEffect(() => {
-		if (isCentersLoading || centersError) return
+		if (isCentersLoading || centersError) return;
 
 		// Si no hay centros, no hacemos nada (el toast se muestra en la Landing)
-		if (!allCenters || allCenters.length === 0) return
+		if (!allCenters || allCenters.length === 0) return;
 
 		if (!selectedCenter) {
 			toast.info('Selecciona un centro para continuar', {
 				description: `Es necesario elegir un centro educativo para ${isAdmin || isTeacher ? 'configurar sus POIs y acceder a su tour virtual' : 'acceder al tour virtual'}`,
-			})
+			});
 		}
 	}, [
 		isCentersLoading,
@@ -53,24 +53,24 @@ export default function CenterSelectionPage() {
 		selectedCenter,
 		isAdmin,
 		isTeacher,
-	])
+	]);
 
 	const handleConfirm = () => {
 		if (localSelectedCenter) {
 			// Actualizamos el contexto global (esto permitirá entrar a /viewer)
-			saveSelectedCenter(localSelectedCenter)
+			saveSelectedCenter(localSelectedCenter);
 
 			toast.success(
 				`${isAdmin || isTeacher ? `Seleccionado ${localSelectedCenter.name}` : `Cargando ${localSelectedCenter.name}`}`,
 				{
 					description: `${isAdmin || isTeacher ? 'Ahora puedes configurar los POIs o acceder al tour virtual' : 'Preparando tour virtual'}`,
 				},
-			)
+			);
 
 			// Redirigimos a la escena de Unity o al gestor de POIs según el rol
-			navigate(isAdmin || isTeacher ? '/listpois' : '/viewer')
+			navigate(isAdmin || isTeacher ? '/listpois' : '/viewer');
 		}
-	}
+	};
 
 	return (
 		<div className="min-h-screen bg-slate-50 flex flex-col gap-4">
@@ -122,7 +122,7 @@ export default function CenterSelectionPage() {
 						<>
 							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 								{allCenters.map((center) => {
-									const isActive = localSelectedCenter?.id === center.id
+									const isActive = localSelectedCenter?.id === center.id;
 									return (
 										<div
 											key={center.id}
@@ -138,10 +138,10 @@ export default function CenterSelectionPage() {
 											{isAdmin && isActive && (
 												<button
 													onClick={(e) => {
-														e.stopPropagation()
+														e.stopPropagation();
 														navigate('/settings', {
 															state: { centerId: center.id },
-														})
+														});
 													}}
 													className="cursor-pointer absolute top-3 right-3 z-10 p-2 bg-white/80 hover:bg-white rounded-full shadow-md transition-colors duration-200 backdrop-blur-sm"
 												>
@@ -182,8 +182,8 @@ export default function CenterSelectionPage() {
 															size="small"
 															className="w-full"
 															onClick={(e) => {
-																e.stopPropagation()
-																handleConfirm()
+																e.stopPropagation();
+																handleConfirm();
 															}}
 														>
 															Acceder al Centro
@@ -196,7 +196,7 @@ export default function CenterSelectionPage() {
 												</div>
 											</div>
 										</div>
-									)
+									);
 								})}
 							</div>
 						</>
@@ -204,5 +204,5 @@ export default function CenterSelectionPage() {
 				</div>
 			</main>
 		</div>
-	)
+	);
 }

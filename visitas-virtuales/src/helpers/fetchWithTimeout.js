@@ -1,7 +1,7 @@
 export default function fetchWithTimeout(url, options, timeout = 10000) {
 	if (typeof options === 'number') {
-		timeout = options
-		options = {}
+		timeout = options;
+		options = {};
 	}
 
 	return Promise.race([
@@ -12,5 +12,5 @@ export default function fetchWithTimeout(url, options, timeout = 10000) {
 				timeout,
 			),
 		),
-	])
+	]);
 }

@@ -1,4 +1,4 @@
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown } from 'lucide-react';
 
 export default function Select({
 	name,
@@ -24,5 +24,5 @@ export default function Select({
 			</select>
 			<ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500" />
 		</div>
-	)
+	);
 }
