@@ -42,7 +42,18 @@ function App() {
 			<div className="flex-col flex w-full h-screen relative">
 				{/* Header: Se oculta en Landing. Landing y CenterSelectionPage tienen su propio header */}
 				{!isLanding && (
-					<TopHeader onMenuClick={() => setIsMobileMenuOpen(true)} />
+					<TopHeader
+						onMenuClick={() => setIsMobileMenuOpen(true)}
+						isLog={!!user}
+						onLogout={() => {}}
+						userName={user?.username}
+						userEmail={user?.email}
+						userImg={
+							user?.imageUrl ||
+							`https://api.dicebear.com/9.x/identicon/svg?seed=${user?.email}`
+						}
+						role={user?.role}
+					/>
 				)}
 
 				<main
