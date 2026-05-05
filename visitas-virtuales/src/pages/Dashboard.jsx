@@ -28,11 +28,7 @@ const Dashboard = () => {
 	// Cargar todos los POIs al montar el componente
 	useEffect(() => {
 		const fetchData = async () => {
-			const fetchPois = fetchWithAuth(
-				'/api/pois',
-				{},
-				logout
-			);
+			const fetchPois = fetchWithAuth('/api/pois', {}, logout);
 			try {
 				const response = await fetchPois;
 				const data = await response.json();

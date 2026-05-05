@@ -1,8 +1,8 @@
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom';
 
 export default function NavButton({ item, isExpanded, onClick }) {
-	const location = useLocation()
-	const currentPath = location.pathname
+	const location = useLocation();
+	const currentPath = location.pathname;
 
 	return (
 		<NavLink
@@ -12,11 +12,11 @@ export default function NavButton({ item, isExpanded, onClick }) {
 				// If standard isActive is true, OR if we are in an extra path (like /crud)
 				const active =
 					isActive ||
-					item.extraActivePaths?.some((p) => currentPath.startsWith(p))
+					item.extraActivePaths?.some((p) => currentPath.startsWith(p));
 
 				return `flex w-full items-center rounded-lg px-4 py-3 cursor-pointer transition-all duration-200 
                     ${active ? 'bg-white text-blue-600 shadow-md font-bold' : 'hover:bg-blue-700 text-blue-100 hover:text-white'}
-                    ${isExpanded ? 'justify-start gap-4' : 'lg:justify-center'}`
+                    ${isExpanded ? 'justify-start gap-4' : 'lg:justify-center'}`;
 			}}
 		>
 			<div className="shrink-0 flex items-center justify-center">
@@ -29,5 +29,5 @@ export default function NavButton({ item, isExpanded, onClick }) {
 				{item.name}
 			</span>
 		</NavLink>
-	)
+	);
 }

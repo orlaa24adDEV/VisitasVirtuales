@@ -51,11 +51,10 @@ export const CenterProvider = ({ children }) => {
 			centersError: null,
 		}));
 		try {
-			const response = await fetchWithAuth(
-				'/api/centers',
-				{},
-				logout
-			);
+			const response = await fetch('/api/centers', {
+				method: 'GET',
+				headers: { 'Content-Type': 'application/json' },
+			});
 
 			if (!response.ok) throw new Error('Error al cargar centros');
 

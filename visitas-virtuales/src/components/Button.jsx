@@ -1,4 +1,4 @@
-import { Children, isValidElement } from 'react'
+import { Children, isValidElement } from 'react';
 
 const Button = ({
 	onClick,
@@ -10,7 +10,7 @@ const Button = ({
 	className = '',
 }) => {
 	const baseStyles =
-		'group rounded-md transition-all min-w-fit flex items-center disabled:opacity-50 justify-center whitespace-nowrap disabled:cursor-not-allowed cursor-pointer shadow-sm duration-200 active:scale-95 select-none shadow-sm'
+		'group rounded-md transition-all min-w-fit flex items-center disabled:opacity-50 justify-center whitespace-nowrap disabled:cursor-not-allowed cursor-pointer shadow-sm duration-200 active:scale-95 select-none shadow-sm';
 
 	const variants = {
 		primary: 'bg-blue-600 text-white hover:bg-blue-700',
@@ -20,9 +20,9 @@ const Button = ({
 		outline:
 			'bg-transparent border border-slate-200 text-slate-700 hover:bg-slate-50',
 		ghost: 'bg-transparent text-slate-700 hover:bg-slate-50 shadow-none!',
-	}
+	};
 
-	const childrenArray = Children.toArray(children)
+	const childrenArray = Children.toArray(children);
 
 	const iconIdx = childrenArray.findIndex(
 		(child) =>
@@ -30,30 +30,30 @@ const Button = ({
 			(typeof child.type === 'function' ||
 				typeof child.type === 'object' ||
 				child.type === 'svg'),
-	)
+	);
 
-	const hasIcon = iconIdx !== -1
-	const iconOnly = hasIcon && childrenArray.length === 1
+	const hasIcon = iconIdx !== -1;
+	const iconOnly = hasIcon && childrenArray.length === 1;
 
 	const sizes = {
 		small: `text-sm h-9 ${iconOnly ? 'w-9 p-0' : 'px-3'} font-medium ${hasIcon ? 'pl-2.5 pr-3.25' : ''}`,
 		normal: `text-sm sm:text-base h-10 ${iconOnly ? 'w-10 p-0' : 'px-4'} py-2 font-medium ${hasIcon ? 'pl 3.5 pr-4.25' : ''}`,
 		large: `text-lg h-12 ${iconOnly ? 'w-12 p-0' : 'px-8'} py-3 font-semibold ${hasIcon ? 'pl-7.5 pr-8.25' : ''}`,
-	}
+	};
 
 	const renderChildren = () => {
-		if (iconOnly) return childrenArray[iconIdx]
+		if (iconOnly) return childrenArray[iconIdx];
 
 		return childrenArray.map((child, idx) => {
 			if (idx === iconIdx && isValidElement(child)) {
-				const isStart = idx === 0
+				const isStart = idx === 0;
 				const marginClass = isStart
 					? size === 'small'
 						? 'mr-1.5'
 						: 'mr-2'
 					: size === 'small'
 						? 'ml-1.5'
-						: 'ml-2'
+						: 'ml-2';
 
 				return (
 					<span
@@ -62,11 +62,11 @@ const Button = ({
 					>
 						{child}
 					</span>
-				)
+				);
 			}
-			return typeof child === 'string' ? <span key={idx}>{child}</span> : child
-		})
-	}
+			return typeof child === 'string' ? <span key={idx}>{child}</span> : child;
+		});
+	};
 
 	return (
 		<button
@@ -77,7 +77,7 @@ const Button = ({
 		>
 			{renderChildren()}
 		</button>
-	)
-}
+	);
+};
 
-export default Button
+export default Button;

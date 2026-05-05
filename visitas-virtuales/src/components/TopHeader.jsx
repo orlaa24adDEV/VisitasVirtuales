@@ -1,22 +1,22 @@
-import '../assets/App.css'
+import '../assets/App.css';
 
-import { Menu } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '@/hooks/useAuth.js'
-import Button from './Button.jsx'
-import CenterSelectButton from './CenterSelectButton.jsx'
-import { useCenter } from '../hooks/useCenter.js'
-import UserDropdown from './UserDropdown.jsx'
+import { Menu } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth.js';
+import Button from './Button.jsx';
+import CenterSelectButton from './CenterSelectButton.jsx';
+import { useCenter } from '../hooks/useCenter.js';
+import UserDropdown from './UserDropdown.jsx';
 
 /* TopHeader: Barra superior de la app.
  * Logueado: Muestra nombre, rol, imagen y dropdown con opciones (configuración, logout).
  * Invitado: Muestra botón para iniciar sesión.
  * Si hay un centro seleccionado, muestra botón para cambiar de centro.*/
 export default function TopHeader({ onMenuClick }) {
-	const navigate = useNavigate()
-	const { isAdmin, isTeacher } = useAuth()
-	const isStaff = isAdmin || isTeacher
-	const { selectedCenter } = useCenter()
+	const navigate = useNavigate();
+	const { isAdmin, isTeacher } = useAuth();
+	const isStaff = isAdmin || isTeacher;
+	const { selectedCenter } = useCenter();
 	return (
 		<header
 			className="sticky top-0 z-40 h-16 w-full flex items-center justify-between p-4 lg:py-4 lg:px-8  lg:justify-end bg-slate-50/80 backdrop-blur-xl border-b border-blue-100/50
@@ -64,5 +64,5 @@ export default function TopHeader({ onMenuClick }) {
 				)}
 			</div>
 		</header>
-	)
+	);
 }

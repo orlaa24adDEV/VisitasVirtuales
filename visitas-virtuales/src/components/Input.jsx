@@ -1,4 +1,4 @@
-import { Children } from 'react'
+import { Children } from 'react';
 
 export default function Input({
 	name,
@@ -12,9 +12,9 @@ export default function Input({
 	icon,
 }) {
 	const baseStyles =
-		'group flex w-full flex-row gap-2 items-center bg-white border border-slate-200 rounded-lg shadow-sm transition-all duration-200 focus-within:ring-4 focus-within:ring-blue-600/10 focus-within:border-blue-600'
-	const childArray = Children.toArray(children)
-	const hasTwoChildren = childArray.length >= 2
+		'group flex w-full flex-row gap-2 items-center bg-white border border-slate-200 rounded-lg shadow-sm transition-all duration-200 focus-within:ring-4 focus-within:ring-blue-600/10 focus-within:border-blue-600';
+	const childArray = Children.toArray(children);
+	const hasTwoChildren = childArray.length >= 2;
 
 	return (
 		<div className={`${baseStyles} ${className}`}>
@@ -29,5 +29,5 @@ export default function Input({
 				className={`w-full p-2 focus:outline-none ${icon ? 'pl-0' : ''}`}
 			/>
 		</div>
-	)
+	);
 }

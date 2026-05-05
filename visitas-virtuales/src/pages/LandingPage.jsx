@@ -1,15 +1,15 @@
-import { Link } from 'react-router-dom'
-import tourImg from '../assets/tour360.jpg'
-import proyectoImg from '../assets/proyecto360.jpg'
-import informationImg from '../assets/information.jpg'
-import accessImg from '../assets/access.jpg'
-import UserDropdown from '../components/UserDropdown'
-import { useAuth } from '@/hooks/useAuth.js'
-import Button from '@/components/Button.jsx'
+import { Link } from 'react-router-dom';
+import tourImg from '../assets/tour360.jpg';
+import proyectoImg from '../assets/proyecto360.jpg';
+import informationImg from '../assets/information.jpg';
+import accessImg from '../assets/access.jpg';
+import UserDropdown from '../components/UserDropdown';
+import { useAuth } from '@/hooks/useAuth.js';
+import Button from '@/components/Button.jsx';
 
 const LandingPage = () => {
-	const { isAdmin, isTeacher } = useAuth()
-	const isStaff = isAdmin || isTeacher
+	const { isAdmin, isTeacher } = useAuth();
+	const isStaff = isAdmin || isTeacher;
 
 	return (
 		// Navbar
@@ -234,6 +234,6 @@ const LandingPage = () => {
 				</div>
 			</section>
 		</div>
-	)
-}
-export default LandingPage
+	);
+};
+export default LandingPage;
