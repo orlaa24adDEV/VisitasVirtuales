@@ -8,7 +8,6 @@ import {
 	removeLocalStorageAllCenters,
 	removeLocalStorageSelectedCenter,
 } from '../helpers/centerLocalStorage.js';
-import fetchWithAuth from '../helpers/fetchWithAuth.js';
 import { CenterContext } from './CenterContext';
 import { useAuth } from '../hooks/useAuth.js';
 

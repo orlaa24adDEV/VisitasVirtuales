@@ -3,7 +3,7 @@ import Button from './Button.jsx';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
-import { MapPinIcon } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { useCenter } from '../hooks/useCenter.js';
 import Input from './Input.jsx';
 import fetchWithAuth from '../helpers/fetchWithAuth.js';
@@ -148,12 +148,12 @@ function Crud() {
 	return (
 		<div className="flex flex-col items-center justify-center min-h-full w-full px-3 py-6 lg:px-12 md:px-10">
 			<div className="flex flex-col gap-3 w-full justify-center min-h-125 mb-50 max-w-2xl">
-				<div className="flex flex-col gap-px">
-					<p className="text-sm flex items-center gap-1 font-medium text-blue-600">
-						<MapPinIcon className="w-4 h-4" />
+				<div className="flex flex-col gap-1 w-full text-center lg:text-start pb-4">
+					<p className="text-sm flex justify-center lg:justify-start items-center gap-1 font-base lg:font-medium text-blue-600">
+						<MapPin className="w-4 h-4" />
 						<span className="">{selectedCenter.name}</span>
 					</p>
-					<h2 className="text-xl font-semibold text-slate-800">
+					<h2 className="text-xl lg:text-2xl font-semibold text-slate-700">
 						{isEditing
 							? 'Editar punto de interés'
 							: 'Crear nuevo punto de interés'}

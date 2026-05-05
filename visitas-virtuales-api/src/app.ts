@@ -8,6 +8,7 @@ import userRoutes from './routes/userRoutes.ts'
 import centerRoutes from './routes/centerRoutes.ts'
 import poiRoutes from './routes/poiRoutes.ts'
 import storageRoutes from './routes/storageRoutes.ts'
+import traceabilityRoutes from './routes/traceabilityRoutes.ts'
 import errorHandler from './middlewares/errorHandler.ts'
 import cors from 'cors'
 import helmet from 'helmet'
@@ -85,6 +86,9 @@ app.use('/api/v1/', centerRoutes)
 
 // Montar rutas de POIs
 app.use('/api/v1/', poiRoutes)
+
+// Montar rutas de trazabilidad
+app.use('/api/v1/', traceabilityRoutes)
 
 // Montar ruta de especificación OpenAPI (solo en desarrollo y staging)
 if (env.APP_STAGE !== 'prod') {
