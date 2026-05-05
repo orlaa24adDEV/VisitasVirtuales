@@ -33,7 +33,7 @@ export default function UserDropdown() {
 					<div className="flex flex-col items-end leading-tight">
 						<h2 className="text-sm font-bold text-slate-800">{username}</h2>
 						<span
-							className={`px-1.75 py-0.75 rounded text-[11px] font-semibold uppercase ${
+							className={`px-1.75 py-0.75 rounded text-[11px] font-semibold ${
 								role === 'admin'
 									? 'bg-blue-100/50 text-blue-600'
 									: role === 'teacher'
