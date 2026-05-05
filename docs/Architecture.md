@@ -21,6 +21,7 @@ El frontend es una aplicacion web React que sirve como interfaz principal para l
 - **Sonner**: Sistema de notificaciones
 
 Estructura del codigo:
+
 ```
 src/
 ├── assets/       # Recursos estaticos
@@ -45,6 +46,7 @@ El backend es una API REST construida con Express que maneja toda la logica de n
 - **Zod**: Validacion de esquemas
 
 Estructura del codigo:
+
 ```
 src/
 ├── controllers/   # Logica de controladores
@@ -81,7 +83,7 @@ El componente Unity genera contenido 3D interactivo que se carga en el frontend 
 │  └─────────┬─────────┘        └──────────┬──────────────┘  │
 │            │                             │                    │
 │            │       REST API              │   WebBridge       │
-│            │     (Puerto 3000)           │   (postMessage)   │
+│            │     (Puerto 8000)           │   (postMessage)   │
 └────────────┼─────────────────────────────┼────────────────────┘
              │                             │
              ▼                             ▼
@@ -105,14 +107,14 @@ El componente Unity genera contenido 3D interactivo que se carga en el frontend 
 
 ### Puertos y Servicios
 
-| Componente      | Puerto | Descripcion                    |
-|-----------------|--------|--------------------------------|
-| Frontend Dev    | 5173   | Servidor de desarrollo Vite     |
-| Frontend Prod   | 4173   | Servidor de preview Vite        |
-| API REST        | 3000   | Servidor Express                |
-| PostgreSQL     | 5432   | Base de datos                  |
-| MinIO          | 9000  | Almacenamiento de objetos       |
-| MinIO Console  | 9001  | Interfaz administrativa      |
+| Componente    | Puerto | Descripcion                 |
+| ------------- | ------ | --------------------------- |
+| Frontend Dev  | 5173   | Servidor de desarrollo Vite |
+| Frontend Prod | 4173   | Servidor de preview Vite    |
+| API REST      | 8000   | Servidor Express            |
+| PostgreSQL    | 5432   | Base de datos               |
+| MinIO         | 9000   | Almacenamiento de objetos   |
+| MinIO Console | 9001   | Interfaz administrativa     |
 
 ---
 

@@ -19,8 +19,8 @@ try {
 		},
 		apis: ['./src/routes/*.ts', './src/routes/*'],
 	})
-	fs.writeFileSync('docs/openapi.json', JSON.stringify(swaggerSpec, null, 2))
-	console.log('OpenAPI spec generada correctamente en docs/openapi.json')
+	fs.writeFileSync('./openapi.json', JSON.stringify(swaggerSpec, null, 2))
+	console.log('OpenAPI spec generada correctamente en ./openapi.json')
 	process.exitCode = 0
 } catch (error) {
 	console.error('Error al generar OpenAPI spec:', error)

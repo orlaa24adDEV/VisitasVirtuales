@@ -89,9 +89,12 @@ app.use('/api/v1/', poiRoutes)
 // Montar ruta de especificación OpenAPI (solo en desarrollo y staging)
 if (env.APP_STAGE !== 'prod') {
 	const currentDir = dirname(fileURLToPath(import.meta.url))
-	const openApiPath = resolve(currentDir, '../docs/openapi.json')
+	const openApiPath = resolve(currentDir, '../openapi.json')
 	const swaggerSpec = JSON.parse(readFileSync(openApiPath, 'utf-8'))
 	app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+	console.log(
+		`Documentación API disponible en ${env.APP_STAGE === 'dev' ? `http://localhost:${env.APP_PORT}` : env.FRONTEND_URL}/api-docs`,
+	)
 }
 
 // Middleware para manejar errores lanzados desde servicios
