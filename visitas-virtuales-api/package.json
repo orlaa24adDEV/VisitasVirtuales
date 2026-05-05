@@ -1,6 +1,6 @@
 {
-	"name": "visitasvirtualeszaitec",
-	"version": "1.0.0",
+	"name": "visitas-virtuales-api",
+	"version": "0.1.0",
 	"description": "",
 	"main": "index.js",
 	"scripts": {
