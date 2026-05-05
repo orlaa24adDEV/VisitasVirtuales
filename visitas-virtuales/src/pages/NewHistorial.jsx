@@ -1,42 +1,84 @@
-import { useState, useEffect } from 'react';
-import { fetchWithAuth } from '../helpers/fetchWithAuth.js';
-import { useAuth } from '../hooks/useAuth.js';
 import { toast } from 'sonner';
 import { History, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { usePoiHistory } from '../hooks/usePoiHistory.js';
 import { useCenter } from '../hooks/useCenter.js';
+import { useMemo, useState } from 'react';
 
 export default function NewHistorial() {
-	const [poiHistory, setPoiHistory] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const { logout } = useAuth();
-	const { saveSelectedCenter, allCenters } = useCenter();
 	const navigate = useNavigate();
+	const { saveSelectedCenter, allCenters } = useCenter();
+	const { isPoiHistoryLoading, poiHistory } = usePoiHistory();
 
-	useEffect(() => {
-		const fetchPoiHistory = async () => {
-			try {
-				const response = await fetchWithAuth(
-					'/api/audit/poi-history',
-					{ method: 'GET' },
-					logout,
-				);
-				if (!response.ok) {
-					toast.error('Error al cargar el historial de POIs');
-					return;
-				}
-				const data = await response.json();
-				setPoiHistory(Array.isArray(data.history) ? data.history : []);
-			} catch (error) {
-				console.error('Error fetching POI history:', error);
-			} finally {
-				setLoading(false);
-			}
-		};
-		fetchPoiHistory();
-	}, [logout]);
+	const centerNames = poiHistory.map(
+		(entry) => entry.poi.center?.name || 'Centro desconocido',
+	);
+	const userNames = poiHistory.map(
+		(entry) => entry.user?.username || 'Usuario desconocido',
+	);
+	const uniqueCenters = [...new Set(centerNames)];
+	const uniqueUsers = [...new Set(userNames)];
 
-	if (loading)
+	const filterMap = new Map([
+		['Fecha', ['Más recientes', 'Más antiguos']],
+		['Centro', ['Todos', ...uniqueCenters]],
+		['Usuario', ['Todos', ...uniqueUsers]],
+	]);
+
+	const filterInitialState = {
+		fecha: filterMap.get('Fecha')[0],
+		centro: filterMap.get('Centro')[0],
+		usuario: filterMap.get('Usuario')[0],
+	};
+
+	const [filter, setFilter] = useState(filterInitialState);
+
+	const isFiltered =
+		filter.centro !== 'Todos' ||
+		filter.usuario !== 'Todos' ||
+		filter.fecha !== filterInitialState.fecha;
+
+	const filteredPoiHistory = useMemo(() => {
+		let result = [...poiHistory];
+
+		if (filter.centro && filter.centro !== 'Todos') {
+			result = result.filter((entry) => {
+				const centerName = entry.poi?.center?.name || 'Centro desconocido';
+				return centerName === filter.centro;
+			});
+		}
+
+		if (filter.usuario && filter.usuario !== 'Todos') {
+			result = result.filter((poi) => poi.user?.username === filter.usuario);
+		}
+
+		if (filter.fecha === 'Más antiguos') {
+			result.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+		} else {
+			result.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+		}
+
+		return result;
+	}, [filter, poiHistory]);
+
+	// Seleccionar centro relacionado al cambio y redirigir a la lista de POIs de ese centro
+	const handleEntryClick = (entry) => {
+		if (!entry.poi || !entry.poi.center) {
+			toast.error('No se pudo determinar el centro de este cambio');
+			return;
+		}
+		saveSelectedCenter(
+			allCenters.find((c) => c.id === entry.details.oldValue.centerId) || null,
+		);
+		navigate(`/listpois`);
+	};
+
+	const handleFilterChange = (e) => {
+		const { name, value } = e.target;
+		setFilter((prev) => ({ ...prev, [name]: value }));
+	};
+
+	if (isPoiHistoryLoading)
 		return (
 			<div className="flex h-full items-center justify-center">
 				<div className="flex flex-col items-center gap-2">
@@ -48,21 +90,8 @@ export default function NewHistorial() {
 			</div>
 		);
 
-	// Seleccionar centro relacionado al cambio y redirigir a la lista de POIs de ese centro
-	const handleEntryClick = (entry) => {
-		console.log('Entry clicked:', entry);
-		if (!entry.poi || !entry.poi.center) {
-			toast.error('No se pudo determinar el centro de este cambio');
-			return;
-		}
-		saveSelectedCenter(
-			allCenters.find((c) => c.id === entry.details.oldValue.centerId) || null,
-		);
-		navigate(`/listpois`);
-	};
-
 	return (
-		<div className="relative flex flex-col items-center justify-center min-h-full w-full py-6 lg:py-20 lg:px-12 md:px-10 px-3">
+		<div className="relative flex flex-col items-center justify-center min-h-full w-full py-6 lg:py-20 lg:px-12 md:px-10 px-3 mt-8">
 			<section className="flex flex-col gap-6 w-full justify-center lg:justify-start min-h-125 max-w-4xl">
 				<div className="flex flex-col w-full justify-between items-center lg:items-start gap-1 p-2 lg:p-0">
 					<h1 className="text-xl lg:text-2xl font-semibold text-slate-800 flex items-center gap-2">
@@ -77,10 +106,33 @@ export default function NewHistorial() {
 						</p>
 					</div>
 				</div>
+				{/* Filtros */}
+				<div className="w-full gap-6 flex items-center justify-start flex-wrap p-4 bg-slate-50 rounded-lg outline outline-slate-100 shadow-sm/8">
+					{Array.from(filterMap.entries()).map(([filterName, options]) => (
+						<label
+							key={filterName}
+							className="text-sm text-slate-600 gap-2 inline-flex items-center"
+						>
+							<span className="font-medium text-slate-500">{filterName}</span>
+							<select
+								value={filter[filterName.toLowerCase()]}
+								name={filterName.toLowerCase()}
+								onChange={handleFilterChange}
+								className="border border-slate-200 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-600"
+							>
+								{options.map((option) => (
+									<option key={option} value={option}>
+										{option}
+									</option>
+								))}
+							</select>
+						</label>
+					))}
+				</div>
 
-				{poiHistory.length > 0 ? (
-					<div className="relative border-l-2 border-blue-200 ml-4 md:ml-6">
-						{poiHistory.map((entry, idx) => {
+				{filteredPoiHistory.length > 0 ? (
+					<div className="relative ml-4 md:ml-6">
+						{filteredPoiHistory.map((entry, idx) => {
 							const oldV =
 								entry.details?.oldValue ?? entry.details?.before ?? {};
 							const newV =
@@ -97,11 +149,16 @@ export default function NewHistorial() {
 							return (
 								<div
 									key={entry.id}
-									className="mb-10 ml-6 group"
+									className="mb-10 ml-6 group relative"
 									onClick={() => handleEntryClick(entry)}
 								>
-									{/* Punto de la línea de tiempo con efecto hover */}
-									<span className="absolute flex items-center justify-center w-4 h-4 bg-white border-2 border-blue-600 rounded-full -left-2.25 group-hover:bg-blue-600 transition-colors shadow-sm cursor-pointer"></span>
+									{/* Linea vertical */}
+									{idx < filteredPoiHistory.length - 1 && (
+										<div className="absolute -left-6.25 top-7 -bottom-18 w-px bg-blue-200" />
+									)}
+
+									{/* Punto */}
+									<span className="absolute top-6.5 -left-8 flex items-center justify-center w-4 h-4 bg-white border-2 border-blue-600 rounded-full group-hover:bg-blue-600 transition-colors shadow-sm cursor-pointer" />
 
 									<div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 cursor-pointer">
 										{/* Header con información del centro */}
@@ -110,15 +167,26 @@ export default function NewHistorial() {
 											<h3 className="text-lg font-semibold text-slate-800">
 												{centerName}
 											</h3>
-											<span className="ml-auto text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">
-												{(entry.action || 'UNKNOWN').toUpperCase()}
+											<span
+												className={`ml-auto text-xs font-medium px-2 py-1 rounded ${
+													entry.action === 'create'
+														? 'bg-green-100 text-green-700'
+														: entry.action === 'delete'
+															? 'bg-red-100 text-red-700'
+															: 'bg-amber-100 text-amber-700'
+												}`}
+											>
+												{(entry.action === 'create' && 'Crear') ||
+													(entry.action === 'delete' && 'Eliminar') ||
+													(entry.action === 'update' && 'Modificar') ||
+													'Desconocida'}
 											</span>
 										</div>
 
 										{/* Fecha y hora */}
 										<div className="flex justify-between items-start gap-4 mb-4">
 											<div className="flex gap-2 items-center">
-												<div className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">
+												<div className="text-xs font-bold text-slate-600 bg-slate-50 px-2 py-1 rounded">
 													{new Date(entry.timestamp).toLocaleDateString()}
 												</div>
 												<div className="text-xs text-slate-400">
@@ -180,7 +248,11 @@ export default function NewHistorial() {
 															{entry.user?.username ?? 'Usuario desconocido'}
 														</div>
 														<div className="text-xs text-slate-400">
-															Modificó este POI
+															{entry.action === 'create'
+																? 'Creó el punto de interés'
+																: entry.action === 'delete'
+																	? 'Eliminó el punto de interés'
+																	: 'Modificó el punto de interés'}
 														</div>
 													</div>
 												</div>
@@ -205,15 +277,21 @@ export default function NewHistorial() {
 				) : (
 					<div className="flex flex-col items-center gap-4 py-10">
 						<History size={48} className="text-slate-300" />
-						<p className="text-slate-400">No hay cambios registrados.</p>
+						<p className="text-slate-400">
+							No hay cambios registrados
+							{isFiltered
+								? ' para los filtros aplicados'
+								: ' en el historial de auditoría'}
+							.
+						</p>
 					</div>
 				)}
 
-				<div className="text-center py-6">
-					<p className="text-sm text-slate-400 italic">
+				{!isFiltered && (
+					<p className="text-sm text-slate-400 italic text-center py-6">
 						Nota: Solo se muestran los últimos 20 cambios.
 					</p>
-				</div>
+				)}
 			</section>
 		</div>
 	);
