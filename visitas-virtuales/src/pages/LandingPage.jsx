@@ -20,7 +20,7 @@ const LandingPage = () => {
                     transition-all"
 			>
 				<Link to="/">
-					<h1 className=" lg:flex gap-2 text-lg font-semibold text-slate-800 justify-center items-center uppercase">
+					<h1 className=" lg:flex gap-2 text-lg font-semibold text-slate-700 justify-center items-center uppercase tracking-tight leading-tight">
 						Proyecto 360
 					</h1>
 				</Link>
@@ -45,17 +45,17 @@ const LandingPage = () => {
 				></div>
 				<div className="relative flex flex-col items-center justify-center w-full h-full bg-black/30  ">
 					<div className="flex flex-col gap-5 items-center md:w-200 p-5">
-						<h1 className="text-4xl font-bold uppercase text-white">
+						<h1 className="text-4xl font-bold uppercase text-white tracking-tight leading-tight">
 							Bienvenido a Visitas Virtuales
 						</h1>
-						<p className="text-white text-lg font-medium">
+						<p className="text-white text-lg font-medium leading-relaxed">
 							Explora las instalaciones, aulas y espacios comunes de los mejores
 							centros educativos a través de recorridos virtuales de alta
 							definición.
 						</p>
 						<Link
 							to="/centros"
-							className="w-60 p-2 uppercase font-semibold  text-center bg-brand-700 text-white rounded-3xl hover:bg-brand-800 shadow-xl transition-colors"
+							className="w-60 p-2 uppercase font-semibold  text-center bg-navy text-white rounded-3xl hover:bg-navy shadow-xl transition-colors"
 						>
 							Explorar Centros
 						</Link>
@@ -69,7 +69,7 @@ const LandingPage = () => {
 						<img src={tourImg} alt="Imagen tour 360" />
 						<div className="flex flex-col gap-4 p-4 ">
 							<h2 className="uppercase font-bold">Recorrido 360 Realistas</h2>
-							<p className="">
+							<p className="leading-relaxed">
 								Camina por pasillos, laboratorios y áreas deportivas como si
 								estuvieras allí.Nuestra tecnología de alta definición captura
 								cada detalle para una experiencia total inmersiva.
@@ -82,7 +82,7 @@ const LandingPage = () => {
 							<h2 className="uppercase font-bold">
 								Puntos de interés interativos
 							</h2>
-							<p className="">
+							<p className="leading-relaxed">
 								Haz clic en elementos clave durante tu visita para ver vídeos ,
 								mallas curriculares o fotos de proyectos destacados de cada
 								aula.
@@ -93,7 +93,7 @@ const LandingPage = () => {
 						<img src={accessImg} alt="Imagen access" />
 						<div className="flex flex-col gap-4 p-4 ">
 							<h2 className="uppercase font-bold">Sin horarios</h2>
-							<p className="">
+							<p className="leading-relaxed">
 								Explora las instalaciones de nuestro centro en cualquier momento
 								y desde cualquier dispositivo, ya sea tablet, móvil u ordenador.
 								Sin importar dónde te encuentres ni el horario.
