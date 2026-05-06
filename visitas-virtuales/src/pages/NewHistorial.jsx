@@ -240,7 +240,7 @@ export default function NewHistorial() {
 															entry.user?.imageUrl ||
 															'https://github.com/identicons/j.png'
 														}
-														className="w-8 h-8 rounded-full border border-slate-200 shrink-0"
+														className="w-8 h-8 rounded-full border border-slate-200 shrink-0 "
 														alt="avatar"
 													/>
 													<div className="min-w-0 flex-1">
