@@ -13,12 +13,12 @@ const Button = ({
 		'group rounded-md transition-all min-w-fit flex items-center disabled:opacity-50 justify-center whitespace-nowrap disabled:cursor-not-allowed cursor-pointer shadow-sm duration-200 active:scale-95 select-none shadow-sm';
 
 	const variants = {
-		primary: 'bg-brand-800 text-white hover:bg-brand-900',
+		primary: 'bg-navy text-white hover:bg-navy-dark',
 		secondary: 'bg-slate-500 text-white hover:bg-slate-600',
 		tertiary: 'bg-slate-100 text-slate-700 rounded-lg! hover:bg-slate-200',
 		danger: 'bg-red-100 text-red-600 hover:bg-red-200',
 		outline:
-			'bg-transparent border border-brand-100 text-slate-700 hover:bg-slate-50',
+			'bg-transparent border border-slate-200 text-slate-700 hover:bg-slate-50',
 		ghost: 'bg-transparent text-slate-700 hover:bg-slate-50 shadow-none!',
 	};
 

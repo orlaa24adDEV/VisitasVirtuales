@@ -149,7 +149,7 @@ function Crud() {
 		<div className="flex flex-col items-center justify-center min-h-full w-full px-3 py-6 lg:px-12 md:px-10">
 			<div className="flex flex-col gap-3 w-full justify-center min-h-125 mb-50 max-w-2xl">
 				<div className="flex flex-col gap-1 w-full text-center lg:text-start pb-4">
-					<p className="text-sm flex justify-center lg:justify-start items-center gap-1 font-base lg:font-medium text-brand-700">
+					<p className="text-sm flex justify-center lg:justify-start items-center gap-1 font-base lg:font-medium text-navy leading-relaxed">
 						<MapPin className="w-4 h-4" />
 						<span className="">{selectedCenter.name}</span>
 					</p>
@@ -188,7 +188,7 @@ function Crud() {
 									value={formData.description || ''}
 									onChange={handleInputChange}
 									rows="6"
-									className="group flex w-full flex-row p-2 gap-2 items-center bg-white outline-1! outline-slate-200 rounded-lg shadow-sm transition-all focus-within:ring-4 focus-within:ring-brand-600/10 focus-within:outline-brand-600"
+									className="group flex w-full flex-row p-2 gap-2 items-center bg-white outline-1! outline-slate-200 rounded-lg shadow-sm transition-all focus-within:ring-4 focus-within:ring-navy/10 focus-within:outline-navy"
 									placeholder="Descripción del punto de interés"
 									required
 								/>

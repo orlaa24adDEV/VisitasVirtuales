@@ -135,7 +135,7 @@ export default function UnityViewer() {
 		<div className="flex flex-col w-200 h-200">
 			{/* Texto de bienvenida */}
 			<div className="flex flex-col items-center justify-center py-4 space-y-2">
-				<h1 className="text-3xl font-bold text-center text-gray-800">
+				<h1 className="text-3xl font-bold text-center text-gray-800 tracking-tight leading-tight">
 					Bienvenido a {selectedCenter.name}
 				</h1>
 				<p className="text-xl italic text-gray-500">Inicio</p>
@@ -171,7 +171,9 @@ export default function UnityViewer() {
 				</div>
 			) : (
 				<div className="flex flex-col items-center justify-center flex-1 text-gray-400">
-					<p className="text-sm italic">Vista de Unity no disponible aún</p>
+					<p className="text-sm italic leading-relaxed">
+						Vista de Unity no disponible aún
+					</p>
 				</div>
 			)}
 		</div>
