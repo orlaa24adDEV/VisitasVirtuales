@@ -3,13 +3,14 @@ import tourImg from "../assets/tour360.jpg";
 import proyectoImg from "../assets/proyecto360.jpg";
 import informationImg from "../assets/information.jpg";
 import accessImg from "../assets/access.jpg";
+import Dav_logo from "../assets/Davante_logo_navy.png";
 
 const LandingPage = () => {
   return (
     // Navbar
     <div className="flex flex-col">
       <nav className="flex flex-row w-full h-25 p-5 justify-between items-center border border-gray-300 shadow-xl">
-        <h1 className="font-bold uppercase text-2xl ">PROYECTO 360</h1>
+        <img src={Dav_logo} alt="Davante Logo" className="h-10" />
 
         <div className="flex flex-row gap-4">
           <Link
