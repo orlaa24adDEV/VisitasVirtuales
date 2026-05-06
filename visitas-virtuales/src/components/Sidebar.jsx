@@ -82,7 +82,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 			{/* OVERLAY: Capa oscura móvil */}
 			{isMobileMenuOpen && (
 				<div
-					className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity"
+					className="fixed inset-0 bg-black/50 z-50 lg:hidden transition-opacity"
 					onClick={() => setIsMobileMenuOpen(false)}
 				/>
 			)}
