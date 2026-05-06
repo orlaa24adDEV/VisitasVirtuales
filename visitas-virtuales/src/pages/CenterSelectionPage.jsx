@@ -28,7 +28,7 @@ export default function CenterSelectionPage() {
 	);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 12;
+	const itemsPerPage = 6;
 
 	const handleSearchChange = (value) => {
 		setSearchQuery(value);
