@@ -39,9 +39,6 @@ services:
       MINIO_DEFAULT_BUCKETS: bucket1
     networks:
       - vv-network
-    ports:
-      - '9000:9000'
-      - '9001:9001' # Consola web de MinIO
     command: server /data --console-address ":9001"
     volumes:
       - miniodata-prod:/data
