@@ -9,9 +9,9 @@ export default function Settings() {
 
 	return (
 		<div className="max-w-3xl mx-auto py-6 sm:py-12 px-3 sm:px-4">
-			<div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-				<div className="bg-blue-600 p-8 text-white">
-					<h1 className="text-2xl font-bold">Configuración</h1>
+			<div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+				<div className="bg-brand-800 p-8 text-white">
+					<h1 className="text-2xl font-semibold">Configuración</h1>
 				</div>
 				<div className="flex flex-col divide-y divide-slate-200">
 					<div className="px-4 py-6 space-y-8">

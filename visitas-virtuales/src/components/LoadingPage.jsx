@@ -11,7 +11,7 @@ export default function LoadingPage({ isExiting }) {
           `}
 		>
 			<LoaderCircle
-				className="animate-spin text-blue-600"
+				className="animate-spin text-brand-800"
 				size={48}
 				strokeWidth={2}
 			/>

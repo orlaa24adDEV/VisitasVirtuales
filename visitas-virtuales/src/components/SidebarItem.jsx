@@ -15,7 +15,7 @@ export default function NavButton({ item, isExpanded, onClick }) {
 					item.extraActivePaths?.some((p) => currentPath.startsWith(p));
 
 				return `flex w-full items-center rounded-lg px-4 py-3 cursor-pointer transition-all duration-200 
-                    ${active ? 'bg-white text-blue-600 shadow-md font-bold' : 'hover:bg-blue-700 text-blue-100 hover:text-white'}
+                    ${active ? 'bg-white text-brand-800 shadow-md font-bold' : 'hover:bg-brand-700 text-brand-800-100 hover:text-white'}
                     ${isExpanded ? 'justify-start gap-4' : 'lg:justify-center'}`;
 			}}
 		>

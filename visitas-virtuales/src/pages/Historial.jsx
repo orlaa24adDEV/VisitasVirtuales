@@ -25,7 +25,7 @@ const Historial = () => {
 		return (
 			<div className="flex h-full items-center justify-center">
 				<div className="flex flex-col items-center gap-2">
-					<div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+					<div className="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
 					<p className="italic text-gray-500">
 						Obteniendo los últimos cambios...
 					</p>
@@ -43,22 +43,22 @@ const Historial = () => {
 					<p className="text-gray-500 italic">
 						Últimos cambios en el repositorio
 					</p>
-					<span className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">
+					<span className="bg-brand-100 text-brand-800 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">
 						Live
 					</span>
 				</div>
 			</div>
 
-			<div className="relative border-l-2 border-blue-200 ml-4 md:ml-6">
+			<div className="relative border-l-2 border-brand-200 ml-4 md:ml-6">
 				{commits.map((item) => (
 					<div key={item.sha} className="mb-10 ml-6 group">
 						{/* Punto de la línea de tiempo con efecto hover */}
-						<span className="absolute flex items-center justify-center w-4 h-4 bg-white border-2 border-blue-600 rounded-full -left-2.25 group-hover:bg-blue-600 transition-colors shadow-sm cursor-pointer"></span>
+						<span className="absolute flex items-center justify-center w-4 h-4 bg-white border-2 border-brand-600 rounded-full -left-2.25 group-hover:bg-brand-600 transition-colors shadow-sm cursor-pointer"></span>
 
 						<div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 cursor-pointer">
 							<div className="flex flex-wrap justify-between items-center mb-3">
 								<div className="flex items-center gap-2">
-									<span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">
+									<span className="text-xs font-bold text-brand-800 bg-brand-50 px-2 py-1 rounded">
 										{new Date(item.commit.author.date).toLocaleDateString()}
 									</span>
 									<span className="text-xs text-slate-400 font-medium">
@@ -96,7 +96,7 @@ const Historial = () => {
 									href={item.html_url}
 									target="_blank"
 									rel="noreferrer"
-									className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1"
+									className="text-xs font-bold text-brand-800 hover:text-brand-800-100 flex items-center gap-1"
 								>
 									DETALLES
 									<svg
