@@ -3,7 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 import { useCenter } from '@/hooks/useCenter.js';
 import { toast } from 'sonner';
-import { ArrowLeft, Settings, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+	ArrowLeft,
+	Settings,
+	Search,
+	ChevronLeft,
+	ChevronRight,
+} from 'lucide-react';
 import Button from '@/components/Button.jsx';
 import UserDropdown from '../components/UserDropdown';
 
@@ -86,14 +92,14 @@ export default function CenterSelectionPage() {
 	// Filtrar y paginar centros
 	const filteredCenters = allCenters
 		? allCenters.filter((center) =>
-				center.name.toLowerCase().includes(searchQuery.toLowerCase())
-		  )
+				center.name.toLowerCase().includes(searchQuery.toLowerCase()),
+			)
 		: [];
 
 	const totalPages = Math.ceil(filteredCenters.length / itemsPerPage);
 	const paginatedCenters = filteredCenters.slice(
 		(currentPage - 1) * itemsPerPage,
-		currentPage * itemsPerPage
+		currentPage * itemsPerPage,
 	);
 
 	return (
@@ -119,7 +125,7 @@ export default function CenterSelectionPage() {
 						</Button>
 					</Link>
 				)}
-</div>
+			</div>
 
 			<main className="flex-1 flex flex-col items-center justify-center p-6 ">
 				<div className="w-full max-w-5xl">
@@ -147,7 +153,7 @@ export default function CenterSelectionPage() {
 								value={searchQuery}
 								onChange={(e) => handleSearchChange(e.target.value)}
 								className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder-slate-400
-                         focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                         focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
 							/>
 						</div>
 					</div>
@@ -155,7 +161,7 @@ export default function CenterSelectionPage() {
 					{/* ... (Estados de carga y error se mantienen igual) ... */}
 					{isCentersLoading && (
 						<div className="flex justify-center items-center h-48">
-							<div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full" />
+							<div className="animate-spin w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full" />
 						</div>
 					)}
 
@@ -181,7 +187,7 @@ export default function CenterSelectionPage() {
 														group relative text-left rounded-2xl overflow-hidden bg-white
 														border-2 transition-all duration-300 focus:outline-none
 														hover:shadow-2xl cursor-pointer flex flex-col
-														${isActive ? 'border-blue-600 ring-10 ring-blue-50' : 'border-slate-100 hover:border-blue-200'}
+														${isActive ? 'border-brand-600 ring-10 ring-brand-50' : 'border-slate-100 hover:border-brand-200'}
 												`}
 												>
 													{/*Boton de configuracion para admins*/}
@@ -207,7 +213,7 @@ export default function CenterSelectionPage() {
 																className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
 															/>
 														) : (
-															<div className="w-full h-full bg-linear-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-4xl font-bold">
+															<div className="w-full h-full bg-linear-to-br from-brand-400 to-indigo-600 flex items-center justify-center text-white text-4xl font-bold">
 																{center.name.charAt(0)}
 															</div>
 														)}
@@ -239,7 +245,7 @@ export default function CenterSelectionPage() {
 																	Acceder al Centro
 																</Button>
 															) : (
-																<div className="h-9 flex justify-center items-center text-sm font-bold text-slate-100 border-rounded border-slate-400 group-hover:text-blue-600 transition-colors duration-300">
+																<div className="h-9 flex justify-center items-center text-sm font-bold text-slate-100 border-rounded border-slate-400 group-hover:text-brand-600 transition-colors duration-300">
 																	Haz clic para seleccionar
 																</div>
 															)}
@@ -256,7 +262,9 @@ export default function CenterSelectionPage() {
 											<Button
 												variant="ghost"
 												size="small"
-												onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+												onClick={() =>
+													setCurrentPage((p) => Math.max(1, p - 1))
+												}
 												disabled={currentPage === 1}
 											>
 												<ChevronLeft size={18} />
@@ -268,7 +276,9 @@ export default function CenterSelectionPage() {
 											<Button
 												variant="ghost"
 												size="small"
-												onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+												onClick={() =>
+													setCurrentPage((p) => Math.min(totalPages, p + 1))
+												}
 												disabled={currentPage === totalPages}
 											>
 												<span>Siguiente</span>

@@ -55,7 +55,7 @@ const LandingPage = () => {
 						</p>
 						<Link
 							to="/centros"
-							className="w-60 p-2 uppercase font-semibold  text-center bg-blue-600 text-white rounded-3xl hover:bg-blue-700 shadow-xl transition-colors"
+							className="w-60 p-2 uppercase font-semibold  text-center bg-brand-700 text-white rounded-3xl hover:bg-brand-800 shadow-xl transition-colors"
 						>
 							Explorar Centros
 						</Link>

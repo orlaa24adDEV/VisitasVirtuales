@@ -19,7 +19,7 @@ export default function TopHeader({ onMenuClick }) {
 	const { selectedCenter } = useCenter();
 	return (
 		<header
-			className="sticky top-0 z-40 h-16 w-full flex items-center justify-between p-4 lg:py-4 lg:px-8  lg:justify-end bg-slate-50/80 backdrop-blur-xl border-b border-blue-100/50
+			className="sticky top-0 z-40 h-16 w-full flex items-center justify-between p-4 lg:py-4 lg:px-8  lg:justify-end bg-slate-50/80 backdrop-blur-xl border-b border-brand-100/50
                     shadow-[0_4px_12px_-2px_rgba(0,0,0,0.03)] 
                     transition-all"
 		>

@@ -169,7 +169,11 @@ export default function Login() {
 							<span>Recordar correo</span>
 						</label>
 					</div>
-					<button type="submit" disabled={isLoading} className="submit-button">
+					<button
+						type="submit"
+						disabled={isLoading}
+						className="bg-brand-800 text-white hover:bg-brand-700 py-2 rounded-lg transition-colors disabled:opacity-50"
+					>
 						{isLoading ? 'Cargando...' : 'Iniciar Sesión'}
 					</button>
 				</form>

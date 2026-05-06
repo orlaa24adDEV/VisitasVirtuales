@@ -21,7 +21,7 @@ export default function Viewer() {
 					<div
 						className={`p-3 rounded-full transition-colors ${
 							isAdmin
-								? 'bg-blue-100 text-blue-600'
+								? 'bg-brand-100 text-brand-800'
 								: isTeacher
 									? 'bg-amber-100 text-amber-600'
 									: 'bg-gray-100 text-slate-400'
@@ -50,7 +50,7 @@ export default function Viewer() {
 								<span
 									className={`ml-2 px-3 py-1 rounded-full text-xs font-bold uppercase border ${
 										isAdmin
-											? 'bg-blue-50 text-blue-700 border-blue-200'
+											? 'bg-brand-50 text-brand-800 border-brand-200'
 											: isTeacher
 												? 'bg-amber-50 text-amber-700 border-amber-200'
 												: 'bg-transparent text-zinc-400 border-zinc-200'
@@ -72,7 +72,7 @@ export default function Viewer() {
 				<div className="mt-4">
 					<p className="text-gray-700">
 						Actualmente estás visualizando el centro:
-						<span className="ml-1 font-bold text-blue-600">
+						<span className="ml-1 font-bold text-brand-800">
 							{selectedCenter?.name || 'Ninguno seleccionado'}
 						</span>
 					</p>
@@ -82,14 +82,14 @@ export default function Viewer() {
 				<div
 					className={`flex flex-col items-center h-full mt-6 p-4 rounded-lg border-l-4 transition-colors ${
 						isAdmin
-							? 'bg-blue-50 border-blue-300'
+							? 'bg-brand-50 border-brand-300'
 							: isTeacher
 								? 'bg-amber-50 border-amber-300'
 								: 'bg-gray-50 border-gray-300'
 					}`}
 				>
 					{isAdmin && (
-						<p className="mb-4 text-sm font-medium text-blue-900">
+						<p className="mb-4 text-sm font-medium text-brand-800">
 							Tienes acceso total. Puedes gestionar puntos de interés (POIs),
 							ver el historial de auditoría y configurar el sistema.
 						</p>

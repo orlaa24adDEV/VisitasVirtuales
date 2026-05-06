@@ -10,11 +10,11 @@ export default function CenterSelectButton({ centerName, onClick }) {
 		>
 			<MapPin
 				size={16}
-				className="text-blue-500 group-hover:scale-110 transition-transform"
+				className="text-brand-700 group-hover:scale-110 transition-transform"
 				strokeWidth={2.25}
 			/>
 			<div className="flex flex-col items-center leading-none width-full">
-				<span className="text-[10px] text-blue-500 font-bold uppercase tracking-tighter">
+				<span className="text-[10px] text-brand-700 font-bold uppercase tracking-tighter">
 					Cambiar centro
 				</span>
 				<span className="text-sm font-semibold text-slate-700">

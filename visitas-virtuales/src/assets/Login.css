@@ -15,7 +15,7 @@
 }
 
 .main-content a:hover {
-	color: blue;
+	color: #0048c2;
 }
 
 .main-content .form-group {
@@ -38,7 +38,7 @@
 
 .main-content .form-group input:focus {
 	outline: none;
-	border-color: #007bff;
+	border-color: #0048c2;
 }
 
 .main-content .form-group input:invalid + .error-message,
@@ -74,7 +74,7 @@
 }
 
 .main-content .password-toggle:hover {
-	color: #007bff;
+	color: #0048c2;
 }
 
 .main-content .icon {
@@ -86,7 +86,7 @@
 	padding: 12px 30px;
 	font-size: 16px;
 	font-weight: bold;
-	background-color: #007bff;
+	background-color: #0048c2;
 	color: white;
 	border: none;
 	border-radius: 20px;
@@ -95,7 +95,7 @@
 }
 
 .main-content button:hover {
-	background-color: darkgray;
+	background-color: #003594;
 }
 
 .main-content button:active {

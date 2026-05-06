@@ -82,7 +82,7 @@ export default function NewHistorial() {
 		return (
 			<div className="flex h-full items-center justify-center">
 				<div className="flex flex-col items-center gap-2">
-					<div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+					<div className="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
 					<p className="italic text-slate-500">
 						Obteniendo los últimos cambios...
 					</p>
@@ -118,7 +118,7 @@ export default function NewHistorial() {
 								value={filter[filterName.toLowerCase()]}
 								name={filterName.toLowerCase()}
 								onChange={handleFilterChange}
-								className="border border-slate-200 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-600"
+								className="border border-slate-200 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-white text-slate-600"
 							>
 								{options.map((option) => (
 									<option key={option} value={option}>
@@ -154,16 +154,16 @@ export default function NewHistorial() {
 								>
 									{/* Linea vertical */}
 									{idx < filteredPoiHistory.length - 1 && (
-										<div className="absolute -left-6.25 top-7 -bottom-18 w-px bg-blue-200" />
+										<div className="absolute -left-6.25 top-7 -bottom-18 w-px bg-brand-800/12" />
 									)}
 
 									{/* Punto */}
-									<span className="absolute top-6.5 -left-8 flex items-center justify-center w-4 h-4 bg-white border-2 border-blue-600 rounded-full group-hover:bg-blue-600 transition-colors shadow-sm cursor-pointer" />
+									<span className="absolute top-6.5 -left-8 flex items-center justify-center w-4 h-4 bg-white border-2 border-brand-800 rounded-full group-hover:bg-brand-800 transition-colors shadow-sm cursor-pointer" />
 
 									<div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 cursor-pointer">
 										{/* Header con información del centro */}
 										<div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
-											<MapPin size={18} className="text-blue-600 shrink-0" />
+											<MapPin size={18} className="text-brand-800 shrink-0" />
 											<h3 className="text-lg font-semibold text-slate-800">
 												{centerName}
 											</h3>
@@ -219,7 +219,7 @@ export default function NewHistorial() {
 													</div>
 												</div>
 
-												<div className="p-3 rounded border border-slate-100 bg-blue-50/30">
+												<div className="p-3 rounded border border-slate-100 bg-brand-50/30">
 													<div className="text-xs font-medium text-slate-500 mb-2 flex items-center gap-1">
 														<span>Después</span>
 													</div>

@@ -1,1 +1,94 @@
 @import 'tailwindcss';
+
+/* Brand 800 = Main */
+@theme {
+	--font-manrope: 'Manrope', sans-serif;
+	--color-brand-50: #eef0ff;
+	--color-brand-100: #e0e4ff;
+	--color-brand-200: #bdc6ff;
+	--color-brand-300: #9cacff;
+	--color-brand-400: #7891ff;
+	--color-brand-500: #4c77ff;
+	--color-brand-600: #005bf0;
+	--color-brand-700: #0048c2;
+	--color-brand-800: #003594;
+	--color-brand-900: #001c59;
+	--color-brand-950: #00103a;
+	--color-brand-secondary-50: #fff8f7;
+	--color-brand-secondary-100: #ffedeb;
+	--color-brand-secondary-200: #ffdad8;
+	--color-brand-secondary-300: #ffc7c3;
+	--color-brand-secondary-400: #ffb3ae;
+	--color-brand-secondary-500: #ffa39c;
+	--color-brand-secondary-600: #ff8e83;
+	--color-brand-secondary-700: #ff7767;
+	--color-brand-secondary-800: #ff5b41;
+	--color-brand-secondary-900: #881f00;
+	--color-brand-secondary-950: #4e0d00;
+	--color-brand-tertiary-50: #fcfcfc;
+	--color-brand-tertiary-100: #fcfcfc;
+	--color-brand-tertiary-200: #f6f6f6;
+	--color-brand-tertiary-300: #f3f3f3;
+	--color-brand-tertiary-400: #f1f1f1;
+	--color-brand-tertiary-500: #ededed;
+	--color-brand-tertiary-600: #b9b9b9;
+	--color-brand-tertiary-700: #868686;
+	--color-brand-tertiary-800: #575757;
+	--color-brand-tertiary-900: #2e2e2e;
+	--color-brand-tertiary-950: #191919;
+	--margin-brand-primary: 5%;
+	--margin-brand-secondary: 10%;
+}
+
+@font-face {
+	font-family: 'Manrope';
+	src: url('./assets/fonts/Manrope/static/Manrope-ExtraLight.ttf');
+	font-weight: 200;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Manrope';
+	src: url('./assets/fonts/Manrope/static/Manrope-Light.ttf');
+	font-weight: 300;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Manrope';
+	src: url('./assets/fonts/Manrope/static/Manrope-Regular.ttf');
+	font-weight: 400;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Manrope';
+	src: url('./assets/fonts/Manrope/static/Manrope-Medium.ttf');
+	font-weight: 500;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Manrope';
+	src: url('./assets/fonts/Manrope/static/Manrope-SemiBold.ttf');
+	font-weight: 600;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Manrope';
+	src: url('./assets/fonts/Manrope/static/Manrope-Bold.ttf');
+	font-weight: 700;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Manrope';
+	src: url('./assets/fonts/Manrope/static/Manrope-ExtraBold.ttf');
+	font-weight: 800;
+	font-display: swap;
+}
+
+body {
+	font-family: var(--font-manrope);
+}
