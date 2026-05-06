@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 import { useCenter } from '@/hooks/useCenter.js';
 import { toast } from 'sonner';
-import { ArrowLeft, Settings } from 'lucide-react';
+import { ArrowLeft, Settings, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import Button from '@/components/Button.jsx';
 import UserDropdown from '../components/UserDropdown';
 
@@ -26,6 +26,14 @@ export default function CenterSelectionPage() {
 	const [localSelectedCenter, setLocalSelectedCenter] = useState(
 		selectedCenter || null,
 	);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 12;
+
+	const handleSearchChange = (value) => {
+		setSearchQuery(value);
+		setCurrentPage(1);
+	};
 
 	useEffect(() => {
 		if (
@@ -75,6 +83,19 @@ export default function CenterSelectionPage() {
 		}
 	};
 
+	// Filtrar y paginar centros
+	const filteredCenters = allCenters
+		? allCenters.filter((center) =>
+				center.name.toLowerCase().includes(searchQuery.toLowerCase())
+		  )
+		: [];
+
+	const totalPages = Math.ceil(filteredCenters.length / itemsPerPage);
+	const paginatedCenters = filteredCenters.slice(
+		(currentPage - 1) * itemsPerPage,
+		currentPage * itemsPerPage
+	);
+
 	return (
 		<div className="min-h-screen bg-slate-50 flex flex-col gap-4">
 			{/* Botón flotante para volver a la Landing (útil para invitados) + dropdown de usuario para logueados */}
@@ -98,9 +119,9 @@ export default function CenterSelectionPage() {
 						</Button>
 					</Link>
 				)}
-			</div>
+</div>
 
-			<main className="flex-1 flex flex-col items-center justify-center p-6">
+			<main className="flex-1 flex flex-col items-center justify-center p-6 ">
 				<div className="w-full max-w-5xl">
 					{/* Título */}
 					<div className="mb-8 text-center">
@@ -113,6 +134,24 @@ export default function CenterSelectionPage() {
 						</p>
 					</div>
 
+					{/* Buscador de centros */}
+					<div className="mb-8">
+						<div className="relative max-w-md mx-auto">
+							<Search
+								className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+								size={18}
+							/>
+							<input
+								type="text"
+								placeholder="Buscar centro por nombre..."
+								value={searchQuery}
+								onChange={(e) => handleSearchChange(e.target.value)}
+								className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder-slate-400
+                         focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+							/>
+						</div>
+					</div>
+
 					{/* ... (Estados de carga y error se mantienen igual) ... */}
 					{isCentersLoading && (
 						<div className="flex justify-center items-center h-48">
@@ -123,85 +162,122 @@ export default function CenterSelectionPage() {
 					{/* Grid de tarjetas */}
 					{!isCentersLoading && !centersError && allCenters && (
 						<>
-							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-								{allCenters.map((center) => {
-									const isActive = localSelectedCenter?.id === center.id;
-									return (
-										<div
-											key={center.id}
-											onClick={() => setLocalSelectedCenter(center)}
-											className={`
-                        group relative text-left rounded-2xl overflow-hidden bg-white
-                        border-2 transition-all duration-300 focus:outline-none
-                        hover:shadow-2xl cursor-pointer flex flex-col
-                        ${isActive ? 'border-blue-600 ring-10 ring-blue-50' : 'border-slate-100 hover:border-blue-200'}
-                      `}
-										>
-											{/*Boton de configuracion para admins*/}
-											{isAdmin && isActive && (
-												<button
-													onClick={(e) => {
-														e.stopPropagation();
-														navigate('/settings', {
-															state: { centerId: center.id },
-														});
-													}}
-													className="cursor-pointer absolute top-3 right-3 z-10 p-2 bg-white/80 hover:bg-white rounded-full shadow-md transition-colors duration-200 backdrop-blur-sm"
+							{filteredCenters.length === 0 ? (
+								<div className="text-center py-12">
+									<p className="text-slate-500 text-lg">
+										No hay centros que coincidan con &quot;{searchQuery}&quot;
+									</p>
+								</div>
+							) : (
+								<>
+									<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+										{paginatedCenters.map((center) => {
+											const isActive = localSelectedCenter?.id === center.id;
+											return (
+												<div
+													key={center.id}
+													onClick={() => setLocalSelectedCenter(center)}
+													className={`
+														group relative text-left rounded-2xl overflow-hidden bg-white
+														border-2 transition-all duration-300 focus:outline-none
+														hover:shadow-2xl cursor-pointer flex flex-col
+														${isActive ? 'border-blue-600 ring-10 ring-blue-50' : 'border-slate-100 hover:border-blue-200'}
+												`}
 												>
-													<Settings size={16} />
-												</button>
-											)}
-											{/* Imagen con overlay si está activo */}
-											<div className="relative h-40 w-full overflow-hidden">
-												{center.imageUrl ? (
-													<img
-														src={center.imageUrl}
-														alt={center.name}
-														className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-													/>
-												) : (
-													<div className="w-full h-full bg-linear-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-4xl font-bold">
-														{center.name.charAt(0)}
-													</div>
-												)}
-												{isActive && <div className="absolute inset-0" />}
-											</div>
-
-											<div className="p-5 flex-1 flex flex-col justify-between">
-												<div>
-													<h2 className="font-bold text-slate-800 text-base mb-1">
-														{center.name}
-													</h2>
-													<p className="text-slate-500 text-xs flex items-center gap-1">
-														{center.location || 'Ubicación disponible'}
-													</p>
-												</div>
-
-												{/* Indicador visual de selección */}
-												<div className="mt-4 ">
-													{isActive ? (
-														<Button
-															variant="primary"
-															size="small"
-															className="w-full"
+													{/*Boton de configuracion para admins*/}
+													{isAdmin && isActive && (
+														<button
 															onClick={(e) => {
 																e.stopPropagation();
-																handleConfirm();
+																navigate('/settings', {
+																	state: { centerId: center.id },
+																});
 															}}
+															className="cursor-pointer absolute top-3 right-3 z-10 p-2 bg-white/80 hover:bg-white rounded-full shadow-md transition-colors duration-200 backdrop-blur-sm"
 														>
-															Acceder al Centro
-														</Button>
-													) : (
-														<div className="h-9 flex justify-center items-center text-sm font-bold text-slate-100 border-rounded border-slate-400 group-hover:text-blue-600 transition-colors duration-300">
-															Haz clic para seleccionar
-														</div>
+															<Settings size={16} />
+														</button>
 													)}
+													{/* Imagen con overlay si está activo */}
+													<div className="relative h-40 w-full overflow-hidden">
+														{center.imageUrl ? (
+															<img
+																src={center.imageUrl}
+																alt={center.name}
+																className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+															/>
+														) : (
+															<div className="w-full h-full bg-linear-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-4xl font-bold">
+																{center.name.charAt(0)}
+															</div>
+														)}
+														{isActive && <div className="absolute inset-0" />}
+													</div>
+
+													<div className="p-5 flex-1 flex flex-col justify-between">
+														<div>
+															<h2 className="font-bold text-slate-800 text-base mb-1">
+																{center.name}
+															</h2>
+															<p className="text-slate-500 text-xs flex items-center gap-1">
+																{center.location || 'Ubicación disponible'}
+															</p>
+														</div>
+
+														{/* Indicador visual de selección */}
+														<div className="mt-4 ">
+															{isActive ? (
+																<Button
+																	variant="primary"
+																	size="small"
+																	className="w-full"
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		handleConfirm();
+																	}}
+																>
+																	Acceder al Centro
+																</Button>
+															) : (
+																<div className="h-9 flex justify-center items-center text-sm font-bold text-slate-100 border-rounded border-slate-400 group-hover:text-blue-600 transition-colors duration-300">
+																	Haz clic para seleccionar
+																</div>
+															)}
+														</div>
+													</div>
 												</div>
-											</div>
+											);
+										})}
+									</div>
+
+									{/* Controles de paginación */}
+									{totalPages > 1 && (
+										<div className="flex items-center justify-center gap-4 mt-8">
+											<Button
+												variant="ghost"
+												size="small"
+												onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+												disabled={currentPage === 1}
+											>
+												<ChevronLeft size={18} />
+												<span>Anterior</span>
+											</Button>
+											<span className="text-sm text-slate-500">
+												Página {currentPage} de {totalPages}
+											</span>
+											<Button
+												variant="ghost"
+												size="small"
+												onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+												disabled={currentPage === totalPages}
+											>
+												<span>Siguiente</span>
+												<ChevronRight size={18} />
+											</Button>
 										</div>
-									);
-								})}
-							</div>
+									)}
+								</>
+							)}
 						</>
 					)}
 				</div>
