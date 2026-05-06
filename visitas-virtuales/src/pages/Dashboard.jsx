@@ -12,8 +12,9 @@ import {
 	ResponsiveContainer,
 	LabelList,
 } from 'recharts';
-import fetchWithTimeout from '@/helpers/fetchWithTimeout.js';
+import { fetchWithAuth } from '../helpers/fetchWithAuth';
 import Button from '@/components/Button.jsx';
+import { useAuth } from '@/hooks/useAuth.js';
 
 const Dashboard = () => {
 	const [pois, setPois] = useState([]);
@@ -22,19 +23,12 @@ const Dashboard = () => {
 	const [searchQuery, setSearchQuery] = useState('');
 	const { allCenters, saveSelectedCenter } = useCenter();
 	const navigate = useNavigate();
+	const { logout } = useAuth();
 
 	// Cargar todos los POIs al montar el componente
 	useEffect(() => {
 		const fetchData = async () => {
-			const fetchPois = fetchWithTimeout(
-				'/api/pois',
-				{
-					headers: {
-						Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
-					},
-				},
-				5000,
-			);
+			const fetchPois = fetchWithAuth('/api/pois', {}, logout);
 			try {
 				const response = await fetchPois;
 				const data = await response.json();

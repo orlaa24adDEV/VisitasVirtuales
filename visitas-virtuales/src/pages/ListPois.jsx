@@ -13,6 +13,7 @@ import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { useCenter } from '../hooks/useCenter';
 import Input from '../components/Input';
+import { toast } from 'sonner';
 
 export default function ListPois({ centerId }) {
 	const [pois, setPois] = useState([]);
@@ -51,6 +52,9 @@ export default function ListPois({ centerId }) {
 
 			if (response.ok) {
 				getPois();
+				toast.success('POI eliminado correctamente');
+			} else {
+				toast.error('Error al eliminar el POI');
 			}
 		} catch (error) {
 			console.error('Error al eliminar:', error);
@@ -78,17 +82,22 @@ export default function ListPois({ centerId }) {
 		getPois();
 	}, [getPois]);
 
+	if (!selectedCenter) {
+		navigate('/centros');
+		return null;
+	}
+
 	//He metido todo el section dentro de un div para centrarlo.
 	return (
-		<div className="relative flex flex-col items-center justify-center min-h-full w-full py-6 lg:px-12 md:px-10 px-3">
-			<section className="flex flex-col gap-3 w-full justify-center min-h-125 max-w-4xl lg:mb-20">
-				<div className="flex w-full justify-between items-center">
-					<div className="flex flex-col gap-px w-full">
-						<p className="text-sm flex items-center gap-1 font-medium text-blue-600">
+		<div className="relative flex flex-col items-center justify-center min-h-full w-full py-6 lg:px-12 lg:py-20 md:px-10 px-3">
+			<section className="flex flex-col gap-2 w-full justify-center min-h-125 max-w-4xl lg:mb-20">
+				<div className="flex flex-col lg:flex-row w-full justify-between items-center gap-2 p-2 lg:p-0">
+					<div className="flex flex-col gap-1 w-full text-center lg:text-start pb-4">
+						<p className="text-sm flex justify-center lg:justify-start items-center gap-1 font-base lg:font-medium text-blue-600">
 							<MapPin className="w-4 h-4" />
 							<span className="">{selectedCenter.name}</span>
 						</p>
-						<h2 className="text-xl font-semibold text-slate-800">
+						<h2 className="text-xl lg:text-2xl font-semibold text-slate-700">
 							Gestión de puntos de interés
 						</h2>
 					</div>
@@ -97,6 +106,7 @@ export default function ListPois({ centerId }) {
 						onClick={() =>
 							navigate('/crud', {
 								state: {
+									id: '',
 									centerId: selectedCenter.name,
 									name: '',
 									description: '',
@@ -104,6 +114,7 @@ export default function ListPois({ centerId }) {
 								},
 							})
 						}
+						className="ml-auto lg:ml-0 lg:w-auto w-full"
 					>
 						<Plus size={18} strokeWidth={3} /> Nuevo POI
 					</Button>
@@ -124,13 +135,13 @@ export default function ListPois({ centerId }) {
 						<table className="w-full min-w-0 sm:min-w-130 text-sm text-left">
 							<thead className="bg-slate-100  text-xs uppercase text-slate-600 font-semibold">
 								<tr>
-									<th className="px-3 lg:px-6 py-3 lg:py-4">
+									<th className="px-4 lg:px-6 py-4 lg:py-4">
 										Punto de interés
 									</th>
-									<th className="hidden sm:table-cell px-3 lg:px-6 py-3 lg:py-4 text-ellipsis">
+									<th className="hidden sm:table-cell px-4 lg:px-6 py-3 lg:py-4 text-ellipsis">
 										Descripción
 									</th>
-									<th className="px-3 lg:px-6 py-3 lg:py-4 text-right">
+									<th className="px-4 lg:px-6 py-4 lg:py-4 text-right">
 										Acciones
 									</th>
 								</tr>
@@ -151,13 +162,15 @@ export default function ListPois({ centerId }) {
 											key={poi.id}
 											className="hover:bg-slate-50/86 transition-colors"
 										>
-											<td className="px-3 lg:px-6 py-3 lg:py-4 font-medium text-slate-900 whitespace-normal">
+											<td className="px-4 lg:px-6 py-4 lg:py-4 font-medium text-slate-900 text-ellipsis max-w-[200px] overflow-hidden whitespace-nowrap">
 												{poi.name}
 											</td>
-											<td className="hidden sm:table-cell px-3 lg:px-6 py-3 lg:py-4 text-slate-600">
-												{poi.details.description}
+											<td className="hidden sm:table-cell px-4 lg:px-6 py-3 lg:py-4 text-slate-600">
+												<span className="text-ellipsis line-clamp-2">
+													{poi.details.description}
+												</span>
 											</td>
-											<td className="px-3 lg:px-6 py-3 lg:py-4 text-right">
+											<td className="px-4 lg:px-6 py-4 lg:py-4 text-right">
 												<div className="flex justify-end gap-2 whitespace-nowrap">
 													<Link
 														to="/crud"
@@ -187,7 +200,7 @@ export default function ListPois({ centerId }) {
 						</table>
 
 						{filteredPois.length > 0 && (
-							<div className="bg-slate-50 px-3 lg:px-6 py-3 border-t border-slate-200 flex items-center justify-between">
+							<div className="bg-slate-50 px-4 lg:px-6 py-3 border-t border-slate-200 flex items-center justify-between">
 								<p className="text-slate-500 text-xs">
 									Mostrando{' '}
 									<span className="font-semibold">{firstIndex + 1}</span> -{' '}
@@ -196,7 +209,7 @@ export default function ListPois({ centerId }) {
 									</span>{' '}
 									de {filteredPois.length}
 								</p>
-								<div className="flex items-center gap-2.25">
+								<div className="flex items-center gap-2">
 									<button
 										onClick={() =>
 											setCurrentPage(Math.max(1, safeCurrentPage - 1))
