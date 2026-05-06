@@ -19,7 +19,7 @@ export default function TopHeader({ onMenuClick }) {
 	const { selectedCenter } = useCenter();
 	return (
 		<header
-			className="sticky top-0 z-40 h-16 w-full flex items-center justify-between p-4 lg:py-4 lg:px-8  lg:justify-end bg-slate-50/80 backdrop-blur-xl border-b border-brand-100/50
+			className="sticky top-0 z-40 h-16 w-full flex items-center justify-between p-4 lg:py-4 lg:px-8  lg:justify-end bg-slate-50/80 backdrop-blur-xl border-b border-slate-200/60
                     shadow-[0_4px_12px_-2px_rgba(0,0,0,0.03)] 
                     transition-all"
 		>
@@ -35,7 +35,7 @@ export default function TopHeader({ onMenuClick }) {
 			) : null}
 			{!isStaff ? (
 				<Link to="/">
-					<h1 className=" lg:flex gap-2 text-lg font-semibold text-slate-800 justify-center items-center uppercase">
+					<h1 className=" lg:flex gap-2 text-lg font-semibold text-slate-700 justify-center items-center uppercase tracking-tight leading-tight">
 						Proyecto 360
 					</h1>
 				</Link>
