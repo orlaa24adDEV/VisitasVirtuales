@@ -6,8 +6,10 @@ import accessImg from "../assets/access.jpg";
 import Dav_logo from "../assets/Davante_logo_navy.png";
 import { useAuth } from '../hooks/useAuth';
 import UserDropdown from '../components/UserDropdown';
-import Button from '../components/Button';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth.js';
+import Button from '@/components/Button.jsx';
+import developers from '../assets/data/developers.json';
+import TeamLayoutComponent from '../components/landing/TeamLayoutComponent';
 
 const LandingPage = () => {
 	const { isAdmin, isTeacher } = useAuth();
@@ -126,133 +128,22 @@ const LandingPage = () => {
 				</div>
 			</section>
 
-			<section className="w-full p-25 bg-gray-300/30 ">
-				<div className="px-4 text-center">
-					<h2 className="text-3xl font-bold mb-10 text-gray-800 ">
+			<section className="flex justify-center w-full p-25 bg-gray-300/30 ">
+				<div className="flex flex-col center gap-10 w-200 p-4 text-center">
+					<h2 className="w-full text-center text-3xl font-bold text-gray-800 ">
 						Equipo de desarrollo
 					</h2>
 
-					<div className="flex flex-wrap w-full justify-center gap-10">
-						<Link to="https://github.com/Alexis10050">
-							<div className="flex flex-col items-center">
-								<div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
-									<img
-										src="https://unavatar.io/github/Alexis10050"
-										className="rounded-full object-cover w-full h-full"
-										alt="Dev"
-									/>
-								</div>
-								<h3 className="font-bold text-lg">Alexis</h3>
-								<p className="text-indigo-600 text-sm">Fullstack Developer</p>
-							</div>
-						</Link>
-
-						<Link to="https://github.com/xdlimadev">
-							<div className="flex flex-col items-center">
-								<div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
-									<img
-										src="https://unavatar.io/github/xdlimadev"
-										className="rounded-full object-cover w-full h-full"
-										alt="Dev"
-									/>
-								</div>
-								<h3 className="font-bold text-lg">Bruno</h3>
-								<p className="text-indigo-600 text-sm">Fullstack Developer</p>
-							</div>
-						</Link>
-
-						<Link to="https://github.com/FlorBauducco">
-							<div className="flex flex-col items-center">
-								<div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
-									<img
-										src="https://unavatar.io/github/FlorBauducco"
-										className="rounded-full object-cover w-full h-full"
-										alt="Dev"
-									/>
-								</div>
-								<h3 className="font-bold text-lg">Flor</h3>
-								<p className="text-indigo-600 text-sm">Unity Developer</p>
-							</div>
-						</Link>
-
-						<Link to="https://github.com/Jfranciglez">
-							<div className="flex flex-col items-center">
-								<div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
-									<img
-										src="https://unavatar.io/github/JFranciglez"
-										className="rounded-full object-cover w-full h-full"
-										alt="Dev"
-									/>
-								</div>
-								<h3 className="font-bold text-lg">Jennifer</h3>
-								<p className="text-indigo-600 text-sm">Fullstack Developer</p>
-							</div>
-						</Link>
-						<Link to="https://github.com/orlaa24adDEV">
-							<div className="flex flex-col items-center">
-								<div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
-									<img
-										src="https://unavatar.io/github/orlaa24adDEV"
-										className="rounded-full object-cover w-full h-full"
-										alt="Dev"
-									/>
-								</div>
-								<h3 className="font-bold text-lg">Orlando</h3>
-								<p className="text-indigo-600 text-sm">Fullstack Developer</p>
-							</div>
-						</Link>
-						<Link to="https://github.com/pablodegalvez">
-							<div className="flex flex-col items-center">
-								<div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
-									<img
-										src="https://unavatar.io/github/pablodegalvez"
-										className="rounded-full object-cover w-full h-full"
-										alt="Dev"
-									/>
-								</div>
-								<h3 className="font-bold text-lg">Pablo De Galvez</h3>
-								<p className="text-indigo-600 text-sm">Fullstack Developer</p>
-							</div>
-						</Link>
-						<Link to="https://github.com/pva0011">
-							<div className="flex flex-col items-center">
-								<div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
-									<img
-										src="https://unavatar.io/github/pva0011"
-										className="rounded-full object-cover w-full h-full"
-										alt="Dev"
-									/>
-								</div>
-								<h3 className="font-bold text-lg">Pablo Villena</h3>
-								<p className="text-indigo-600 text-sm">Fullstack Developer</p>
-							</div>
-						</Link>
-						<Link to="https://github.com/jga0037-cell">
-							<div className="flex flex-col items-center">
-								<div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
-									<img
-										src="https://unavatar.io/github/jga0037-cell"
-										className="rounded-full object-cover w-full h-full"
-										alt="Dev"
-									/>
-								</div>
-								<h3 className="font-bold text-lg">Jose Luis</h3>
-								<p className="text-indigo-600 text-sm">Fullstack Developer</p>
-							</div>
-						</Link>
-						<Link to="https://github.com/fermiinbp03">
-							<div className="flex flex-col items-center">
-								<div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
-									<img
-										src="https://unavatar.io/github/fermiinbp03"
-										className="rounded-full object-cover w-full h-full"
-										alt="Dev"
-									/>
-								</div>
-								<h3 className="font-bold text-lg">Fermin</h3>
-								<p className="text-indigo-600 text-sm">Unity Developer</p>
-							</div>
-						</Link>
+					<div className="flex flex-wrap gap-10">
+						{developers.map((dev) => (
+							<TeamLayoutComponent
+								key={dev.id}
+								gitUrl={dev.githubUrl}
+								avatarUrl={dev.avatarUrl}
+								nameDev={dev.name}
+								roleDev={dev.role}
+							/>
+						))}
 					</div>
 				</div>
 			</section>
