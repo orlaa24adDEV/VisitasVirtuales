@@ -4,16 +4,11 @@ import { useCenter } from '../hooks/useCenter';
 import { useAuth } from '@/hooks/useAuth.js';
 import { XCircle } from 'lucide-react';
 
-// TODO: cambiar a "true" cuando los archivos del build de Unity estén en el folder de Built_Unity
-// Ver instrucciones en public/Build_Unity/.gitkeep
-const UNITY_BUILD_LISTO = true;
-
 export default function UnityViewer() {
 	// Obtenemos el centro seleccionado del contexto global
 	const { selectedCenter } = useCenter();
 	const { isAdmin, isTeacher } = useAuth();
 	const selectedCenterId = selectedCenter?.id ?? null;
-	const [isReady, setIsReady] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
 
 	// Calculamos sceneId directamente desde selectedCenter, sin depender de la URL
@@ -50,11 +45,7 @@ export default function UnityViewer() {
 	useEffect(() => {
 		if (selectedCenterId === null) return;
 
-		// Si el build no está listo todavía no se hace nada
-		if (!UNITY_BUILD_LISTO) {
-			console.log('Unity build no disponible aún');
-			return;
-		}
+		// FIX: Eliminamos el "if (!isUnityLoaded) return" porque impedía que Unity empezara a cargar.
 
 		// Crear el script del loader de Unity dinámicamente
 		const script = document.createElement('script');
@@ -81,7 +72,6 @@ export default function UnityViewer() {
 				.then((unityInstance) => {
 					unityInstanceRef.current = unityInstance;
 					setIsUnityLoaded(true);
-					setIsReady(true);
 					setErrorMessage('');
 
 					// Delay de 1.5seg para que encuente el gameobject antes
@@ -112,7 +102,7 @@ export default function UnityViewer() {
 
 				// Si Unity falla al cargar
 				.catch((error) => {
-					setIsReady(false);
+					setIsUnityLoaded(false);
 					setErrorMessage(
 						'No se pudo cargar la vista 360°. Por favor, inténtalo de nuevo más tarde.',
 					);
@@ -144,81 +134,63 @@ export default function UnityViewer() {
 				}
 			}
 		};
-	}, [sceneId, selectedCenterId]);
+	}, [selectedCenterId]);
 
 	// Lo que se muestra en pantalla
 	return (
-		<div className="flex flex-col w-full h-160 rounded-lg overflow-hidden bg-slate-100">
-			{/* Texto de Bienvenida */}
-			{!isAdmin && !isTeacher && (
-				<div className="flex flex-col items-center justify-center py-4 space-y-2">
-					<h1 className="text-3xl font-bold text-center text-gray-800">
-						Bienvenido a {selectedCenter?.name}
-					</h1>
-				</div>
-			)}
-
-			{/* Contenedor del canvas con botón de fullscreen */}
-			{UNITY_BUILD_LISTO ? (
-				<div ref={containerRef} className="relative flex-1 w-full">
-					{/* Overlay de carga */}
-					{!isUnityLoaded && !errorMessage && (
-						<div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-gray-900 rounded-lg w-full">
-							<p className="mb-3 text-sm text-white">
-								Cargando visita virtual... {Math.round(loadingProgress * 100)}%
-							</p>
-							<div className="w-64 h-2 overflow-hidden bg-gray-700 rounded-full">
-								<div
-									className="h-full transition-all duration-300 bg-teal-400 rounded-full"
-									style={{ width: `${loadingProgress * 100}%` }}
-								/>
-							</div>
+		<div className="w-full flex flex-col rounded-lg overflow-hidden bg-slate-100 h-160">
+			<div ref={containerRef} className="relative flex-1 h-full">
+				{/* Overlay de carga */}
+				{!isUnityLoaded && !errorMessage && (
+					<div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-gray-900 rounded-lg w-full">
+						<p className="mb-3 text-sm text-white">
+							Cargando visita virtual... {Math.round(loadingProgress * 100)}%
+						</p>
+						<div className="w-64 h-2 overflow-hidden bg-gray-700 rounded-full">
+							<div
+								className="h-full transition-all duration-300 bg-teal-400 rounded-full"
+								style={{ width: `${loadingProgress * 100}%` }}
+							/>
 						</div>
-					)}
+					</div>
+				)}
 
-					{/* Overlay de error */}
-					{errorMessage && (
-						<div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-gray-900 rounded-lg text-white p-4 text-center">
-							<XCircle size={40} className="mb-2 text-red-400" />
-							<p className="text-sm italic">{errorMessage}</p>
-						</div>
-					)}
+				{/* Overlay de error */}
+				{errorMessage && (
+					<div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-gray-900 rounded-lg text-white p-4 text-center">
+						<XCircle size={40} className="mb-2 text-red-400" />
+						<p className="text-sm italic">{errorMessage}</p>
+					</div>
+				)}
 
-					<canvas
-						ref={canvasRef}
-						id="unity-canvas"
-						className="w-full h-full"
-						style={{ display: 'block' }}
-					/>
+				<canvas
+					ref={canvasRef}
+					id="unity-canvas"
+					className="w-full h-full"
+					style={{ display: isUnityLoaded ? 'block' : 'none' }}
+				/>
 
-					{/* Botón de fullscreen — esquina inferior derecha */}
-					{isUnityLoaded && (
-						<button
-							onClick={handleFullscreen}
-							title="Pantalla completa"
-							className="absolute z-10 p-2 text-white transition-colors duration-200 rounded-lg cursor-pointer bottom-3 right-3 bg-black/50 hover:bg-black/80"
+				{/* Botón de fullscreen — esquina inferior derecha */}
+				{isUnityLoaded && (
+					<button
+						onClick={handleFullscreen}
+						title="Pantalla completa"
+						className="absolute z-10 p-2 text-white transition-colors duration-200 rounded-lg cursor-pointer bottom-3 right-3 bg-black/50 hover:bg-black/80"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
 						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="20"
-								height="20"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="2"
-							>
-								<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-							</svg>
-						</button>
-					)}
-				</div>
-			) : (
-				<div className="flex flex-col items-center justify-center flex-1 text-gray-400">
-					<p className="text-sm italic leading-relaxed">
-						Vista de Unity no disponible aún
-					</p>
-				</div>
-			)}
+							<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+						</svg>
+					</button>
+				)}
+			</div>
 		</div>
 	);
 }
