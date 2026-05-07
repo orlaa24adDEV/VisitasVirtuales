@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState} from 'react';
 import { ESCENAS_POR_CENTRO } from '@/helpers/escenas.js';
 import { useCenter } from '../hooks/useCenter';
+import { useAuth } from '@/hooks/useAuth.js';
 
 // TODO: cambiar a "true" cuando los archivos del build de Unity estén en el folder de Built_Unity
 //Ver instrucciones en public/Build_Unity/.gitkeep
@@ -9,6 +10,7 @@ const UNITY_BUILD_LISTO = true;
 export default function UnityViewer() {
 	// Obtenemos el centro seleccionado del contexto global
 	const { selectedCenter } = useCenter();
+	const { isAdmin, isTeacher } = useAuth();
 	const selectedCenterId = selectedCenter?.id ?? null;
 
 	// Calculamos sceneId directamente desde selectedCenter, sin depender de la URL
@@ -140,13 +142,13 @@ export default function UnityViewer() {
 		<div className="flex flex-col w-200 h-200">
 
 			{/* Texto de Bienvenida */}
-			<div className="flex flex-col items-center justify-center py-4 space-y-2">
-				<h1 className="text-3xl font-bold text-center text-gray-800 tracking-tight leading-tight">
-					Bienvenido a {selectedCenter.name}
-				</h1>
-				<p className="text-xl italic text-gray-500">Inicio</p>
-			</div>
-		
+			{!isAdmin && !isTeacher && (
+				<div className="flex flex-col items-center justify-center py-4 space-y-2">
+					<h1 className="text-3xl font-bold text-center text-gray-800">
+						Bienvenido a {selectedCenter.name}
+					</h1>
+				</div>
+			)}
 			{/* Contenedor del canvas con botón de fullscreen */}
 			{UNITY_BUILD_LISTO ? (
 				<div ref={containerRef} className="relative flex-1 w-full">
