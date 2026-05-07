@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import '@/assets/Login.css';
 import { useAuth } from '@/hooks/useAuth.js';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Input from './Input';
+import { ArrowLeft, Compass, Eye, LucideEyeOff } from 'lucide-react';
+import Button from './Button';
 
 export default function Login() {
 	const [errors, setErrors] = useState([]);
@@ -104,10 +106,17 @@ export default function Login() {
 	};
 
 	return (
-		<main className="main-content">
-			<section className="login-section">
-				<h2>Iniciar Sesión</h2>
-				<form onSubmit={handleSubmit}>
+		<main className="main-content flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
+			<div className="space-y-1">
+				<h2 className="text-2xl font-semibold tracking-tight leading-tight">
+					Visitas Virtuales
+				</h2>
+				<h3 className="text-slate-500 leading-relaxed">
+					Inicia sesión para continuar
+				</h3>
+			</div>
+			<section className="login-section space-y-6 max-w-md p-8 rounded-lg bg-slate-50 outline-slate-100 outline shadow-sm">
+				<form onSubmit={handleSubmit} className="space-y-6">
 					{errors && errors.length > 0 && (
 						<div className="error-message">
 							{errors.length === 1 ? (
@@ -121,44 +130,38 @@ export default function Login() {
 							)}
 						</div>
 					)}
-					<div className="form-group">
-						<input
-							type="text"
-							name="email"
-							id="email"
-							placeholder="Correo electrónico"
-							value={email}
-							onChange={(event) => setEmail(event.target.value)}
-							autoComplete="username"
-							disabled={isLoading}
-							required
-						/>
-					</div>
-					<div className="form-group">
-						<div className="password-container">
-							<input
-								type={showPassword ? 'text' : 'password'}
-								id="password"
-								name="password"
-								placeholder="Contraseña"
-								value={password}
-								onChange={(event) => setPassword(event.target.value)}
-								disabled={isLoading}
-								required
-							/>
-							<span
-								className="password-toggle"
-								onClick={() => setShowPassword(!showPassword)}
-							>
-								{showPassword ? (
-									<EyeSlashIcon className="icon" />
-								) : (
-									<EyeIcon className="icon" />
-								)}
-							</span>
-						</div>
-					</div>
-					<div className="form-group remember-group">
+					<Input
+						type="text"
+						name="email"
+						id="email"
+						placeholder="Correo electrónico"
+						value={email}
+						onChange={(event) => setEmail(event.target.value)}
+						autoComplete="username"
+						disabled={isLoading}
+						required
+					/>
+					<Input
+						type={showPassword ? 'text' : 'password'}
+						name="password"
+						placeholder="Contraseña"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+					>
+						<button
+							type="button"
+							slot="suffix"
+							onClick={() => setShowPassword(!showPassword)}
+							className="bg-transparent! border-none p-1! flex items-center text-slate-400! hover:text-slate-600! focus:outline-none"
+						>
+							{showPassword ? (
+								<Eye className="h-5 w-5" />
+							) : (
+								<LucideEyeOff className="h-5 w-5" />
+							)}
+						</button>
+					</Input>
+					<div className="max-w-fit">
 						<label className="remember-label">
 							<input
 								type="checkbox"
@@ -169,14 +172,37 @@ export default function Login() {
 							<span>Recordar correo</span>
 						</label>
 					</div>
-					<button
+					<Button
 						type="submit"
 						disabled={isLoading}
-						className="bg-brand-800 text-white hover:bg-brand-700 py-2 rounded-lg transition-colors disabled:opacity-50"
+						variant="primary"
+						className="w-full"
 					>
 						{isLoading ? 'Cargando...' : 'Iniciar Sesión'}
-					</button>
+					</Button>
 				</form>
+				<div className="flex items-center gap-4 mt-4 w-full">
+					<Button
+						variant="outline"
+						size="normal"
+						type="button"
+						onClick={() => navigate('/')}
+						className="w-full"
+					>
+						<ArrowLeft size={18} className="mr-1" />
+						Volver a inicio
+					</Button>
+					<Button
+						variant="outline"
+						size="normal"
+						type="button"
+						onClick={() => navigate('/centros')}
+						className="w-full"
+					>
+						<Compass size={18} className="mr-1" />
+						Explorar centros
+					</Button>
+				</div>
 			</section>
 		</main>
 	);

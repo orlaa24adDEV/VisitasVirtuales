@@ -98,7 +98,7 @@ export default function UserProfileForm() {
 						/>
 					</figure>
 					<div
-						className="absolute bottom-2 right-2 bg-brand-800 p-2 rounded-full cursor-pointer hover:bg-brand-900 transition-colors"
+						className="absolute bottom-2 right-2 bg-navy p-2 rounded-full cursor-pointer hover:bg-navy-dark transition-colors"
 						onClick={() => userImageRef.current.click()}
 					>
 						<Pencil className="w-4 h-4 text-white" />

@@ -89,14 +89,14 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 
 			{/* SIDEBAR PRINCIPAL */}
 			<aside
-				className={`fixed inset-y-0 ${isExpanded ? 'min-w-[256px]' : ''} left-0 z-50 flex h-screen flex-col bg-brand-800 text-white shadow-lg transition-all duration-300 lg:relative
+				className={`fixed inset-y-0 ${isExpanded ? 'min-w-[256px]' : ''} left-0 z-50 flex h-screen flex-col bg-navy text-white shadow-lg transition-all duration-300 lg:relative
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                     ${isExpanded ? 'w-64' : 'lg:w-20'}`}
 			>
 				{/* Cabecera */}
 				<div className="flex flex-col items-center gap-2 border-b border-white/20 p-6 relative">
 					<button
-						className="absolute top-4 right-4 lg:hidden p-1 hover:bg-brand-700 rounded"
+						className="absolute top-4 right-4 lg:hidden p-1 hover:bg-navy-dark rounded"
 						onClick={() => setIsMobileMenuOpen(false)}
 					>
 						<X size={20} />
@@ -131,7 +131,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 					<div className="flex items-center justify-center">
 						<button
 							onClick={() => setIsExpanded(!isExpanded)}
-							className="hover:bg-brand-700 p-2 rounded-full cursor-pointer transition-colors"
+							className="hover:bg-navy-dark p-2 rounded-full cursor-pointer transition-colors"
 							title="Expandir/Contraer"
 						>
 							<Menu size={24} strokeWidth={1.6} />
