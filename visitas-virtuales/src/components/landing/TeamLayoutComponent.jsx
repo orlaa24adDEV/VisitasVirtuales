@@ -4,7 +4,7 @@ function TeamLayoutComponent({ gitUrl, avatarUrl, nameDev, roleDev }) {
 	return (
 		<Link to={gitUrl}>
 			<div className="flex flex-col items-center">
-				<div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-indigo-500 p-1">
+				<div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden border-2 border-navy p-1">
 					<img
 						src={avatarUrl}
 						className="rounded-full object-cover w-full h-full"
@@ -12,7 +12,7 @@ function TeamLayoutComponent({ gitUrl, avatarUrl, nameDev, roleDev }) {
 					/>
 				</div>
 				<h3 className="font-bold text-lg">{nameDev}</h3>
-				<p className="text-indigo-600 text-sm">{roleDev}</p>
+				<p className="text-navy text-sm">{roleDev}</p>
 			</div>
 		</Link>
 	);
