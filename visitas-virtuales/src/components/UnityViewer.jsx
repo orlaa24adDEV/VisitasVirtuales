@@ -134,7 +134,7 @@ export default function UnityViewer() {
 				}
 			}
 		};
-	}, [selectedCenterId]);
+	}, [selectedCenterId, sceneId]);
 
 	// Lo que se muestra en pantalla
 	return (

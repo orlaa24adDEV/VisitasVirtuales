@@ -134,7 +134,7 @@ const LandingPage = () => {
 						Equipo de desarrollo
 					</h2>
 
-					<div className="flex flex-wrap gap-10">
+					<div className="flex-wrap gap-10 grid grid-cols-5 justify-center">
 						{developers.map((dev) => (
 							<TeamLayoutComponent
 								key={dev.id}

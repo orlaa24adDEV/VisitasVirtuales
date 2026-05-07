@@ -39,6 +39,22 @@ export default function ListPois({ centerId }) {
 	const firstIndex = lastIndex - itemsPerPage;
 	const currentPois = filteredPois.slice(firstIndex, lastIndex);
 
+	const centerNames = pois.map((poi) => poi.details.centerName);
+	const userNames = pois.map((poi) => poi.details.userName);
+
+	console.log(pois);
+	const uniqueCenters = [...new Set(centerNames)];
+	const uniqueUsers = [...new Set(userNames)];
+
+	console.log('Unique Centers:', uniqueCenters);
+	console.log('Unique Users:', uniqueUsers);
+
+	const filterMap = new Map([
+		['Fecha', ['Más recientes', 'Más antiguos']],
+		['Centro', ['Todos', uniqueCenters]],
+		['Usuario', ['Todos', uniqueUsers]],
+	]);
+
 	const deletePois = async (id) => {
 		try {
 			const response = await fetch(
@@ -127,6 +143,29 @@ export default function ListPois({ centerId }) {
 					>
 						<Search size={18} />
 					</Input>
+					{/* Filtros */}
+					<div className="w-full gap-6 flex items-center justify-start flex-wrap p-4 bg-slate-50 rounded-lg outline outline-slate-100 shadow-sm/8">
+						{Array.from(filterMap.entries()).map(([filterName, options]) => (
+							<label
+								key={filterName}
+								className="text-sm text-slate-600 gap-2 inline-flex items-center"
+							>
+								<span className="font-medium text-slate-500">{filterName}</span>
+								<select
+									// value={filter[filterName.toLowerCase()]}
+									name={filterName.toLowerCase()}
+									// onChange={handleFilterChange}
+									className="border border-slate-200 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-navy-500 focus:border-navy-500 bg-white text-slate-600"
+								>
+									{options.map((option) => (
+										<option key={option} value={option}>
+											{option}
+										</option>
+									))}
+								</select>
+							</label>
+						))}
+					</div>
 
 					<div className="overflow-x-auto outline outline-slate-100 rounded-lg bg-slate-50 shadow-sm/8 mt-5">
 						<table className="w-full min-w-0 sm:min-w-130 text-sm text-left">

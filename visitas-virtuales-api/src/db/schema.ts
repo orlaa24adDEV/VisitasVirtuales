@@ -357,3 +357,10 @@ export const centerImageUpdateSchema = z.object({
 export type CenterUpdateType = z.infer<typeof centerUpdateSchema>
 
 export type PoiHistoryItemType = typeof poiHistory.$inferSelect
+
+export const allCenterSchema = z.object({
+	query: z.object({
+		limit: z.coerce.number().int().positive().max(100).default(10),
+		lastId: z.coerce.number().int().positive().optional(),
+	}),
+})
