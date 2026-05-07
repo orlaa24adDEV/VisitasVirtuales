@@ -61,7 +61,7 @@ const LandingPage = () => {
 							size="large"
 							type="button"
 							modifier="pill"
-							onClick={() => navigate('/centers')}
+							onClick={() => navigate('/centros')}
 						>
 							Explorar centros
 						</Button>

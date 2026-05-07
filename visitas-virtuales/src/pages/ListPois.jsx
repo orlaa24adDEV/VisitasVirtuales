@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCenter } from '../hooks/useCenter';
 import Input from '../components/Input';
 import { toast } from 'sonner';
+import PageHeader from '../components/PageHeader';
 
 export default function ListPois({ centerId }) {
 	const [pois, setPois] = useState([]);
@@ -90,17 +91,13 @@ export default function ListPois({ centerId }) {
 	//He metido todo el section dentro de un div para centrarlo.
 	return (
 		<div className="relative flex flex-col items-center justify-center min-h-full w-full py-6 lg:px-12 lg:py-20 md:px-10 px-3">
-			<section className="flex flex-col gap-2 w-full justify-center min-h-125 max-w-4xl lg:mb-20">
-				<div className="flex flex-col lg:flex-row w-full justify-between items-center gap-2 p-2 lg:p-0">
-					<div className="flex flex-col gap-1 w-full text-center lg:text-start pb-4">
-						<p className="text-sm flex justify-center lg:justify-start items-center gap-1 font-base lg:font-medium text-navy leading-relaxed">
-							<MapPin className="w-4 h-4" />
-							<span className="">{selectedCenter.name}</span>
-						</p>
-						<h2 className="text-xl lg:text-2xl font-semibold text-slate-700">
-							Gestión de puntos de interés
-						</h2>
-					</div>
+			<section className="flex flex-col gap-4 w-full justify-center min-h-125 max-w-4xl">
+				<div className="flex flex-col lg:flex-row w-full justify-between items-end gap-4">
+					<PageHeader
+						title="Gestión de puntos de interés"
+						contextText={selectedCenter.name}
+						contextIcon={<MapPin className="w-4 h-4" />}
+					/>
 					<Button
 						size="small"
 						onClick={() =>
@@ -119,7 +116,6 @@ export default function ListPois({ centerId }) {
 						<Plus size={18} strokeWidth={2.25} /> Nuevo POI
 					</Button>
 				</div>
-
 				<div className="p-4 min-w-full bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
 					<Input
 						placeholder="Buscador de POI"
