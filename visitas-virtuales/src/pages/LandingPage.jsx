@@ -4,6 +4,9 @@ import proyectoImg from "../assets/proyecto360.jpg";
 import informationImg from "../assets/information.jpg";
 import accessImg from "../assets/access.jpg";
 import Dav_logo from "../assets/Davante_logo_navy.png";
+import { useAuth } from '../hooks/useAuth';
+import UserDropdown from '../components/UserDropdown';
+import Button from '../components/Button';
 
 const LandingPage = () => {
 	const { isAdmin, isTeacher } = useAuth();
@@ -18,7 +21,7 @@ const LandingPage = () => {
                     transition-all"
 			>
 				<Link to="/">
-					 <img src={Dav_logo} alt="Davante Logo" className="h-10" />
+					<img src={Dav_logo} alt="Davante Logo" className="h-10" />
 				</Link>
 				<div className="flex flex-row gap-4">
 					{isStaff ? (
