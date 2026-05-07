@@ -1,8 +1,10 @@
-import { Link } from 'react-router-dom';
-import tourImg from '../assets/tour360.jpg';
-import proyectoImg from '../assets/proyecto360.jpg';
-import informationImg from '../assets/information.jpg';
-import accessImg from '../assets/access.jpg';
+import { Link } from "react-router-dom";
+import tourImg from "../assets/tour360.jpg";
+import proyectoImg from "../assets/proyecto360.jpg";
+import informationImg from "../assets/information.jpg";
+import accessImg from "../assets/access.jpg";
+import Dav_logo from "../assets/Davante_logo_navy.png";
+import { useAuth } from '../hooks/useAuth';
 import UserDropdown from '../components/UserDropdown';
 import { useAuth } from '@/hooks/useAuth.js';
 import Button from '@/components/Button.jsx';
@@ -12,6 +14,7 @@ import TeamLayoutComponent from '../components/landing/TeamLayoutComponent';
 const LandingPage = () => {
 	const { isAdmin, isTeacher } = useAuth();
 	const isStaff = isAdmin || isTeacher;
+	const navigate = useNavigate();
 
 	return (
 		// Navbar
@@ -22,19 +25,20 @@ const LandingPage = () => {
                     transition-all"
 			>
 				<Link to="/">
-					<h1 className=" lg:flex gap-2 text-lg font-semibold text-slate-700 justify-center items-center uppercase tracking-tight leading-tight">
-						Proyecto 360
-					</h1>
+					<img src={Dav_logo} alt="Davante Logo" className="h-10" />
 				</Link>
 				<div className="flex flex-row gap-4">
 					{isStaff ? (
 						<UserDropdown />
 					) : (
-						<Link to="/login">
-							<Button variant="primary" size="normal" type="button">
-								Iniciar sesión
-							</Button>
-						</Link>
+						<Button
+							variant="primary"
+							size="normal"
+							type="button"
+							onClick={() => navigate('/login')}
+						>
+							Iniciar sesión
+						</Button>
 					)}
 				</div>
 			</nav>
@@ -42,12 +46,12 @@ const LandingPage = () => {
 			{/* Header */}
 			<header className="relative w-full h-150 text-center overflow-hidden ">
 				<div
-					className="absolute w-full h-150 bg-cover bg-center blur-sm"
+					className="absolute w-full h-150 bg-cover bg-center blur"
 					style={{ backgroundImage: `url(${proyectoImg})` }}
 				></div>
-				<div className="relative flex flex-col items-center justify-center w-full h-full bg-black/30  ">
+				<div className="relative flex flex-col items-center justify-center w-full h-full bg-black/40">
 					<div className="flex flex-col gap-5 items-center md:w-200 p-5">
-						<h1 className="text-4xl font-bold uppercase text-white tracking-tight leading-tight">
+						<h1 className="text-4xl font-bold text-white tracking-tight leading-tight">
 							Bienvenido a Visitas Virtuales
 						</h1>
 						<p className="text-white text-lg font-medium leading-relaxed">
@@ -55,12 +59,14 @@ const LandingPage = () => {
 							centros educativos a través de recorridos virtuales de alta
 							definición.
 						</p>
-						<Link
-							to="/centros"
-							className="w-60 p-2 uppercase font-semibold  text-center bg-navy text-white rounded-3xl hover:bg-navy-dark shadow-xl transition-colors"
+						<Button
+							size="large"
+							type="button"
+							modifier="pill"
+							onClick={() => navigate('/centros')}
 						>
-							Explorar Centros
-						</Link>
+							Explorar centros
+						</Button>
 					</div>
 				</div>
 			</header>
@@ -75,10 +81,10 @@ const LandingPage = () => {
 						/>
 					</div>
 					<div className="flex-1 flex flex-col gap-4">
-						<h2 className="text-2xl font-bold uppercase text-slate-800">
+						<h2 className="text-2xl font-bold text-slate-800">
 							Recorridos 360 Realistas
 						</h2>
-						<p className="text-slate-600">
+						<p className="text-slate-600 leading-relaxed">
 							Camina por pasillos, laboratorios y áreas deportivas como si
 							estuvieras allí. Nuestra tecnología de alta definición captura
 							cada detalle para una experiencia total inmersiva.
@@ -94,10 +100,10 @@ const LandingPage = () => {
 						/>
 					</div>
 					<div className="flex-1 flex flex-col gap-4">
-						<h2 className="text-2xl font-bold uppercase text-slate-800">
+						<h2 className="text-2xl font-bold text-slate-800">
 							Puntos de Interés Interactivos
 						</h2>
-						<p className="text-slate-600">
+						<p className="text-slate-600 leading-relaxed">
 							Haz clic en elementos clave durante tu visita para ver vídeos,
 							mallas curriculares o fotos de proyectos destacados de cada aula.
 						</p>
@@ -112,10 +118,8 @@ const LandingPage = () => {
 						/>
 					</div>
 					<div className="flex-1 flex flex-col gap-4">
-						<h2 className="text-2xl font-bold uppercase text-slate-800">
-							Sin Horarios
-						</h2>
-						<p className="text-slate-600">
+						<h2 className="text-2xl font-bold text-slate-800">Sin Horarios</h2>
+						<p className="text-slate-600 leading-relaxed">
 							Explora las instalaciones de nuestro centro en cualquier momento y
 							desde cualquier dispositivo, ya sea tablet, móvil u ordenador. Sin
 							importar dónde te encuentres ni el horario.
