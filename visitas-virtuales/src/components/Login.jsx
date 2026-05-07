@@ -3,7 +3,13 @@ import '@/assets/Login.css';
 import { useAuth } from '@/hooks/useAuth.js';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Input from './Input';
-import { ArrowLeft, Compass, Eye, LucideEyeOff } from 'lucide-react';
+import {
+	AlertCircle,
+	ArrowLeft,
+	Compass,
+	Eye,
+	LucideEyeOff,
+} from 'lucide-react';
 import Button from './Button';
 
 export default function Login() {
@@ -115,10 +121,11 @@ export default function Login() {
 					Inicia sesión para continuar
 				</h3>
 			</div>
-			<section className="login-section space-y-6 max-w-md p-8 rounded-lg bg-slate-50 outline-slate-100 outline shadow-sm">
+			<section className="login-section space-y-6 w-full! lg:max-w-md p-8 rounded-lg bg-slate-50 outline-slate-100 outline shadow-sm">
 				<form onSubmit={handleSubmit} className="space-y-6">
 					{errors && errors.length > 0 && (
-						<div className="error-message">
+						<div className="error-message flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 rounded outline outline-red-200">
+							<AlertCircle className="h-4 w-4 shrink-0" />
 							{errors.length === 1 ? (
 								<span>{errors[0]}</span>
 							) : (
@@ -152,7 +159,7 @@ export default function Login() {
 							type="button"
 							slot="suffix"
 							onClick={() => setShowPassword(!showPassword)}
-							className="bg-transparent! border-none p-1! flex items-center text-slate-400! hover:text-slate-600! focus:outline-none"
+							className="bg-transparent! border-none p-1! flex items-center text-slate-400! hover:text-slate-600! focus:outline-none cursor-pointer"
 						>
 							{showPassword ? (
 								<Eye className="h-5 w-5" />
