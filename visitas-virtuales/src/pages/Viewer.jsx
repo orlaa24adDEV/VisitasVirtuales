@@ -4,6 +4,27 @@ import { UserCheck, ShieldCheck, GraduationCap } from 'lucide-react'; // Iconos 
 import UnityViewer from '../components/UnityViewer';
 import { useCenter } from '../hooks/useCenter';
 
+//tooltip de informacion
+function InfoIcon() {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="16"
+			height="16"
+			viewBox='0 0 24 24'
+			fill='none'
+			stroke='currentColor'
+			strokeWidth='2'
+			strokeLinecap='round'
+			strokeLinejoin='round'
+		>
+				<circle cx="12" cy="12" r="10" />
+				<line x1="12" y1="16" x2="12" y2="12"/>
+				<line x1="12" y1="8" x2="12.01" y2="8" />
+		</svg>
+	);
+}
+
 export default function Viewer() {
 	const { user, isAdmin, isTeacher } = useAuth();
 	const { selectedCenter } = useCenter();
@@ -40,37 +61,69 @@ export default function Viewer() {
 					</div>
 
 					<div className="space-y-1">
-						<h1 className="text-2xl font-bold text-gray-800 tracking-tight leading-tight">
+						<h1 className="text-2xl font-bold leading-tight tracking-tight text-gray-800">
 							¡Bienvenido{isAdmin || isTeacher ? ' de nuevo, ' : ' '}
 							{user?.username || 'Invitado'}!
 						</h1>
+						
 						{isAdmin || isTeacher ? (
-							<p className="text-gray-500 leading-relaxed">
+							<p className="flex items-center gap-2 leading-relaxed text-gray-500">
 								Has iniciado sesión como
 								<span
-									className={`ml-2 px-3 py-1 rounded-full text-xs font-bold uppercase border ${
+									className={`px-3 py-1 rounded-full text-xs font-bold uppercase border ${
 										isAdmin
 											? 'bg-navy-muted text-navy border-navy/20'
-											: isTeacher
-												? 'bg-amber-50 text-amber-700 border-amber-200'
-												: 'bg-transparent text-zinc-400 border-zinc-200'
+											: 'bg-amber-50 text-amber-700 border-amber-200'
 									}`}
 								>
-									{isAdmin
-										? 'Administrador'
-										: isTeacher
-											? 'Profesor'
-											: 'Invitado'}
+									{isAdmin ? 'Administrador' : 'Profesor'}
+								</span>
+
+								{/* Icono de info con tooltip */}
+								<span className="relative group">
+									<span
+										className={`cursor-default inline-flex items-center justify-center ${
+											isAdmin ? 'text-navy' : 'text-amber-600'
+										}`}
+									>
+										<InfoIcon />
+									</span>
+									
+									<span
+										className={`absolute left-6 top-1/2 -translate-y-1/2 z-10 w-110 p-3 text-sm rounded-lg shadow-lg border
+											opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none
+											${isAdmin
+												? 'text-navy bg-white border-navy/20'
+												: 'text-amber-900 bg-white border-amber-200'
+											}`}
+									>
+										{isAdmin
+											? 'Tienes acceso total. Puedes gestionar puntos de interés (POIs), ver el historial de auditoría y configurar el sistema.'
+											: 'Como profesor, puedes gestionar tus clases y ver la información de los puntos de interés.'
+										}
+									</span>
 								</span>
 							</p>
-						) : null}
+						) : (
+							/* Invitado: tooltip de información */
+							<div className="relative group">
+								<span className="inline-flex items-center gap-1.5 text-xs text-gray-400 cursor-default select-none">
+									<InfoIcon />
+									Información
+								</span>
+								<span className="absolute z-10 p-3 text-sm text-gray-600 transition-opacity duration-200 -translate-y-1/2 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 pointer-events-none left-6 top-1/2 w-96 group-hover:opacity-100">
+									Puedes explorar el mapa y ver la información de los puntos de interés.
+								</span>
+							</div>
+						)}
 					</div>
+					
 				</div>
 
 				<hr className="my-4 border-gray-100" />
 
 				<div className="mt-4">
-					<p className="text-gray-700 leading-relaxed">
+					<p className="leading-relaxed text-gray-700">
 						Actualmente estás visualizando el centro:
 						<span className="ml-1 font-bold text-navy">
 							{selectedCenter?.name || 'Ninguno seleccionado'}
@@ -88,29 +141,13 @@ export default function Viewer() {
 								: 'bg-gray-50 border-gray-300'
 					}`}
 				>
-					{isAdmin && (
-						<p className="mb-4 text-sm font-medium text-navy leading-relaxed">
-							Tienes acceso total. Puedes gestionar puntos de interés (POIs),
-							ver el historial de auditoría y configurar el sistema.
-						</p>
-					)}
-					{isTeacher && (
-						<p className="mb-4 text-sm font-medium text-amber-900 leading-relaxed">
-							Como profesor, puedes gestionar tus clases y ver la información de
-							los puntos de interés.
-						</p>
-					)}
-					{!isAdmin && !isTeacher && (
-						<p className="mb-4 text-sm font-medium text-gray-600 leading-relaxed">
-							Puedes explorar el mapa y ver la información de los puntos de
-							interés.
-						</p>
-					)}
+	
+					
 					{/* Solo montamos Unity cuando selectedCenter ya tiene valor */}
 					{selectedCenter ? (
 						<UnityViewer />
 					) : (
-						<div className="flex items-center justify-center h-40 text-gray-400 leading-relaxed">
+						<div className="flex items-center justify-center h-40 leading-relaxed text-gray-400">
 							<p className="text-sm italic">Cargando centro...</p>
 						</div>
 					)}
