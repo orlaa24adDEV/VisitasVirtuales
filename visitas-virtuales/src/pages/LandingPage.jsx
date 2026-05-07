@@ -125,12 +125,12 @@ const LandingPage = () => {
 			</section>
 
 			<section className="flex justify-center w-full p-25 bg-gray-300/30 ">
-				<div className="flex flex-wrap w-200 px-4 text-center ">
-					<h2 className="w-full text-center text-3xl font-bold mb-10 text-gray-800 ">
+				<div className="flex flex-col center gap-10 w-200 p-4 text-center">
+					<h2 className="w-full text-center text-3xl font-bold text-gray-800 ">
 						Equipo de desarrollo
 					</h2>
 
-					<div className="flex flex-wrap w-full justify-center gap-10">
+					<div className="flex flex-wrap gap-10">
 						{developers.map((dev) => (
 							<TeamLayoutComponent
 								key={dev.id}
