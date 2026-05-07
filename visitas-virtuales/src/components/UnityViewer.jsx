@@ -1,11 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { ESCENAS_POR_CENTRO } from '@/helpers/escenas.js';
 import { useCenter } from '../hooks/useCenter';
-import { X, XCircle } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth.js';
+import { XCircle } from 'lucide-react';
+
+// TODO: cambiar a "true" cuando los archivos del build de Unity estén en el folder de Built_Unity
+// Ver instrucciones en public/Build_Unity/.gitkeep
+const UNITY_BUILD_LISTO = true;
 
 export default function UnityViewer() {
 	// Obtenemos el centro seleccionado del contexto global
 	const { selectedCenter } = useCenter();
+	const { isAdmin, isTeacher } = useAuth();
 	const selectedCenterId = selectedCenter?.id ?? null;
 	const [isReady, setIsReady] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
@@ -22,6 +28,9 @@ export default function UnityViewer() {
 	const canvasRef = useRef(null);
 	const unityInstanceRef = useRef(null);
 	const containerRef = useRef(null);
+
+	const [loadingProgress, setLoadingProgress] = useState(0);
+	const [isUnityLoaded, setIsUnityLoaded] = useState(false);
 
 	// Alterna entre pantalla completa y modo normal
 	// Si no estamos en fullscreen lo activa, si ya estamos lo desactiva
@@ -41,6 +50,12 @@ export default function UnityViewer() {
 	useEffect(() => {
 		if (selectedCenterId === null) return;
 
+		// Si el build no está listo todavía no se hace nada
+		if (!UNITY_BUILD_LISTO) {
+			console.log('Unity build no disponible aún');
+			return;
+		}
+
 		// Crear el script del loader de Unity dinámicamente
 		const script = document.createElement('script');
 		script.src = '/Build_Unity/Build/Build_Unity.loader.js';
@@ -58,16 +73,18 @@ export default function UnityViewer() {
 					codeUrl: '/Build_Unity/Build/Build_Unity.wasm',
 				},
 				(progress) => {
+					setLoadingProgress(progress); // Actualizamos el estado con el valor 0-1
 					console.log('Cargando Unity... ' + Math.round(progress * 100) + '%');
 				},
 			)
-				//Cuando Unity termino de cargar correctamente
+				// Cuando Unity termino de cargar correctamente
 				.then((unityInstance) => {
 					unityInstanceRef.current = unityInstance;
+					setIsUnityLoaded(true);
 					setIsReady(true);
 					setErrorMessage('');
 
-					//Delay de 1.5seg para que encuente el gameobject antes
+					// Delay de 1.5seg para que encuente el gameobject antes
 					setTimeout(() => {
 						// EL PUENTE: enviamos el ID del centro a Unity
 						unityInstance.SendMessage(
@@ -131,49 +148,75 @@ export default function UnityViewer() {
 
 	// Lo que se muestra en pantalla
 	return (
-		<div className="flex flex-col lg:w-full min-h-140 bg-slate-50 overflow-hidden rounded-lg">
-			<div
-				ref={containerRef}
-				className={`flex flex-col lg:w-full h-full max-h-150 relative rounded-md overflow-hidden ${isReady && !errorMessage ? '' : 'hidden'}`}
-			>
-				<canvas
-					ref={canvasRef}
-					id="unity-canvas"
-					className="w-full h-full"
-					style={{ display: 'block' }}
-				/>
-				<button
-					onClick={handleFullscreen}
-					title="Pantalla completa"
-					className="absolute z-10 p-2 text-white transition-colors duration-200 rounded-lg cursor-pointer bottom-3 right-3 bg-black/50 hover:bg-black/80"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="20"
-						height="20"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						strokeWidth="2"
-					>
-						<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-					</svg>
-				</button>
-			</div>
-
-			{!isReady && !errorMessage && (
-				<div className="flex flex-col items-center justify-center h-150 text-gray-400 gap-3">
-					<div className="animate-spin w-8 h-8 border-4 border-navy border-t-transparent rounded-full" />
-					<p className="text-sm italic leading-relaxed">
-						Cargando vista 360°...
-					</p>
+		<div className="flex flex-col w-full h-160 rounded-lg overflow-hidden bg-slate-100">
+			{/* Texto de Bienvenida */}
+			{!isAdmin && !isTeacher && (
+				<div className="flex flex-col items-center justify-center py-4 space-y-2">
+					<h1 className="text-3xl font-bold text-center text-gray-800">
+						Bienvenido a {selectedCenter?.name}
+					</h1>
 				</div>
 			)}
 
-			{errorMessage && (
-				<div className="flex flex-col items-center justify-center h-150 text-red-600 gap-3">
-					<XCircle className="w-4 h-4" />
-					<p className="text-sm italic leading-relaxed">{errorMessage}</p>
+			{/* Contenedor del canvas con botón de fullscreen */}
+			{UNITY_BUILD_LISTO ? (
+				<div ref={containerRef} className="relative flex-1 w-full">
+					{/* Overlay de carga */}
+					{!isUnityLoaded && !errorMessage && (
+						<div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-gray-900 rounded-lg w-full">
+							<p className="mb-3 text-sm text-white">
+								Cargando visita virtual... {Math.round(loadingProgress * 100)}%
+							</p>
+							<div className="w-64 h-2 overflow-hidden bg-gray-700 rounded-full">
+								<div
+									className="h-full transition-all duration-300 bg-teal-400 rounded-full"
+									style={{ width: `${loadingProgress * 100}%` }}
+								/>
+							</div>
+						</div>
+					)}
+
+					{/* Overlay de error */}
+					{errorMessage && (
+						<div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-gray-900 rounded-lg text-white p-4 text-center">
+							<XCircle size={40} className="mb-2 text-red-400" />
+							<p className="text-sm italic">{errorMessage}</p>
+						</div>
+					)}
+
+					<canvas
+						ref={canvasRef}
+						id="unity-canvas"
+						className="w-full h-full"
+						style={{ display: 'block' }}
+					/>
+
+					{/* Botón de fullscreen — esquina inferior derecha */}
+					{isUnityLoaded && (
+						<button
+							onClick={handleFullscreen}
+							title="Pantalla completa"
+							className="absolute z-10 p-2 text-white transition-colors duration-200 rounded-lg cursor-pointer bottom-3 right-3 bg-black/50 hover:bg-black/80"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+							>
+								<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+							</svg>
+						</button>
+					)}
+				</div>
+			) : (
+				<div className="flex flex-col items-center justify-center flex-1 text-gray-400">
+					<p className="text-sm italic leading-relaxed">
+						Vista de Unity no disponible aún
+					</p>
 				</div>
 			)}
 		</div>
