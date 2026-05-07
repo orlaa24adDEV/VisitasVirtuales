@@ -1,11 +1,13 @@
-import { Link, useNavigate } from 'react-router-dom';
-import tourImg from '../assets/tour360.jpg';
-import proyectoImg from '../assets/proyecto360.jpg';
-import informationImg from '../assets/information.jpg';
-import accessImg from '../assets/access.jpg';
+import { Link } from "react-router-dom";
+import tourImg from "../assets/tour360.jpg";
+import proyectoImg from "../assets/proyecto360.jpg";
+import informationImg from "../assets/information.jpg";
+import accessImg from "../assets/access.jpg";
+import Dav_logo from "../assets/Davante_logo_navy.png";
+import { useAuth } from '../hooks/useAuth';
 import UserDropdown from '../components/UserDropdown';
-import { useAuth } from '@/hooks/useAuth.js';
-import Button from '@/components/Button.jsx';
+import Button from '../components/Button';
+import { useAuth } from '../hooks/useAuth';
 
 const LandingPage = () => {
 	const { isAdmin, isTeacher } = useAuth();
@@ -21,9 +23,7 @@ const LandingPage = () => {
                     transition-all"
 			>
 				<Link to="/">
-					<h1 className=" lg:flex gap-2 text-lg font-semibold text-slate-700 justify-center items-center uppercase tracking-tight leading-tight">
-						Proyecto 360
-					</h1>
+					<img src={Dav_logo} alt="Davante Logo" className="h-10" />
 				</Link>
 				<div className="flex flex-row gap-4">
 					{isStaff ? (
