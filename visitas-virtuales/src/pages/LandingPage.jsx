@@ -6,21 +6,32 @@ import accessImg from "../assets/access.jpg";
 import Dav_logo from "../assets/Davante_logo_navy.png";
 
 const LandingPage = () => {
-  return (
-    // Navbar
-    <div className="flex flex-col">
-      <nav className="flex flex-row w-full h-25 p-5 justify-between items-center border border-gray-300 shadow-xl">
-        <img src={Dav_logo} alt="Davante Logo" className="h-10" />
+	const { isAdmin, isTeacher } = useAuth();
+	const isStaff = isAdmin || isTeacher;
 
-        <div className="flex flex-row gap-4">
-          <Link
-            to="/login"
-            className="w-35 p-2 text-center bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Iniciar Sesión
-          </Link>
-        </div>
-      </nav>
+	return (
+		// Navbar
+		<div className="flex flex-col">
+			<nav
+				className="sticky top-0 z-40 h-16 w-full flex items-center justify-between p-4 lg:py-4 lg:px-8 border-b border-transparent
+                    bg-slate-50/80 backdrop-blur-xl
+                    transition-all"
+			>
+				<Link to="/">
+					 <img src={Dav_logo} alt="Davante Logo" className="h-10" />
+				</Link>
+				<div className="flex flex-row gap-4">
+					{isStaff ? (
+						<UserDropdown />
+					) : (
+						<Link to="/login">
+							<Button variant="primary" size="normal" type="button">
+								Iniciar sesión
+							</Button>
+						</Link>
+					)}
+				</div>
+			</nav>
 
 			{/* Header */}
 			<header className="relative w-full h-150 text-center overflow-hidden ">
@@ -30,17 +41,17 @@ const LandingPage = () => {
 				></div>
 				<div className="relative flex flex-col items-center justify-center w-full h-full bg-black/30  ">
 					<div className="flex flex-col gap-5 items-center md:w-200 p-5">
-						<h1 className="text-4xl font-bold uppercase text-white">
+						<h1 className="text-4xl font-bold uppercase text-white tracking-tight leading-tight">
 							Bienvenido a Visitas Virtuales
 						</h1>
-						<p className="text-white text-lg font-medium">
+						<p className="text-white text-lg font-medium leading-relaxed">
 							Explora las instalaciones, aulas y espacios comunes de los mejores
 							centros educativos a través de recorridos virtuales de alta
 							definición.
 						</p>
 						<Link
 							to="/centros"
-							className="w-60 p-2 uppercase font-semibold  text-center bg-blue-600 text-white rounded-3xl hover:bg-blue-700 shadow-xl transition-colors"
+							className="w-60 p-2 uppercase font-semibold  text-center bg-navy text-white rounded-3xl hover:bg-navy shadow-xl transition-colors"
 						>
 							Explorar Centros
 						</Link>
@@ -48,42 +59,61 @@ const LandingPage = () => {
 				</div>
 			</header>
 
-			<section className="flex w-full justify-center mt-10 mb-10 p-10 ">
-				<div className="flex flex-row flex-wrap gap-10 w-full justify-center ">
-					<div className="flex flex-col w-80 border border-gray-300 rounded-2xl shadow-md overflow-hidden">
-						<img src={tourImg} alt="Imagen tour 360" />
-						<div className="flex flex-col gap-4 p-4 ">
-							<h2 className="uppercase font-bold">Recorrido 360 Realistas</h2>
-							<p className="">
-								Camina por pasillos, laboratorios y áreas deportivas como si
-								estuvieras allí.Nuestra tecnología de alta definición captura
-								cada detalle para una experiencia total inmersiva.
-							</p>
-						</div>
+			<section className="flex flex-col gap-16 pt-24 pb-16 px-8 max-w-6xl mx-auto">
+				<div className="flex flex-col md:flex-row-reverse items-center gap-8">
+					<div className="flex-1">
+						<img
+							src={tourImg}
+							alt="Recorrido 360"
+							className="w-full h-64 object-cover rounded-2xl shadow-xl"
+						/>
 					</div>
-					<div className="flex flex-col w-80 border border-gray-300 rounded-2xl shadow-md overflow-hidden">
-						<img src={informationImg} alt="Imagen información" />
-						<div className="flex flex-col gap-4 p-4 ">
-							<h2 className="uppercase font-bold">
-								Puntos de interés interativos
-							</h2>
-							<p className="">
-								Haz clic en elementos clave durante tu visita para ver vídeos ,
-								mallas curriculares o fotos de proyectos destacados de cada
-								aula.
-							</p>
-						</div>
+					<div className="flex-1 flex flex-col gap-4">
+						<h2 className="text-2xl font-bold uppercase text-slate-800">
+							Recorridos 360 Realistas
+						</h2>
+						<p className="text-slate-600">
+							Camina por pasillos, laboratorios y áreas deportivas como si
+							estuvieras allí. Nuestra tecnología de alta definición captura
+							cada detalle para una experiencia total inmersiva.
+						</p>
 					</div>
-					<div className="flex flex-col w-80 border border-gray-300 rounded-2xl shadow-md overflow-hidden">
-						<img src={accessImg} alt="Imagen access" />
-						<div className="flex flex-col gap-4 p-4 ">
-							<h2 className="uppercase font-bold">Sin horarios</h2>
-							<p className="">
-								Explora las instalaciones de nuestro centro en cualquier momento
-								y desde cualquier dispositivo, ya sea tablet, móvil u ordenador.
-								Sin importar dónde te encuentres ni el horario.
-							</p>
-						</div>
+				</div>
+				<div className="flex flex-col md:flex-row items-center gap-8">
+					<div className="flex-1">
+						<img
+							src={informationImg}
+							alt="Puntos de interés"
+							className="w-full h-64 object-cover rounded-2xl shadow-xl"
+						/>
+					</div>
+					<div className="flex-1 flex flex-col gap-4">
+						<h2 className="text-2xl font-bold uppercase text-slate-800">
+							Puntos de Interés Interactivos
+						</h2>
+						<p className="text-slate-600">
+							Haz clic en elementos clave durante tu visita para ver vídeos,
+							mallas curriculares o fotos de proyectos destacados de cada aula.
+						</p>
+					</div>
+				</div>
+				<div className="flex flex-col md:flex-row-reverse items-center gap-8">
+					<div className="flex-1">
+						<img
+							src={accessImg}
+							alt="Sin horarios"
+							className="w-full h-64 object-cover rounded-2xl shadow-xl"
+						/>
+					</div>
+					<div className="flex-1 flex flex-col gap-4">
+						<h2 className="text-2xl font-bold uppercase text-slate-800">
+							Sin Horarios
+						</h2>
+						<p className="text-slate-600">
+							Explora las instalaciones de nuestro centro en cualquier momento y
+							desde cualquier dispositivo, ya sea tablet, móvil u ordenador. Sin
+							importar dónde te encuentres ni el horario.
+						</p>
 					</div>
 				</div>
 			</section>

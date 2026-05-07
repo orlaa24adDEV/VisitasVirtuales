@@ -82,8 +82,8 @@ export default function NewHistorial() {
 		return (
 			<div className="flex h-full items-center justify-center">
 				<div className="flex flex-col items-center gap-2">
-					<div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-					<p className="italic text-slate-500">
+					<div className="w-8 h-8 border-4 border-navy border-t-transparent rounded-full animate-spin"></div>
+					<p className="italic text-slate-500 leading-relaxed">
 						Obteniendo los últimos cambios...
 					</p>
 				</div>
@@ -94,14 +94,14 @@ export default function NewHistorial() {
 		<div className="relative flex flex-col items-center justify-center min-h-full w-full py-6 lg:py-20 lg:px-12 md:px-10 px-3 mt-8">
 			<section className="flex flex-col gap-6 w-full justify-center lg:justify-start min-h-125 max-w-4xl">
 				<div className="flex flex-col w-full justify-between items-center lg:items-start gap-1 p-2 lg:p-0">
-					<h1 className="text-xl lg:text-2xl font-semibold text-slate-800 flex items-center gap-2">
+					<h1 className="text-xl lg:text-2xl font-semibold text-slate-700 flex items-center gap-2 tracking-tight leading-tight">
 						Historial de Auditoría
 						<span className="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">
 							Live
 						</span>
 					</h1>
 					<div className="flex items-center gap-2">
-						<p className="text-slate-500 text-sm font-base lg:font-medium flex items-center gap-1">
+						<p className="text-slate-500 text-sm font-base lg:font-medium flex items-center gap-1 leading-relaxed">
 							Últimos cambios en los puntos de interés
 						</p>
 					</div>
@@ -118,7 +118,7 @@ export default function NewHistorial() {
 								value={filter[filterName.toLowerCase()]}
 								name={filterName.toLowerCase()}
 								onChange={handleFilterChange}
-								className="border border-slate-200 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-600"
+								className="border border-slate-200 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-navy-500 focus:border-navy-500 bg-white text-slate-600"
 							>
 								{options.map((option) => (
 									<option key={option} value={option}>
@@ -154,17 +154,17 @@ export default function NewHistorial() {
 								>
 									{/* Linea vertical */}
 									{idx < filteredPoiHistory.length - 1 && (
-										<div className="absolute -left-6.25 top-7 -bottom-18 w-px bg-blue-200" />
+										<div className="absolute -left-6.25 top-7 -bottom-18 w-px bg-navy-muted" />
 									)}
 
 									{/* Punto */}
-									<span className="absolute top-6.5 -left-8 flex items-center justify-center w-4 h-4 bg-white border-2 border-blue-600 rounded-full group-hover:bg-blue-600 transition-colors shadow-sm cursor-pointer" />
+									<span className="absolute top-6.5 -left-8 flex items-center justify-center w-4 h-4 bg-white border-2 border-navy rounded-full group-hover:bg-navy transition-colors shadow-sm cursor-pointer" />
 
 									<div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 cursor-pointer">
 										{/* Header con información del centro */}
 										<div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
-											<MapPin size={18} className="text-blue-600 shrink-0" />
-											<h3 className="text-lg font-semibold text-slate-800">
+											<MapPin size={18} className="text-navy shrink-0" />
+											<h3 className="text-lg font-semibold text-slate-700">
 												{centerName}
 											</h3>
 											<span
@@ -211,7 +211,7 @@ export default function NewHistorial() {
 													<div className="text-xs font-medium text-slate-500 mb-2 flex items-center gap-1">
 														<span>Antes</span>
 													</div>
-													<div className="font-semibold text-slate-800 text-ellipsis line-clamp-1">
+													<div className="font-semibold text-slate-700 text-ellipsis line-clamp-1">
 														{nameOld}
 													</div>
 													<div className="text-sm text-slate-500 mt-2 text-ellipsis line-clamp-2 min-h-10">
@@ -219,11 +219,11 @@ export default function NewHistorial() {
 													</div>
 												</div>
 
-												<div className="p-3 rounded border border-slate-100 bg-blue-50/30">
+												<div className="p-3 rounded border border-slate-100 bg-navy-50/30">
 													<div className="text-xs font-medium text-slate-500 mb-2 flex items-center gap-1">
 														<span>Después</span>
 													</div>
-													<div className="font-semibold text-slate-800 text-ellipsis line-clamp-1">
+													<div className="font-semibold text-slate-700 text-ellipsis line-clamp-1">
 														{nameNew}
 													</div>
 													<div className="text-sm text-slate-500 mt-2 text-ellipsis line-clamp-2 min-h-10">
@@ -262,7 +262,7 @@ export default function NewHistorial() {
 														<div className="text-xs font-medium text-slate-500 mb-1">
 															Razón
 														</div>
-														<p className="text-xs text-slate-600 italic">
+														<p className="text-xs text-slate-600 italic leading-relaxed">
 															{entry.details.reason}
 														</p>
 													</div>
@@ -277,7 +277,7 @@ export default function NewHistorial() {
 				) : (
 					<div className="flex flex-col items-center gap-4 py-10">
 						<History size={48} className="text-slate-300" />
-						<p className="text-slate-400">
+						<p className="text-slate-400 leading-relaxed">
 							No hay cambios registrados
 							{isFiltered
 								? ' para los filtros aplicados'
@@ -288,7 +288,7 @@ export default function NewHistorial() {
 				)}
 
 				{!isFiltered && (
-					<p className="text-sm text-slate-400 italic text-center py-6">
+					<p className="text-sm text-slate-400 italic text-center py-6 leading-relaxed">
 						Nota: Solo se muestran los últimos 20 cambios.
 					</p>
 				)}

@@ -93,7 +93,7 @@ export default function ListPois({ centerId }) {
 			<section className="flex flex-col gap-2 w-full justify-center min-h-125 max-w-4xl lg:mb-20">
 				<div className="flex flex-col lg:flex-row w-full justify-between items-center gap-2 p-2 lg:p-0">
 					<div className="flex flex-col gap-1 w-full text-center lg:text-start pb-4">
-						<p className="text-sm flex justify-center lg:justify-start items-center gap-1 font-base lg:font-medium text-blue-600">
+						<p className="text-sm flex justify-center lg:justify-start items-center gap-1 font-base lg:font-medium text-navy leading-relaxed">
 							<MapPin className="w-4 h-4" />
 							<span className="">{selectedCenter.name}</span>
 						</p>
@@ -116,7 +116,7 @@ export default function ListPois({ centerId }) {
 						}
 						className="ml-auto lg:ml-0 lg:w-auto w-full"
 					>
-						<Plus size={18} strokeWidth={3} /> Nuevo POI
+						<Plus size={18} strokeWidth={2.25} /> Nuevo POI
 					</Button>
 				</div>
 
@@ -129,8 +129,9 @@ export default function ListPois({ centerId }) {
 							setCurrentPage(1);
 						}}
 					>
-						<Search size={22} className="text-slate-300 ml-2" />
+						<Search size={18} />
 					</Input>
+
 					<div className="overflow-x-auto outline outline-slate-100 rounded-lg bg-slate-50 shadow-sm/8 mt-5">
 						<table className="w-full min-w-0 sm:min-w-130 text-sm text-left">
 							<thead className="bg-slate-100  text-xs uppercase text-slate-600 font-semibold">
@@ -162,7 +163,7 @@ export default function ListPois({ centerId }) {
 											key={poi.id}
 											className="hover:bg-slate-50/86 transition-colors"
 										>
-											<td className="px-4 lg:px-6 py-4 lg:py-4 font-medium text-slate-900 text-ellipsis max-w-[200px] overflow-hidden whitespace-nowrap">
+											<td className="px-4 lg:px-6 py-4 lg:py-4 font-medium text-slate-700 text-ellipsis max-w-50 overflow-hidden whitespace-nowrap">
 												{poi.name}
 											</td>
 											<td className="hidden sm:table-cell px-4 lg:px-6 py-3 lg:py-4 text-slate-600">
@@ -181,7 +182,7 @@ export default function ListPois({ centerId }) {
 															description: poi.details.description,
 															isEditing: true,
 														}}
-														className="p-2 text-blue-600 hover:bg-blue-100 rounded-xl transition-colors"
+														className="p-2 text-navy hover:bg-navy-muted rounded-xl transition-colors"
 													>
 														<Pencil size={18} />
 													</Link>
@@ -201,7 +202,7 @@ export default function ListPois({ centerId }) {
 
 						{filteredPois.length > 0 && (
 							<div className="bg-slate-50 px-4 lg:px-6 py-3 border-t border-slate-200 flex items-center justify-between">
-								<p className="text-slate-500 text-xs">
+								<p className="text-slate-500 text-xs leading-relaxed">
 									Mostrando{' '}
 									<span className="font-semibold">{firstIndex + 1}</span> -{' '}
 									<span className="font-semibold">

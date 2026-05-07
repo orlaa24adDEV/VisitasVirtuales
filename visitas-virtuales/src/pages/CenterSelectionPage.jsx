@@ -3,9 +3,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 import { useCenter } from '@/hooks/useCenter.js';
 import { toast } from 'sonner';
-import { ArrowLeft, Settings, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+	ArrowLeft,
+	Settings,
+	Search,
+	ChevronLeft,
+	ChevronRight,
+} from 'lucide-react';
 import Button from '@/components/Button.jsx';
 import UserDropdown from '../components/UserDropdown';
+import Input from '../components/Input.jsx';
 
 export default function CenterSelectionPage() {
 	const navigate = useNavigate();
@@ -86,14 +93,14 @@ export default function CenterSelectionPage() {
 	// Filtrar y paginar centros
 	const filteredCenters = allCenters
 		? allCenters.filter((center) =>
-				center.name.toLowerCase().includes(searchQuery.toLowerCase())
-		  )
+				center.name.toLowerCase().includes(searchQuery.toLowerCase()),
+			)
 		: [];
 
 	const totalPages = Math.ceil(filteredCenters.length / itemsPerPage);
 	const paginatedCenters = filteredCenters.slice(
 		(currentPage - 1) * itemsPerPage,
-		currentPage * itemsPerPage
+		currentPage * itemsPerPage,
 	);
 
 	return (
@@ -119,16 +126,16 @@ export default function CenterSelectionPage() {
 						</Button>
 					</Link>
 				)}
-</div>
+			</div>
 
 			<main className="flex-1 flex flex-col items-center justify-center p-6 ">
 				<div className="w-full max-w-5xl">
 					{/* Título */}
 					<div className="mb-8 text-center">
-						<h1 className="text-3xl font-bold text-slate-800 tracking-tight">
+						<h1 className="text-3xl font-bold text-slate-700 tracking-tight leading-tight">
 							¿Qué centro quieres visitar?
 						</h1>
-						<p className="text-slate-500 mt-2 text-sm max-w-md mx-auto">
+						<p className="text-slate-500 mt-2 text-sm max-w-md mx-auto leading-relaxed">
 							Selecciona una ubicación para explorar sus instalaciones en el
 							tour virtual 360°.
 						</p>
@@ -137,25 +144,20 @@ export default function CenterSelectionPage() {
 					{/* Buscador de centros */}
 					<div className="mb-8">
 						<div className="relative max-w-md mx-auto">
-							<Search
-								className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-								size={18}
-							/>
-							<input
-								type="text"
+							<Input
 								placeholder="Buscar centro por nombre..."
 								value={searchQuery}
-								onChange={(e) => handleSearchChange(e.target.value)}
-								className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder-slate-400
-                         focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-							/>
+								onChange={(e) => setSearchQuery(e.target.value)}
+							>
+								<Search size={18} />
+							</Input>
 						</div>
 					</div>
 
 					{/* ... (Estados de carga y error se mantienen igual) ... */}
 					{isCentersLoading && (
 						<div className="flex justify-center items-center h-48">
-							<div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full" />
+							<div className="animate-spin w-8 h-8 border-4 border-navy border-t-transparent rounded-full" />
 						</div>
 					)}
 
@@ -164,7 +166,7 @@ export default function CenterSelectionPage() {
 						<>
 							{filteredCenters.length === 0 ? (
 								<div className="text-center py-12">
-									<p className="text-slate-500 text-lg">
+									<p className="text-slate-500 text-lg leading-relaxed">
 										No hay centros que coincidan con &quot;{searchQuery}&quot;
 									</p>
 								</div>
@@ -181,7 +183,7 @@ export default function CenterSelectionPage() {
 														group relative text-left rounded-2xl overflow-hidden bg-white
 														border-2 transition-all duration-300 focus:outline-none
 														hover:shadow-2xl cursor-pointer flex flex-col
-														${isActive ? 'border-blue-600 ring-10 ring-blue-50' : 'border-slate-100 hover:border-blue-200'}
+														${isActive ? 'border-navy ring-10 ring-navy/4' : 'border-slate-100 hover:border-navy/40'}
 												`}
 												>
 													{/*Boton de configuracion para admins*/}
@@ -207,7 +209,7 @@ export default function CenterSelectionPage() {
 																className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
 															/>
 														) : (
-															<div className="w-full h-full bg-linear-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-4xl font-bold">
+															<div className="w-full h-full bg-linear-to-br from-navy/6 to-indigo-600 flex items-center justify-center text-white text-4xl font-bold">
 																{center.name.charAt(0)}
 															</div>
 														)}
@@ -216,10 +218,10 @@ export default function CenterSelectionPage() {
 
 													<div className="p-5 flex-1 flex flex-col justify-between">
 														<div>
-															<h2 className="font-bold text-slate-800 text-base mb-1">
+															<h2 className="font-bold text-slate-700 text-base mb-1">
 																{center.name}
 															</h2>
-															<p className="text-slate-500 text-xs flex items-center gap-1">
+															<p className="text-slate-500 text-xs flex items-center gap-1 leading-relaxed">
 																{center.location || 'Ubicación disponible'}
 															</p>
 														</div>
@@ -239,7 +241,7 @@ export default function CenterSelectionPage() {
 																	Acceder al Centro
 																</Button>
 															) : (
-																<div className="h-9 flex justify-center items-center text-sm font-bold text-slate-100 border-rounded border-slate-400 group-hover:text-blue-600 transition-colors duration-300">
+																<div className="h-9 flex justify-center items-center text-sm font-bold text-slate-100 border-rounded border-slate-400 group-hover:text-navy transition-colors duration-300">
 																	Haz clic para seleccionar
 																</div>
 															)}
@@ -256,7 +258,9 @@ export default function CenterSelectionPage() {
 											<Button
 												variant="ghost"
 												size="small"
-												onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+												onClick={() =>
+													setCurrentPage((p) => Math.max(1, p - 1))
+												}
 												disabled={currentPage === 1}
 											>
 												<ChevronLeft size={18} />
@@ -268,7 +272,9 @@ export default function CenterSelectionPage() {
 											<Button
 												variant="ghost"
 												size="small"
-												onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+												onClick={() =>
+													setCurrentPage((p) => Math.min(totalPages, p + 1))
+												}
 												disabled={currentPage === totalPages}
 											>
 												<span>Siguiente</span>
