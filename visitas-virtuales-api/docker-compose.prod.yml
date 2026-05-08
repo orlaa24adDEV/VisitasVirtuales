@@ -28,7 +28,7 @@ services:
     networks:
       - vv-network
 
-  minio_service:
+  minio:
     image: minio/minio
     container_name: vv-minio
     env_file:

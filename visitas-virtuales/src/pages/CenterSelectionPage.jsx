@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth.js';
 import { useCenter } from '@/hooks/useCenter.js';
 import { toast } from 'sonner';
@@ -13,10 +13,37 @@ import {
 import Button from '@/components/Button.jsx';
 import UserDropdown from '../components/UserDropdown';
 import Input from '../components/Input.jsx';
+import Select from '../components/Select.jsx';
+import { useWindowSize } from '@/hooks/useWindowSize.js';
 
 export default function CenterSelectionPage() {
 	const navigate = useNavigate();
 	const hasFetchedRef = useRef(false);
+	const initialValues = {
+		search: '',
+		limit: 6,
+		page: 1,
+	};
+
+	const [searchParams, setSearchParams] = useSearchParams(initialValues);
+	const [searchQuery, setSearchQuery] = useState(
+		searchParams.get(initialValues.search) || '',
+	);
+	const [filterValues, setFilterValues] = useState();
+	const itemsPerPage = Number(searchParams.get('limit')) || 6;
+	const currentPage = Number(searchParams.get('page')) || 1;
+	const setCurrentPage = (pageOrUpdater) => {
+		const nextPage =
+			typeof pageOrUpdater === 'function'
+				? pageOrUpdater(currentPage)
+				: pageOrUpdater;
+
+		setSearchParams({
+			search: searchParams.get('search') || '',
+			limit: String(itemsPerPage),
+			page: String(nextPage),
+		});
+	};
 
 	const { isAdmin, isTeacher } = useAuth();
 	const isStaff = isAdmin || isTeacher;
@@ -33,13 +60,15 @@ export default function CenterSelectionPage() {
 	const [localSelectedCenter, setLocalSelectedCenter] = useState(
 		selectedCenter || null,
 	);
-	const [searchQuery, setSearchQuery] = useState('');
-	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 6;
+	const windowSize = useWindowSize();
 
 	const handleSearchChange = (value) => {
 		setSearchQuery(value);
-		setCurrentPage(1);
+		setSearchParams({
+			search: value,
+			page: 1,
+			limit: String(itemsPerPage),
+		});
 	};
 
 	useEffect(() => {
@@ -93,7 +122,9 @@ export default function CenterSelectionPage() {
 	// Filtrar y paginar centros
 	const filteredCenters = allCenters
 		? allCenters.filter((center) =>
-				center.name.toLowerCase().includes(searchQuery.toLowerCase()),
+				center.name
+					.toLowerCase()
+					.includes(searchParams.get('search')?.toLowerCase() || ''),
 			)
 		: [];
 
@@ -128,8 +159,8 @@ export default function CenterSelectionPage() {
 				)}
 			</div>
 
-			<main className="flex-1 flex flex-col items-center justify-center p-6 ">
-				<div className="w-full max-w-5xl">
+			<main className="flex-1 flex flex-col items-center justify-center p-6">
+				<div className="w-full max-w-6xl">
 					{/* Título */}
 					<div className="mb-8 text-center">
 						<h1 className="text-3xl font-bold text-slate-700 tracking-tight leading-tight">
@@ -143,14 +174,37 @@ export default function CenterSelectionPage() {
 
 					{/* Buscador de centros */}
 					<div className="mb-8">
-						<div className="relative max-w-md mx-auto">
+						<div className="relative w-full mx-auto flex flex-col justify-center items-center gap-4">
 							<Input
 								placeholder="Buscar centro por nombre..."
+								className="w-full lg:w-md"
 								value={searchQuery}
-								onChange={(e) => setSearchQuery(e.target.value)}
+								onChange={(e) => handleSearchChange(e.target.value)}
 							>
 								<Search size={18} />
 							</Input>
+							<div className="flex w-full gap-4 justify-center">
+								<Select
+									size="small"
+									variant="outline"
+									className="w-40! pr-1.25! pl-1.5! rounded-full!"
+									options={[
+										{ id: 'name_asc', name: 'Nombre A-Z' },
+										{ id: 'name_desc', name: 'Nombre Z-A' },
+									]}
+								/>
+								<Select
+									size="small"
+									variant="outline"
+									className="w-40! pr-1.25! pl-1.5! rounded-full!"
+									options={[
+										{ id: 'madrid', name: 'Madrid' },
+										{ id: 'pacifico', name: 'Pacífico' },
+										{ id: 'jerez', name: 'Jerez' },
+										{ id: 'cordoba', name: 'Córdoba' },
+									]}
+								/>
+							</div>
 						</div>
 					</div>
 
@@ -163,7 +217,7 @@ export default function CenterSelectionPage() {
 
 					{/* Grid de tarjetas */}
 					{!isCentersLoading && !centersError && allCenters && (
-						<>
+						<div className="flex w-full justify-between">
 							{filteredCenters.length === 0 ? (
 								<div className="text-center py-12">
 									<p className="text-slate-500 text-lg leading-relaxed">
@@ -171,8 +225,19 @@ export default function CenterSelectionPage() {
 									</p>
 								</div>
 							) : (
-								<>
-									<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+								<div className="flex items-center w-full gap-12 justify-center">
+									{windowSize.width >= 1024 && (
+										<Button
+											size="normal"
+											variant="outline"
+											className=" pl-1.25! pr-1.5! rounded-full!"
+											onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+											disabled={currentPage === 1}
+										>
+											<ChevronLeft className="w-5 h-5" />
+										</Button>
+									)}
+									<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
 										{paginatedCenters.map((center) => {
 											const isActive = localSelectedCenter?.id === center.id;
 											return (
@@ -181,12 +246,12 @@ export default function CenterSelectionPage() {
 													onClick={() => setLocalSelectedCenter(center)}
 													className={`
 														group relative text-left rounded-2xl overflow-hidden bg-white
-														border-2 transition-all duration-300 focus:outline-none
-														hover:shadow-2xl cursor-pointer flex flex-col
+														border-2 transition-all duration-300 focus:outline-none w-full
+														hover:shadow-2xl cursor-pointer flex flex-col min-w-75 lg:w-75 h-75
 														${isActive ? 'border-navy ring-10 ring-navy/4' : 'border-slate-100 hover:border-navy/40'}
-												`}
+													`}
 												>
-													{/*Boton de configuracion para admins*/}
+													{/* Boton de configuracion para admins */}
 													{isAdmin && isActive && (
 														<button
 															onClick={(e) => {
@@ -200,6 +265,7 @@ export default function CenterSelectionPage() {
 															<Settings size={16} />
 														</button>
 													)}
+
 													{/* Imagen con overlay si está activo */}
 													<div className="relative h-40 w-full overflow-hidden">
 														{center.imageUrl ? (
@@ -227,7 +293,7 @@ export default function CenterSelectionPage() {
 														</div>
 
 														{/* Indicador visual de selección */}
-														<div className="mt-4 ">
+														<div className="mt-4">
 															{isActive ? (
 																<Button
 																	variant="primary"
@@ -282,9 +348,20 @@ export default function CenterSelectionPage() {
 											</Button>
 										</div>
 									)}
-								</>
+									{windowSize.width >= 1024 && (
+										<Button
+											size="normal"
+											variant="outline"
+											className=" pr-1.25! pl-1.5! rounded-full!"
+											onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+											disabled={currentPage === 1}
+										>
+											<ChevronRight className="w-5 h-5" />
+										</Button>
+									)}
+								</div>
 							)}
-						</>
+						</div>
 					)}
 				</div>
 			</main>
