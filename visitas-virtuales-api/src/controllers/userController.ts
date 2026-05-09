@@ -85,12 +85,10 @@ export const userUpdateHandler = async (req: Request, res: Response) => {
 		}
 
 		if (!['image/jpeg', 'image/png', 'image/gif'].includes(mimeType)) {
-			return res
-				.status(400)
-				.json({
-					error:
-						'Tipo de fichero no permitido. Solo se permiten imágenes JPEG, PNG o GIF.',
-				})
+			return res.status(400).json({
+				error:
+					'Tipo de fichero no permitido. Solo se permiten imágenes JPEG, PNG o GIF.',
+			})
 		}
 
 		// Subir la imagen a MinIO y obtener la URL pública
@@ -99,7 +97,7 @@ export const userUpdateHandler = async (req: Request, res: Response) => {
 			mimeType,
 			buffer,
 		)
-		fileUrl = `${env.FRONTEND_URL}/api/${env.API_VERSION}/assets/${sanitizedFileName}`
+		fileUrl = `${env.API_BASE_URL}/api/${env.API_VERSION}/assets/${sanitizedFileName}`
 		validData.body.imageUrl = fileUrl // Agregar la URL de la imagen al cuerpo de datos a actualizar
 	} else {
 		// El frontend envía una string vacía para indicar que se desea eliminar la imagen de perfil

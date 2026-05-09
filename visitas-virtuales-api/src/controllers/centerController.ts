@@ -75,7 +75,7 @@ export const updateCenterImageHandler = asyncHandler(
 			mimeType,
 			buffer,
 		)
-		const fileUrl = `${env.FRONTEND_URL}/api/${env.API_VERSION}/assets/${sanitizedFileName}`
+		const fileUrl = `${env.API_BASE_URL}/api/${env.API_VERSION}/assets/${sanitizedFileName}`
 		// Actualizar el centro con la nueva URL de la imagen
 		const updatedCenter = await centerService.updateCenterImage(id, {
 			imageUrl: fileUrl,

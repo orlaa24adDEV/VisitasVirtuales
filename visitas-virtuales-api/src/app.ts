@@ -54,7 +54,7 @@ app.use(cookieParser() as RequestHandler)
 
 // Permitir CORS desde la app de React (Vite)
 const allowedOrigins = [
-	env.FRONTEND_URL,
+	...env.FRONTEND_URLS,
 	'http://localhost:5173',
 	'http://localhost:8000',
 ]
@@ -104,9 +104,9 @@ if (env.APP_STAGE !== 'prod') {
 	const openApiPath = resolve(currentDir, '../openapi.json')
 	const swaggerSpec = JSON.parse(readFileSync(openApiPath, 'utf-8'))
 	app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
-	console.log(
-		`Documentación API disponible en ${env.APP_STAGE === 'dev' ? `http://localhost:${env.APP_PORT}` : env.FRONTEND_URL}/api-docs`,
-	)
+	for (const url of env.FRONTEND_URLS) {
+		console.log(`Documentación API disponible en ${url}/api-docs`)
+	}
 }
 
 // Middleware para manejar errores lanzados desde servicios
