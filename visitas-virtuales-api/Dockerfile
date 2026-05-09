@@ -14,8 +14,8 @@ RUN npm run openapi:generate
 FROM node:25-slim AS runner
 WORKDIR /app
 
-# Instalar netcat y psql
-RUN apt-get update && apt-get install -y netcat-openbsd postgresql-client && rm -rf /var/lib/apt/lists/*
+# Instalar netcat, curl y psql
+RUN apt-get update && apt-get install -y netcat-openbsd postgresql-client curl && rm -rf /var/lib/apt/lists/*
 
 # Instalar PM2
 RUN npm install -g pm2
