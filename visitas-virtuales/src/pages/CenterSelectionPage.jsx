@@ -183,7 +183,8 @@ export default function CenterSelectionPage() {
 							>
 								<Search size={18} />
 							</Input>
-							<div className="flex w-full gap-4 justify-center">
+							{/* TODO: Filtros de orden y ubicación */}
+							{/* <div className="flex w-full gap-4 justify-center">
 								<Select
 									size="small"
 									variant="outline"
@@ -204,7 +205,7 @@ export default function CenterSelectionPage() {
 										{ id: 'cordoba', name: 'Córdoba' },
 									]}
 								/>
-							</div>
+							</div> */}
 						</div>
 					</div>
 

@@ -143,8 +143,8 @@ export default function ListPois({ centerId }) {
 					>
 						<Search size={18} />
 					</Input>
-					{/* Filtros */}
-					<div className="w-full gap-6 flex items-center justify-start flex-wrap p-4 bg-slate-50 rounded-lg outline outline-slate-100 shadow-sm/8">
+					{/* TODO: Filtros de fecha, centro y usuario */}
+					{/* <div className="w-full gap-6 flex items-center justify-start flex-wrap p-4 bg-slate-50 rounded-lg outline outline-slate-100 shadow-sm/8">
 						{Array.from(filterMap.entries()).map(([filterName, options]) => (
 							<label
 								key={filterName}
@@ -165,7 +165,7 @@ export default function ListPois({ centerId }) {
 								</select>
 							</label>
 						))}
-					</div>
+					</div> */}
 
 					<div className="overflow-x-auto outline outline-slate-100 rounded-lg bg-slate-50 shadow-sm/8 mt-5">
 						<table className="w-full min-w-0 sm:min-w-130 text-sm text-left">
