@@ -5,20 +5,25 @@ services:
     image: visitas-virtuales-api:0.1.0
     ports:
       - '8000:8000'
-    restart: always
+    restart: on-failure:5
     environment:
       - APP_STAGE=prod
     env_file:
       - .env.prod
     depends_on:
+      - minio
       - postgres_service
     networks:
       - vv-network
+    deploy:
+      resources:
+        limits:
+          memory: 400m
 
   postgres_service:
     image: postgres:16
     container_name: vv-postgres
-    restart: always
+    restart: on-failure:5
     env_file:
       - .env.prod
     environment:
@@ -27,10 +32,15 @@ services:
       - pgdata-prod:/var/lib/postgresql/data
     networks:
       - vv-network
+    deploy:
+      resources:
+        limits:
+          memory: 300m
 
   minio:
     image: minio/minio
     container_name: vv-minio
+    restart: on-failure:5
     env_file:
       - .env.prod
     environment:
@@ -42,6 +52,10 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - miniodata-prod:/data
+    deploy:
+      resources:
+        limits:
+          memory: 300m
 
 networks:
   vv-network:
