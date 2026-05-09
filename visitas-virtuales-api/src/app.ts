@@ -25,6 +25,9 @@ app.use(morgan('dev') as RequestHandler)
 // Middleware para establecer headers de seguridad en las respuestas (permitiendo embedding de imágenes desde React)
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
 
+// Confiar en el proxy para obtener IP real del cliente
+app.set('trust proxy', 1)
+
 // Middleware para rate limiting (100 solicitudes cada 15 minutos por IP por defecto)
 const limiter = rateLimit({
 	windowMs: env.RATE_LIMIT_WINDOW,
