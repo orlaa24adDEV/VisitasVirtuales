@@ -80,7 +80,6 @@ const upload = multer({
  */
 router.get(
 	'/centers',
-	hasRole(['admin', 'teacher', 'guest']),
 	validateRequest({ query: allCenterSchema.shape.query }),
 	getAllCentersHandler,
 )
