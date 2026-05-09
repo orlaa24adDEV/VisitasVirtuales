@@ -29,6 +29,8 @@ const envSchema = z.object({
 	APP_STAGE: z.enum(['dev', 'stage', 'prod']).default('dev'),
 	APP_PORT: z.coerce.number().default(8000),
 	API_VERSION: z.string().regex(new RegExp('^v\\d+$')).default('v1'),
+	ADMIN_EMAIL: z.email().min(1),
+	ADMIN_PASSWORD: z.string().min(26).max(128),
 	RATE_LIMIT_WINDOW: rateLimitWindowSchema('5m'),
 	AUTH_RATE_LIMIT_WINDOW: rateLimitWindowSchema('15m'),
 	RATE_LIMIT_MAX: z.coerce.number().default(100),
