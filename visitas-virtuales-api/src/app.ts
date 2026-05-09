@@ -90,6 +90,11 @@ app.use('/api/v1/', poiRoutes)
 // Montar rutas de trazabilidad
 app.use('/api/v1/', traceabilityRoutes)
 
+// Health check
+app.get('/health', (req: Request, res: Response) => {
+	res.status(200).json({ status: 'ok' })
+})
+
 // Montar ruta de especificación OpenAPI (solo en desarrollo y staging)
 if (env.APP_STAGE !== 'prod') {
 	const currentDir = dirname(fileURLToPath(import.meta.url))
