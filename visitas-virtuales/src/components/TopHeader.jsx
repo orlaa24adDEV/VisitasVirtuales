@@ -7,6 +7,7 @@ import Button from './Button.jsx';
 import CenterSelectButton from './CenterSelectButton.jsx';
 import { useCenter } from '../hooks/useCenter.js';
 import UserDropdown from './UserDropdown.jsx';
+import Dav_logo from '../assets/Davante_logo_navy.png';
 
 /* TopHeader: Barra superior de la app.
  * Logueado: Muestra nombre, rol, imagen y dropdown con opciones (configuración, logout).
@@ -36,7 +37,7 @@ export default function TopHeader({ onMenuClick }) {
 			{!isStaff ? (
 				<Link to="/">
 					<h1 className=" lg:flex gap-2 text-lg font-semibold text-slate-700 justify-center items-center uppercase tracking-tight leading-tight">
-						Proyecto 360
+						<img src={Dav_logo} alt="Davante Logo" className="h-10" />
 					</h1>
 				</Link>
 			) : null}
